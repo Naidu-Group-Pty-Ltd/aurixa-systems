@@ -40,6 +40,7 @@ export function Footer() {
               <li><Link to="/industries" className="hover:text-white transition-colors">For Enterprise Firms</Link></li>
               <li><Link to="/solutions" className="hover:text-white transition-colors">Client Reporting</Link></li>
               <li><Link to="/solutions" className="hover:text-white transition-colors">Compliance OS</Link></li>
+              <li><Link to="/compliance-passport" className="hover:text-white transition-colors">Compliance Passport</Link></li>
             </ul>
           </div>
 

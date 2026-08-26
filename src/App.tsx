@@ -23,6 +23,7 @@ import Resources from "./pages/Resources";
 import Docs from "./pages/Docs";
 import Contact from "./pages/Contact";
 import Compliance from "./pages/Compliance";
+import CompliancePassport from "./pages/CompliancePassport";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Status from "./pages/Status";
@@ -130,6 +131,7 @@ export function AppShell() {
             <Route path="/docs" element={<Docs />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/compliance" element={<Compliance />} />
+            <Route path="/compliance-passport" element={<CompliancePassport />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
             <Route path="/status" element={<Status />} />

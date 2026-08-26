@@ -127,6 +127,15 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     priority: 0.7,
   },
   {
+    path: "/compliance-passport",
+    title: "AML/CTF Compliance Passport | Aurixa Systems",
+    description:
+      "The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey — connecting clients, your team and authorised property professionals from onboarding through to transaction completion.",
+    indexable: true,
+    changefreq: "monthly",
+    priority: 0.8,
+  },
+  {
     path: "/privacy-policy",
     title: "Privacy Policy | Aurixa Systems",
     description:
