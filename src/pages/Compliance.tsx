@@ -157,6 +157,9 @@ export default function Compliance() {
     <section className="compliance-section compliance-section--diligence"><SectionTransition number="03" /><div className="compliance-container">
       <SectionHeader eyebrow="AML/CTF & Customer Due Diligence" title="Due Diligence in Motion." description="Aurixa supports structured AML/CTF and customer due diligence workflows throughout the client lifecycle. Information, responsibilities, reviews and operational records remain connected within one controlled process." />
       <DueDiligenceFlow />
+      <motion.div {...reveal} className="compliance-crosslink">
+        <LegalLink to="/compliance-passport">Explore the AML/CTF Compliance Passport</LegalLink>
+      </motion.div>
     </div></section>
     <section className="compliance-section compliance-section--governance"><SectionTransition number="04" /><div className="compliance-container">
       <SectionHeader eyebrow="Information Governance" title="Clear Policies. Defined Responsibilities." description="Privacy practices and platform terms provide a clear framework for how information is handled and how the Aurixa environment may be accessed and used." />
