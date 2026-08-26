@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { label: "Industries", href: "/industries" },
   { label: "About", href: "/about" },
   { label: "Compliance", href: "/compliance" },
+  { label: "Passport", href: "/compliance-passport" },
   { label: "Resources", href: "/resources" },
 ] as const;
 
@@ -49,17 +50,19 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-[var(--site-header-height)] flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1 py-1 lg:flex-none">
           {/* max-w-full, not a 100vw calc: on desktop 100vw counts the
-              scrollbar and would let the mark run past its own column. */}
-          <BrandLogo priority compact className="max-w-full lg:!w-[220px] xl:!w-[260px]" />
+              scrollbar and would let the mark run past its own column.
+              lg sizes are tightened: eight nav items plus the CTA meet a
+              1024px viewport with nothing to spare. */}
+          <BrandLogo priority compact className="max-w-full lg:!w-[190px] xl:!w-[260px]" />
         </div>
 
-        <nav aria-label="Primary" className="hidden items-center gap-4 lg:flex xl:gap-6">
+        <nav aria-label="Primary" className="hidden items-center gap-3 lg:flex xl:gap-6">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.label}
               to={item.href}
               aria-current={isActive(item.href) ? "page" : undefined}
-              className={`text-[13px] font-semibold text-gray-300 hover:text-white transition-colors tracking-wide ${isActive(item.href) ? "relative text-white after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:bg-[#C89B3C] after:content-['']" : ""}`}
+              className={`text-[12px] xl:text-[13px] font-semibold text-gray-300 hover:text-white transition-colors tracking-wide ${isActive(item.href) ? "relative text-white after:absolute after:-bottom-2 after:left-0 after:h-px after:w-full after:bg-[#C89B3C] after:content-['']" : ""}`}
             >
               {item.label}
             </Link>
@@ -69,9 +72,9 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-6">
           <Link
             to="/contact"
-            className="group relative isolate inline-flex items-center justify-center overflow-hidden px-6 py-2.5 text-[13px] font-black tracking-widest uppercase text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,168,181,0.3)] hover:shadow-[0_0_30px_rgba(200,155,60,0.6)]"
+            className="group relative isolate inline-flex items-center justify-center overflow-hidden px-4 xl:px-6 py-2.5 text-[13px] font-black tracking-widest uppercase text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,168,181,0.3)] hover:shadow-[0_0_30px_rgba(200,155,60,0.6)]"
           >
-            <span className="relative z-10 text-white tracking-[0.25em] font-semibold">JOIN WAITLIST</span>
+            <span className="relative z-10 text-white tracking-[0.18em] xl:tracking-[0.25em] font-semibold">JOIN WAITLIST</span>
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-sm bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
           </Link>
         </div>
