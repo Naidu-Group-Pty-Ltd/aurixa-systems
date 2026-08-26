@@ -412,24 +412,61 @@
   .passport-btn--ghost svg { color:#d7b35f; }
 
   .passport-hero-visual { display:grid; place-items:center; overflow:visible; }
-  .passport-card { position:relative; width:min(100%,26rem); border:1px solid rgba(215,179,95,.35); background:linear-gradient(150deg,rgba(13,27,48,.96),rgba(5,13,24,.98)); box-shadow:0 30px 80px rgba(0,0,0,.4),inset 0 0 45px rgba(0,0,0,.3); }
-  .passport-card::before { content:""; position:absolute; inset:.45rem; border:1px solid rgba(94,221,232,.14); pointer-events:none; }
-  .passport-card__head { display:flex; align-items:center; gap:.85rem; padding:1.3rem 1.5rem 1.1rem; border-bottom:1px solid rgba(255,255,255,.08); }
-  .passport-card__head>i { flex:none; width:9px; height:9px; border:1px solid #d7b35f; transform:rotate(45deg); }
-  .passport-card__head strong { display:block; color:#d7b35f; font:700 .6rem/1.4 ui-monospace,monospace; letter-spacing:.26em; text-transform:uppercase; }
-  .passport-card__head span { display:block; margin-top:.25rem; color:#7f8da0; font:600 .52rem/1.4 ui-monospace,monospace; letter-spacing:.18em; text-transform:uppercase; }
-  .passport-card__rows { padding:.55rem 1.5rem; }
-  .passport-card__rows li { display:grid; grid-template-columns:1.6rem 1fr auto 1rem; align-items:center; gap:.6rem; padding:.68rem 0; border-bottom:1px solid rgba(255,255,255,.05); color:#c3cbd6; font-size:.82rem; font-weight:300; }
-  .passport-card__rows li:last-child { border-bottom:0; }
-  .passport-card__rows span { color:#64748b; font:500 .52rem/1 ui-monospace,monospace; }
-  .passport-card__rows em { color:#5edde8; font:600 .5rem/1 ui-monospace,monospace; font-style:normal; letter-spacing:.16em; text-transform:uppercase; }
-  .passport-card__rows i { width:7px; height:7px; justify-self:end; border:1px solid #5edde8; background:rgba(94,221,232,.22); transform:rotate(45deg); box-shadow:0 0 8px rgba(0,168,181,.45); }
-  .passport-card__rows li.is-active { color:#fff; }
-  .passport-card__rows li.is-active em { color:#d7b35f; }
-  .passport-card__rows li.is-active i { border-color:#d7b35f; background:rgba(215,179,95,.22); box-shadow:0 0 10px rgba(215,179,95,.55); animation:passport-active 2.6s ease-in-out infinite; }
-  .passport-card__foot { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.1rem 1.5rem 1.3rem; border-top:1px solid rgba(255,255,255,.08); }
-  .passport-card__foot span { color:#64748b; font:500 .52rem/1.4 ui-monospace,monospace; letter-spacing:.16em; }
-  .passport-card__foot em { flex:none; padding:.5rem .7rem; border:1px solid rgba(215,179,95,.6); color:#d7b35f; font:700 .52rem/1 ui-monospace,monospace; font-style:normal; letter-spacing:.22em; animation:passport-seal 5s ease-in-out infinite; }
+  /* `--passport-cover-w` is declared HERE, on the composition root, not on the
+     book — the attestation plates below have to be exactly as wide as the
+     document above them, and a width restated in a second place is a width
+     that eventually disagrees. The book reads it with a `var(…, 320)` fallback
+     so a standalone `.passport-book` still has a size. One number, one place. */
+  .passport-artefact { --passport-cover-w:320; display:flex; flex-direction:column; align-items:center; gap:1.4rem; }
+
+  /* ── The passport, as a bound document ──────────────────────────────────
+     The board inside `.passport-cover-art` is authored against a 470×648 box
+     and drawn at exactly that size, then scaled. `--passport-cover-w` is
+     UNITLESS and is the only number: the slot width and the scale factor are
+     both derived from it, so they cannot drift apart and clip the clasp. Size
+     the cover by setting that one property — never by touching the art. */
+  .passport-book { position:relative; display:inline-flex; padding-left:12px; filter:drop-shadow(0 30px 44px rgba(0,0,0,.55)); }
+  /* Flush with the board top and bottom: an inset spine reads as a second
+     panel standing behind the cover rather than as one bound document. */
+  .passport-book__spine { position:absolute; left:0; top:0; bottom:0; width:22px; border-radius:7px 0 0 7px; background:linear-gradient(90deg,hsl(225 44% 5%),hsl(228 36% 13%) 55%,hsl(226 42% 8%)); box-shadow:inset -5px 0 9px rgba(0,0,0,.6),inset 1px 0 0 rgba(217,166,31,.16); }
+  /* The leaf edges peeking past the board — what makes it read as bound. Kept
+     dim: a bright stripe here turns the document into a stack of paper. */
+  .passport-book__edge { position:absolute; right:-3px; top:13px; bottom:13px; width:4px; border-radius:0 3px 3px 0; background:repeating-linear-gradient(180deg,rgba(226,214,186,.26) 0 2px,rgba(96,88,74,.3) 2px 4px); }
+  .passport-cover-slot { position:relative; display:block; width:calc(var(--passport-cover-w,320) * 1px); aspect-ratio:470 / 648; overflow:hidden; border-radius:2px 9px 9px 2px; box-shadow:0 0 0 1px rgba(166,130,43,.4); }
+  .passport-cover-art { position:absolute; top:0; left:0; display:block; width:470px; height:648px; transform-origin:top left; transform:scale(calc(var(--passport-cover-w,320) / 470)); pointer-events:none; }
+
+  /* The board itself: navy leather, and the design's own margins and rhythm. */
+  .passport-cover-board { --pp-gold-soft:hsl(44 74% 67%); --pp-gold-dim:hsl(41 50% 57%); position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; width:470px; height:648px; padding:58px 44px 46px; text-align:center; background:radial-gradient(120% 85% at 50% 8%,rgba(233,200,107,.1),transparent 58%),linear-gradient(155deg,hsl(228 40% 12%) 0%,hsl(225 44% 7%) 55%,hsl(36 29% 3%) 100%); box-shadow:inset 0 1px 0 rgba(255,255,255,.09); }
+  .passport-cover__frame { position:absolute; inset:14px; border:1px solid rgba(217,166,31,.55); border-radius:8px; pointer-events:none; }
+  .passport-cover__frame-inner { position:absolute; inset:20px; border:1px solid rgba(217,166,31,.2); border-radius:5px; pointer-events:none; }
+  .passport-cover__crest { position:relative; display:flex; align-items:center; justify-content:center; flex:none; width:210px; height:210px; }
+  /* Concentric rings and radial ticks, masked to a ring so the halo reads as
+     engraving on the leather rather than as a disc behind the mark. */
+  .passport-cover__halo { position:absolute; inset:0; border-radius:50%; opacity:.55; pointer-events:none; background:repeating-radial-gradient(circle at 50% 50%,rgba(217,166,31,.2) 0 1px,transparent 1px 15px),repeating-conic-gradient(from 0deg,rgba(217,166,31,.14) 0 .5deg,transparent .5deg 6deg); -webkit-mask:radial-gradient(circle,transparent 0 30%,#000 42% 76%,transparent 88%); mask:radial-gradient(circle,transparent 0 30%,#000 42% 76%,transparent 88%); }
+  .passport-cover__emblem { position:relative; width:150px; height:150px; object-fit:contain; filter:drop-shadow(0 6px 18px rgba(0,0,0,.55)); }
+  /* `text-indent` cancels the trailing letter-space so the word optically
+     centres; without it the whole wordmark sits a quarter-em left. */
+  .passport-cover__wordmark { display:block; margin-top:14px; font-family:ui-serif,Georgia,"Times New Roman",serif; font-size:42px; font-weight:600; line-height:1; letter-spacing:.22em; text-indent:.22em; text-transform:uppercase; color:var(--pp-gold-soft); text-shadow:0 1px 0 rgba(0,0,0,.5); }
+  .passport-cover__systems { display:block; margin-top:9px; font-size:11px; font-weight:600; letter-spacing:.68em; text-indent:.68em; text-transform:uppercase; color:var(--pp-gold-dim); }
+  .passport-cover__diamond { display:flex; align-items:center; justify-content:center; gap:10px; width:190px; margin-top:26px; }
+  .passport-cover__diamond-rule { flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(217,166,31,.7),transparent); }
+  .passport-cover__diamond-mark { font-size:7px; line-height:1; color:var(--pp-gold-dim); }
+  .passport-cover__title { display:block; margin-top:26px; font-family:ui-serif,Georgia,"Times New Roman",serif; font-size:19px; font-weight:600; line-height:1.85; letter-spacing:.1em; text-transform:uppercase; color:var(--pp-gold-soft); }
+  .passport-cover__clasp { position:absolute; left:50%; bottom:30px; width:46px; height:21px; transform:translateX(-50%); border:1px solid rgba(166,130,43,.8); border-radius:4px; background:linear-gradient(180deg,hsl(44 62% 64%),hsl(43 55% 45%) 45%,hsl(42 50% 32%)); box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 2px 7px -2px rgba(0,0,0,.65); }
+
+  /* ── The two attestations that make it a record ─────────────────────── */
+  /* Exactly the book's own width — cover slot plus the spine it sits on. */
+  .passport-attest { display:flex; flex-direction:column; gap:.6rem; width:calc(var(--passport-cover-w,320) * 1px + 12px); max-width:100%; }
+  .passport-attest__row { display:flex; align-items:flex-start; gap:.85rem; padding:.85rem 1.05rem; border:1px solid rgba(94,221,232,.22); background:linear-gradient(120deg,rgba(0,168,181,.08),rgba(6,15,27,.85)); }
+  /* Sized so the longer of the two headings clears one line at the narrowest
+     desktop cover; a wrapped attestation heading reads as an overflow bug. */
+  .passport-attest__row strong { display:block; color:#e6ecf3; font:700 .58rem/1.4 ui-monospace,monospace; letter-spacing:.15em; text-transform:uppercase; }
+  .passport-attest__row span { display:block; margin-top:.3rem; color:#8b96a6; font-size:.76rem; font-weight:300; line-height:1.6; }
+  .passport-attest__row svg { flex:none; width:1rem; margin-top:.1rem; color:#5edde8; }
+  .passport-attest__row--sealed { border-color:rgba(215,179,95,.32); background:linear-gradient(120deg,rgba(200,155,60,.08),rgba(6,15,27,.85)); }
+  .passport-attest__row--sealed strong { color:#d7b35f; }
+  .passport-attest__row--sealed>i { flex:none; width:9px; height:9px; margin-top:.28rem; border:1px solid #d7b35f; background:rgba(215,179,95,.25); transform:rotate(45deg); box-shadow:0 0 10px rgba(215,179,95,.45); animation:passport-seal 5s ease-in-out infinite; }
+  .passport-attest__hash { font-family:ui-monospace,monospace; font-size:.58rem !important; letter-spacing:.12em; word-break:break-word; }
 
   .passport-frame { position:relative; padding:clamp(1.25rem,2.5vw,2.25rem); border:1px solid rgba(94,221,232,.14); background:linear-gradient(145deg,rgba(9,22,39,.82),rgba(4,11,22,.92)); box-shadow:0 28px 80px rgba(0,0,0,.28),inset 0 0 55px rgba(0,0,0,.26); }
   .passport-steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1rem; }
@@ -501,23 +538,31 @@
   .compliance-crosslink { display:flex; justify-content:center; margin-top:2.75rem; }
 }
 
-@keyframes passport-active { 0%,100%{box-shadow:0 0 10px rgba(215,179,95,.55)} 50%{box-shadow:0 0 18px rgba(215,179,95,.9)} }
 @keyframes passport-seal { 50%{box-shadow:0 0 25px rgba(215,179,95,.35)} }
 
+/* The cover resizes by ONE property. Nothing else about the board may be
+   touched per breakpoint — the art is a fixed composition and the scale is
+   derived from this number. */
+@media (max-width:1279px){ .passport-artefact{--passport-cover-w:300} }
 @media (max-width:900px){
   .passport-steps{grid-template-columns:repeat(2,minmax(0,1fr))}
   .passport-surfaces{grid-template-columns:1fr}
   .passport-ledger{grid-template-columns:1fr}
 }
 @media (max-width:560px){
+  .passport-artefact{--passport-cover-w:255}
+  /* The plates stop tracking the cover here: matched to a 255px board they
+     wrap the fingerprint onto four lines on a phone. */
+  .passport-attest{width:min(100%,22rem)}
   .passport-steps{grid-template-columns:1fr}
   .passport-role{grid-template-columns:1fr;gap:.55rem}
   .passport-actions .passport-btn{width:100%;justify-content:center}
   .passport-ledger__stamps{padding-inline:1rem}
   .passport-chain ol{gap:.5rem}
 }
+@media (max-width:389px){ .passport-artefact{--passport-cover-w:225} }
 @media (prefers-reduced-motion:reduce){
-  .passport-card__rows li.is-active i,.passport-card__foot em{animation:none}
+  .passport-attest__row--sealed>i{animation:none}
 }
 
 /* Legal documents: a quieter extension of the platform and compliance system. */

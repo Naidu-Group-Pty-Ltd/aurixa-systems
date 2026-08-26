@@ -2,6 +2,7 @@ import { MotionConfig, motion } from "motion/react";
 import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
+import { PassportCover } from "../components/PassportCover";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 /**
@@ -60,8 +61,8 @@ const propertyJourney = [
   "Review & Decision",
   "Aurixa Compliance Passport",
   "Professional Collaboration",
-  "Ongoing Review",
   "Transaction Completion",
+  "Ongoing Review",
 ] as const;
 
 const clientView = [
@@ -100,29 +101,26 @@ function SectionTransition({ number }: { number: string }) {
 }
 
 /**
- * A journey mid-flight, not the finished milestone list — the Passport section
- * below carries that. Statuses here are illustrative marketing content.
+ * The hero artefact: the passport itself, with the two attestations that make
+ * it a record rather than a status screen.
+ *
+ * The plates carry the site's teal rather than the Command Centre's green —
+ * the cover is the artefact and is reproduced exactly, but everything around
+ * it belongs to this page's palette. The fingerprint is an illustrative
+ * sample, which is why the whole block is labelled as an illustration.
  */
-function PassportCardVisual() {
-  const rows = [
-    ["Client Consent", "recorded"],
-    ["Identity", "verified"],
-    ["Documents", "verified"],
-    ["Screening", "completed"],
-    ["Source of Funds", "in review"],
-  ] as const;
-  return <div className="passport-card" role="img" aria-label="Illustration of an Aurixa Compliance Passport showing a client journey in progress: consent recorded, identity and documents verified, screening completed, source of funds in review.">
-    <div className="passport-card__head">
-      <i aria-hidden="true" />
-      <div><strong>Aurixa Systems</strong><span>AML/CTF Compliance Passport</span></div>
-    </div>
-    <ul className="passport-card__rows" aria-hidden="true">
-      {rows.map(([label, status], index) => <li key={label} className={status === "in review" ? "is-active" : ""}>
-        <span>{String(index + 1).padStart(2, "0")}</span>{label}<em>{status}</em><i />
-      </li>)}
-    </ul>
-    <div className="passport-card__foot" aria-hidden="true">
-      <span>ONE CLIENT · ONE JOURNEY</span><em>IN PROGRESS</em>
+function PassportArtefact() {
+  return <div className="passport-artefact">
+    <PassportCover />
+    <div className="passport-attest">
+      <div className="passport-attest__row passport-attest__row--issued">
+        <Check aria-hidden="true" />
+        <div><strong>Issued · Current</strong><span>Every verified milestone in one sealed record</span></div>
+      </div>
+      <div className="passport-attest__row passport-attest__row--sealed">
+        <i aria-hidden="true" />
+        <div><strong>Digitally verified by Aurixa Systems</strong><span className="passport-attest__hash">8F3C · B41D · 9AE0 · 72CF · SHA-256</span></div>
+      </div>
     </div>
   </div>;
 }
@@ -254,7 +252,7 @@ export default function CompliancePassport() {
           <Link className="passport-btn" to="/contact">Book Your Free Demo<ArrowRight aria-hidden="true" /></Link>
           <a className="passport-btn passport-btn--ghost" href="#passport">Explore the Compliance Passport<ArrowRight aria-hidden="true" /></a>
         </div>
-      </motion.div><div className="compliance-hero__visual passport-hero-visual"><PassportCardVisual /></div></div>
+      </motion.div><motion.div {...reveal} className="compliance-hero__visual passport-hero-visual"><PassportArtefact /></motion.div></div>
     </section>
 
     <div className="compliance-story-rail" aria-hidden="true" />
