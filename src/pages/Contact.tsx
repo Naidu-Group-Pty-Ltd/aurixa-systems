@@ -187,7 +187,7 @@ export default function Contact() {
     } catch (error) {
       console.error(error);
       setSubmissionError(
-        "We could not submit your application just now. Please try again — your answers have been kept.",
+        "We could not submit your application just now. Please try again. Your answers have been kept.",
       );
     } finally {
       setIsSubmitting(false);
@@ -259,7 +259,7 @@ export default function Contact() {
               "To maintain extreme architectural fidelity for our Tier-1 partners, we limit new integrations. We do not accept capital for queue priority. Allocation is earned by proving your firm has the systemic capability to dominate your sector once armed with our software. Submit your credentials meticulously. Each review cycle is calibrated around transaction volume, market stance, and alignment with Aurixa Systems' strategic objectives."
             </p>
             <div className="text-[10px] uppercase tracking-widest text-[#94A3B8] font-mono">
-              — Founding Partner, Aurixa Systems
+              Founding Partner, Aurixa Systems
             </div>
           </motion.div>
         </div>

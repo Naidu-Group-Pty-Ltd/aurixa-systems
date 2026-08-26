@@ -28,9 +28,9 @@ export default function PricingCancel() {
           <p className="mt-4 text-sm leading-relaxed text-[#94A3B8]">
             No charge was made.{" "}
             {uid
-              ? "Your checkout link is still valid — head back to pricing to pick it up again."
+              ? "Your checkout link is still valid. Head back to pricing to pick it up again."
               : h
-                ? "To pick the purchase back up, head back to your dashboard and start it again — that refreshes your secure checkout link."
+                ? "To pick the purchase back up, head back to your dashboard and start it again. That refreshes your secure checkout link."
                 : "You can come back to pricing any time."}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">

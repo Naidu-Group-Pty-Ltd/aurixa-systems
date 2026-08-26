@@ -32,8 +32,8 @@ export function QuestionnaireProgress({
 }: QuestionnaireProgressProps) {
   const completed = new Set(completedIndexes);
   const status = reviewing
-    ? "Review — all four sections complete"
-    : `Section ${currentIndex + 1} of ${sections.length} — ${sections[currentIndex].title}`;
+    ? "Review: all four sections complete"
+    : `Section ${currentIndex + 1} of ${sections.length}: ${sections[currentIndex].title}`;
 
   return (
     <nav aria-label="Questionnaire progress" className="space-y-3">

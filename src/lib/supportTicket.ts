@@ -36,7 +36,7 @@ export const BREAKAGE_OPTIONS: Option[] = [
   { value: "single_feature", label: "One feature is broken" },
   { value: "intermittent", label: "Comes and goes" },
   { value: "cosmetic", label: "Cosmetic / visual" },
-  { value: "none", label: "No breakage — question or request" },
+  { value: "none", label: "No breakage: question or request" },
 ];
 
 // ── Bounds (mirrored in supabase/functions/support-ticket/index.ts) ──────────
@@ -126,7 +126,7 @@ export function validateSupportTicket(
   const description = values.description.trim();
   if (!description) errors.description = "Describe what happened.";
   else if (description.length < MIN_DESCRIPTION || description.length > MAX_DESCRIPTION)
-    errors.description = `Description must be between ${MIN_DESCRIPTION} and ${MAX_DESCRIPTION} characters — include what you did, what you expected and what you saw.`;
+    errors.description = `Description must be between ${MIN_DESCRIPTION} and ${MAX_DESCRIPTION} characters. Include what you did, what you expected and what you saw.`;
 
   if (values.impact.trim().length > MAX_IMPACT)
     errors.impact = `Please keep the impact note under ${MAX_IMPACT} characters.`;

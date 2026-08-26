@@ -116,14 +116,14 @@ export default function SupportAssistant({
     if (result.kind === "throttled") {
       setNotice(
         result.retryAfterSeconds
-          ? `A few too many questions at once — please try again in about ${Math.max(1, Math.ceil(result.retryAfterSeconds))} seconds.`
-          : "A few too many questions at once — please try again shortly.",
+          ? `A few too many questions at once. Please try again in about ${Math.max(1, Math.ceil(result.retryAfterSeconds))} seconds.`
+          : "A few too many questions at once. Please try again shortly.",
       );
       return;
     }
 
     if (result.kind === "invalid") {
-      setNotice("That question couldn't be processed — please rephrase it and try again.");
+      setNotice("That question couldn't be processed. Please rephrase it and try again.");
       return;
     }
 
@@ -163,7 +163,7 @@ export default function SupportAssistant({
       </div>
 
       <p className="mt-3 text-sm leading-relaxed text-[#94A3B8]">
-        Ask about anything in the dashboard — most questions are answered instantly from the User
+        Ask about anything in the dashboard. Most questions are answered instantly from the User
         Guide.
       </p>
 
@@ -247,7 +247,7 @@ export default function SupportAssistant({
           role="status"
           className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-[#00A8B5]/35 bg-[#00A8B5]/10 px-4 py-3"
         >
-          <p className="text-[13px] text-white">Great — glad the guide had the answer.</p>
+          <p className="text-[13px] text-white">Great, glad the guide had the answer.</p>
           <button
             type="button"
             onClick={onResolved}
@@ -273,7 +273,7 @@ export default function SupportAssistant({
           className="mt-5 rounded-lg border border-[#C89B3C]/40 bg-[#C89B3C]/10 px-4 py-3"
         >
           <p className="text-sm text-[#F2DFA8]">
-            The assistant is unavailable right now — you can raise a ticket below.
+            The assistant is unavailable right now. You can raise a ticket below.
           </p>
           <button
             type="button"
@@ -396,7 +396,7 @@ function GuideSections({ sections }: { sections: GuideSection[] }) {
             <p className="text-[13px] font-medium text-white">
               {section.title || "User Guide"}
               {section.section_title && (
-                <span className="font-normal text-[#94A3B8]"> — {section.section_title}</span>
+                <span className="font-normal text-[#94A3B8]">, {section.section_title}</span>
               )}
             </p>
             {section.snippet && (

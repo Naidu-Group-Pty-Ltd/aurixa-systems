@@ -1238,7 +1238,7 @@ function SectionSystems({ ctx }: { ctx: Ctx }) {
             return (
               <div className="pl-3">
                 <label htmlFor={id} className="sr-only">
-                  {`${option.label} — product or platform name, if known (optional)`}
+                  {`${option.label}: product or platform name, if known (optional)`}
                 </label>
                 <input
                   id={id}
@@ -1599,7 +1599,7 @@ function SectionReadiness({ ctx }: { ctx: Ctx }) {
         number="14"
         question="Does your organisation have specific security, hosting or procurement requirements?"
         required
-        helper="Select all that apply. Selecting a requirement records it for review — it does not confirm that Aurixa currently provides or certifies it."
+        helper="Select all that apply. Selecting a requirement records it for review. It does not confirm that Aurixa currently provides or certifies it."
         error={errors[Q.security]}
       >
         <MultiSelectGroup
@@ -1699,7 +1699,7 @@ function SectionReadiness({ ctx }: { ctx: Ctx }) {
             id={Q.investmentRange}
             number="16"
             question="Has an indicative technology investment range been approved?"
-            helper="Optional. This helps us prepare a relevant discussion — it is not a commitment."
+            helper="Optional. This helps us prepare a relevant discussion. It is not a commitment."
             error={errors[Q.investmentRange]}
           >
             <SingleSelectGroup
@@ -1996,7 +1996,7 @@ function ReviewScreen({
                     ) : (
                       <span className={item.required ? "text-red-300" : "text-[#6B7689]"}>
                         {item.required
-                          ? `${READINESS_COPY.review.unanswered} — required`
+                          ? `${READINESS_COPY.review.unanswered}, required`
                           : READINESS_COPY.review.unanswered}
                       </span>
                     )}

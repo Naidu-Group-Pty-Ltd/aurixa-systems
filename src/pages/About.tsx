@@ -58,7 +58,7 @@ export default function About() {
                    A clandestine coalition of quantitative engineers and former apex-tier advisory figures recognized a critical systemic flaw: the industry's catastrophic reliance on fragmented spreadsheets, decaying CRM data, and severely manual workflows spanning disjointed portals. The Aurixa mandate is to confront fragmented tools, decaying CRM data, and severely manual workflows spanning disjointed platforms.
                  </p>
                  <p className="text-[#9CA3B8] font-light text-lg leading-relaxed">
-                   We determined that human intuition in high-velocity financial operations is a devastating liability. Aurixa was engineered from the bedrock up to be the ultimate countermeasure—a singularly unified, mathematically infallible intelligence matrix that surgically targets operational friction, eradicates human error, and replaces it with algorithmic certainty. It reduces administrative limits and replaces them with highly scalable operational infrastructure.
+                   We determined that human intuition in high-velocity financial operations is a devastating liability. Aurixa was engineered from the bedrock up to be the ultimate countermeasure, a singularly unified, mathematically infallible intelligence matrix that surgically targets operational friction, eradicates human error, and replaces it with algorithmic certainty. It reduces administrative limits and replaces them with highly scalable operational infrastructure.
                  </p>
                </div>
             </div>

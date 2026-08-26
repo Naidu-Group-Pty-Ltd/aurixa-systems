@@ -177,9 +177,9 @@ test("history bar tooltips distinguish reconstructed days from observed ones", (
   assert.ok(reconstructed.includes("published history"), reconstructed);
   // Days we polled ourselves carry no qualifier — and neither does anything
   // when we do not know where observation began.
-  assert.equal(historyBarTitle("2026-08-13", "operational", observedSince), "2026-08-13 — Operational");
-  assert.equal(historyBarTitle("2026-08-20", "degraded", observedSince), "2026-08-20 — Degraded performance");
-  assert.equal(historyBarTitle("2026-08-01", "degraded", null), "2026-08-01 — Degraded performance");
+  assert.equal(historyBarTitle("2026-08-13", "operational", observedSince), "2026-08-13: Operational");
+  assert.equal(historyBarTitle("2026-08-20", "degraded", observedSince), "2026-08-20: Degraded performance");
+  assert.equal(historyBarTitle("2026-08-01", "degraded", null), "2026-08-01: Degraded performance");
   // The qualifier is public copy: it must never name a vendor.
   assert.ok(!/supabase|cloudflare|vercel|github|openai|stripe/i.test(reconstructed));
 });

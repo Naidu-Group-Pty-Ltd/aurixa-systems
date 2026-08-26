@@ -222,7 +222,7 @@ function HistoryBars({
               key={entry.date}
               type="button"
               onClick={() => onSelectDate(entry.date)}
-              aria-label={`${formatDayLong(entry.date)} — ${STATUS_LABELS[entry.status]} — view details`}
+              aria-label={`${formatDayLong(entry.date)}, ${STATUS_LABELS[entry.status]}, view details`}
               aria-expanded={selected}
               className="group relative rounded-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5EDDE8]/70"
             >
@@ -438,7 +438,7 @@ function DayDetailPanel({
   return (
     <div
       role="region"
-      aria-label={`${label} — ${formatDayLong(date)} detail`}
+      aria-label={`${label}, ${formatDayLong(date)} detail`}
       className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4 sm:p-5"
     >
       <div className="flex items-start justify-between gap-4">
@@ -462,7 +462,7 @@ function DayDetailPanel({
         <p className="mt-3 animate-pulse text-xs text-[#94A3B8]">Loading day detail&hellip;</p>
       ) : !detail.ok ? (
         <p className="mt-3 text-xs text-[#94A3B8]">
-          Couldn&rsquo;t load this day&rsquo;s detail — close and try again.
+          Couldn&rsquo;t load this day&rsquo;s detail. Close and try again.
         </p>
       ) : (
         <div className="mt-4 space-y-5">
@@ -488,8 +488,8 @@ function DayDetailPanel({
                     key={h.hour}
                     title={
                       h.status === "none"
-                        ? `${String(h.hour).padStart(2, "0")}:00 — no checks`
-                        : `${String(h.hour).padStart(2, "0")}:00 — ${STATUS_LABELS[h.status]} — ${h.checks} check${h.checks === 1 ? "" : "s"}`
+                        ? `${String(h.hour).padStart(2, "0")}:00, no checks`
+                        : `${String(h.hour).padStart(2, "0")}:00, ${STATUS_LABELS[h.status]}, ${h.checks} check${h.checks === 1 ? "" : "s"}`
                     }
                     className={`h-6 min-w-0 flex-1 rounded-[3px] ${
                       h.status === "none" ? "bg-white/[0.05]" : STATUS_STYLES[h.status].bar
@@ -565,7 +565,7 @@ function DayDetailPanel({
             <p className="text-xs text-[#94A3B8]">
               No incident windows recorded for this day
               {!detail.observed && detail.day_status
-                ? ` — the provider's published record shows it as ${STATUS_LABELS[detail.day_status].toLowerCase()}`
+                ? `, and the provider's published record shows it as ${STATUS_LABELS[detail.day_status].toLowerCase()}`
                 : ""}
               .
             </p>
@@ -960,7 +960,7 @@ export default function Status() {
           <p className="mx-auto mt-4 max-w-xl text-balance text-sm leading-relaxed text-[#94A3B8] md:text-base">
             The live health of every service Aurixa Systems runs on, polled directly from each
             provider&rsquo;s official status feed every five minutes. Providers are shown by role
-            rather than by name — each card says what it does for us and which features an
+            rather than by name. Each card says what it does for us and which features an
             incident there can touch.
           </p>
         </div>

@@ -99,7 +99,7 @@ export default function PricingSuccess() {
             )}
             {receipt?.fulfilled && (
               <div className="flex items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
-                <CheckCircle2 className="h-4 w-4" /> Fulfilment complete — credits / seats / setup
+                <CheckCircle2 className="h-4 w-4" /> Fulfilment complete: credits / seats / setup
                 are live in your workspace.
               </div>
             )}
@@ -108,7 +108,7 @@ export default function PricingSuccess() {
                 <AlertTriangle className="h-4 w-4 shrink-0" />
                 {error
                   ? "We couldn't load this receipt, but your payment is safe. Check your dashboard in a minute."
-                  : "Still finalising. Your payment is safe — it will appear in your dashboard shortly."}
+                  : "Still finalising. Your payment is safe. It will appear in your dashboard shortly."}
               </div>
             )}
           </div>

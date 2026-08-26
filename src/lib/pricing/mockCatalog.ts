@@ -202,7 +202,7 @@ export const MOCK_TIERS: readonly MockLineItem[] = [
     url: "https://buy.stripe.com/dRm14g7MmgXAcWH1pO0co0s",
     livePriceCents: 1750000,
     billing: "month",
-    note: "Scoped and quoted in production — no public link. Minted so the seat_plan checkout path is testable.",
+    note: "Scoped and quoted in production, with no public link. Minted so the seat_plan checkout path is testable.",
   },
 ];
 
@@ -269,7 +269,7 @@ export const MOCK_MODULES: readonly MockLineItem[] = [
   {
     kind: "module",
     slug: "report-comparisons",
-    name: "Generated Reports — Comparisons",
+    name: "Generated Reports: Comparisons",
     group: "Reports & Analysis",
     productId: "prod_V0uQgc5OG763He",
     priceId: "price_1U0sbn3tNhf9apmHEvsiODCE",
@@ -281,7 +281,7 @@ export const MOCK_MODULES: readonly MockLineItem[] = [
   {
     kind: "module",
     slug: "cashflow-comparisons",
-    name: "Cash Flow Analysis — Comparisons",
+    name: "Cash Flow Analysis: Comparisons",
     group: "Reports & Analysis",
     productId: "prod_V0uQbwGrHvBJlU",
     priceId: "price_1U0sc33tNhf9apmH5BoqHStx",
@@ -430,7 +430,7 @@ export const MOCK_MODULES: readonly MockLineItem[] = [
     livePriceCents: 19500,
     billing: "month",
     includedIn: [],
-    note: "Already contained in every tier's headline price — needed only alongside a tier bought without it.",
+    note: "Already contained in every tier's headline price. Needed only alongside a tier bought without it.",
   },
 
   // Administration

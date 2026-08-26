@@ -90,7 +90,7 @@ export function RankedCapabilitySelector({
         </span>
         <span className="text-[12px] font-light text-[#9CA3B8]">
           {RANKED_CAPABILITY_COUNT} capabilities required
-          {remaining > 0 ? ` — ${remaining} still to add` : " — ranking complete"}
+          {remaining > 0 ? `, ${remaining} still to add` : ", ranking complete"}
         </span>
       </div>
 

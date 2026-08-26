@@ -261,7 +261,7 @@ export const STATUS_COMPONENT_ROSTER: Array<{
     key: "security_delivery",
     label: "Edge security & delivery",
     description:
-      "Sits in front of every request we serve — DNS, traffic protection and content delivery. An incident here can make our sites slow or unreachable.",
+      "Sits in front of every request we serve: DNS, traffic protection and content delivery. An incident here can make our sites slow or unreachable.",
     affects: ["Site reachability", "Load times"],
   },
   {
@@ -296,7 +296,7 @@ export const STATUS_COMPONENT_ROSTER: Array<{
     key: "email_delivery",
     label: "Email delivery",
     description:
-      "Sends our transactional email — receipts, invitations and notifications.",
+      "Sends our transactional email: receipts, invitations and notifications.",
     affects: ["Email notifications"],
   },
 ];
@@ -369,9 +369,9 @@ export function historyBarTitle(
   status: ComponentStatus,
   observedSince: string | null,
 ): string {
-  const base = `${date} — ${STATUS_LABELS[status]}`;
+  const base = `${date}: ${STATUS_LABELS[status]}`;
   const observedDay = observedSince ? observedSince.slice(0, 10) : null;
-  if (observedDay && date < observedDay) return `${base} — from the provider's published history`;
+  if (observedDay && date < observedDay) return `${base}, from the provider's published history`;
   return base;
 }
 

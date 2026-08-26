@@ -89,7 +89,7 @@ function llmsTxt(): string {
     `Aurixa Systems is an Australian company serving property, finance and`,
     `advisory firms. Access is granted through a staged Priority Access process`,
     `rather than self-serve signup, and pricing is not published on the public`,
-    `site — the Contact page is the entry point for both.`,
+    `site. The Contact page is the entry point for both.`,
     ``,
     section("Product", ["/platform", "/solutions", "/compliance-passport", "/industries", "/docs"]),
     section("Company", ["/about", "/compliance", "/contact"]),

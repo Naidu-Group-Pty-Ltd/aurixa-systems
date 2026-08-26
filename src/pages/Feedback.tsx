@@ -179,7 +179,7 @@ export default function Feedback() {
             <h2 className="text-lg font-semibold">Open this from your workspace</h2>
             <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
               The questions are tailored to the modules your firm actually uses, and the{" "}
-              {rewardTokens} credits are paid into your workspace balance — so this form needs to
+              {rewardTokens} credits are paid into your workspace balance, so this form needs to
               know which workspace you&rsquo;re from. Head back to your dashboard and use the
               feedback prompt there.
             </p>
@@ -196,7 +196,7 @@ export default function Feedback() {
               <Check className="h-5 w-5 text-[#5EDDE8]" /> You&rsquo;ve already answered this one
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-[#94A3B8]">
-              Thank you — you&rsquo;ve already had your say this round. We&rsquo;ll ask again
+              Thank you. You&rsquo;ve already had your say this round. We&rsquo;ll ask again
               next quarter, and there will be another {rewardTokens} credits in it.
             </p>
           </Panel>
@@ -283,7 +283,7 @@ export default function Feedback() {
 
             {submitError && (
               <p className="rounded-lg border border-[#C89B3C]/40 bg-[#C89B3C]/10 px-4 py-3 text-sm text-[#F2DFA8]">
-                We couldn&rsquo;t save that — {submitError}. Your answers are still on this page, so
+                We couldn&rsquo;t save that: {submitError}. Your answers are still on this page, so
                 nothing is lost. Please try again.
               </p>
             )}
@@ -405,7 +405,7 @@ function RatingRow({
                 type="button"
                 role="radio"
                 aria-checked={value === n}
-                aria-label={`${n} out of 5 — ${RATING_LABELS[n - 1]}`}
+                aria-label={`${n} out of 5, ${RATING_LABELS[n - 1]}`}
                 tabIndex={value === n || (value === null && n === 1) ? 0 : -1}
                 onClick={() => onChange(n)}
                 className={`h-9 w-9 rounded-lg border font-mono text-xs transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5EDDE8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#040B16] ${
@@ -521,7 +521,7 @@ function ThankYou({
       </span>
 
       <h2 className="mt-6 text-2xl font-semibold tracking-tight md:text-3xl">
-        Thank you — that&rsquo;s genuinely useful.
+        Thank you. That&rsquo;s genuinely useful.
       </h2>
 
       {granted ? (
@@ -552,7 +552,7 @@ function ThankYou({
       ) : (
         <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-[#94A3B8]">
           Your answers are recorded. Someone else in your workspace already claimed this
-          round&rsquo;s {rewardTokens.toLocaleString()} credits — the reward is one per workspace,
+          round&rsquo;s {rewardTokens.toLocaleString()} credits. The reward is one per workspace,
           not one per person, but every response still gets read.
         </p>
       )}

@@ -280,7 +280,7 @@ export function buildReviewIcs(input: IcsInput): string {
     `DTSTAMP:${icsTimestamp(stamp)}`,
     `DTSTART:${icsTimestamp(start)}`,
     `DTEND:${icsTimestamp(end)}`,
-    `SUMMARY:${icsText("Aurixa Systems — Strategic Review")}`,
+    `SUMMARY:${icsText("Aurixa Systems Strategic Review")}`,
     `DESCRIPTION:${icsText(description)}`,
     "STATUS:TENTATIVE",
     "TRANSP:OPAQUE",

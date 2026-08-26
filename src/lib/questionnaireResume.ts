@@ -68,7 +68,7 @@ export const RESUME_COPY: Record<ResumeFailure, string> = {
   invalid_reference:
     "We could not match that reference and email. Check both against your Aurixa confirmation email, or contact the team for a new secure link.",
   already_completed:
-    "This questionnaire has already been submitted. No further action is needed — Aurixa will be in touch about the next step.",
+    "This questionnaire has already been submitted. No further action is needed. Aurixa will be in touch about the next step.",
   throttled: "Too many attempts. Please wait a few minutes before trying again.",
   not_configured:
     "Resuming by reference is not available just yet. Please contact the Aurixa team and quote your reference for a new secure link.",
