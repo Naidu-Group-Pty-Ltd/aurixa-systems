@@ -160,7 +160,7 @@ export default function SupportPortal() {
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-balance text-sm leading-relaxed text-[#94A3B8] md:text-base">
             Tickets go straight to Aurixa Mission Control, are classified by severity (P0&ndash;P3),
-            and eligible issues are remediated automatically — often before an engineer picks them up.
+            and eligible issues are remediated automatically, often before an engineer picks them up.
           </p>
         </div>
 
@@ -184,7 +184,7 @@ export default function SupportPortal() {
                       onClick={handleSkip}
                       className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#94A3B8] underline decoration-white/25 underline-offset-4 transition-colors hover:text-white"
                     >
-                      Skip — raise a ticket directly
+                      Skip and raise a ticket directly
                     </button>
                   </p>
                   <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-[#94A3B8]/70">
@@ -359,7 +359,7 @@ function TicketForm({
     const wait = THROTTLE_MS - (now - readLastSubmit());
     if (wait > 0) {
       setThrottleMessage(
-        `You submitted a ticket a moment ago — please wait ${Math.ceil(wait / 1000)} seconds before sending another.`,
+        `You submitted a ticket a moment ago. Please wait ${Math.ceil(wait / 1000)} seconds before sending another.`,
       );
       return;
     }
@@ -390,8 +390,8 @@ function TicketForm({
         : null;
       setThrottleMessage(
         minutes
-          ? `Too many attempts from your connection just now — please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}. Nothing you typed has been lost.`
-          : "Too many attempts from your connection just now — please try again shortly. Nothing you typed has been lost.",
+          ? `Too many attempts from your connection just now. Please try again in about ${minutes} minute${minutes === 1 ? "" : "s"}. Nothing you typed has been lost.`
+          : "Too many attempts from your connection just now. Please try again shortly. Nothing you typed has been lost.",
       );
       return;
     }
@@ -423,7 +423,7 @@ function TicketForm({
       // Private browsing — nothing stored, nothing to clear.
     }
     setSubmissionError(
-      "We couldn't send your ticket just now. Please try again — your answers are still on this page, so nothing is lost.",
+      "We couldn't send your ticket just now. Please try again. Your answers are still on this page, so nothing is lost.",
     );
   };
 
@@ -801,13 +801,13 @@ function TicketReceipt({ outcome }: { outcome: Outcome }) {
           <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-[#94A3B8]">
             P2 and below are queued for automatic remediation; P0 and P1 go straight to an
             engineer. Either way, updates will be emailed to{" "}
-            <span className="text-white">{reporterEmail || "the address you gave"}</span> — quote
+            <span className="text-white">{reporterEmail || "the address you gave"}</span>. Quote
             the reference above in any follow-up.
           </p>
         </>
       ) : (
         <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-[#94A3B8]">
-          Thank you — the Aurixa team will review it and email{" "}
+          Thank you. The Aurixa team will review it and email{" "}
           <span className="text-white">{reporterEmail || "the address you gave"}</span> with what
           happens next.
         </p>

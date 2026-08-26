@@ -95,14 +95,14 @@ const FAQ_GROUPS: FaqGroup[] = [
       {
         q: "How do credits work?",
         a: [
-          "Credits are how AI work is metered. Every generated report, comparison or scenario costs a set number of credits, and the cost depends on the report type rather than on how long it takes or how much data it touches — so the same report always costs the same, and you can predict a month's usage from a month's workload.",
+          "Credits are how AI work is metered. Every generated report, comparison or scenario costs a set number of credits, and the cost depends on the report type rather than on how long it takes or how much data it touches, so the same report always costs the same, and you can predict a month's usage from a month's workload.",
           "Each plan includes a monthly allowance. If you need more before the next cycle, top-up packs are available at any time and land in your balance as soon as payment clears.",
         ],
       },
       {
         q: "What does a single report cost?",
         a: [
-          "It varies by report type. The exact credit cost of every report is listed in the Report economics table further up this page, and it is the same figure the platform charges when you generate one — there is no separate internal price list.",
+          "It varies by report type. The exact credit cost of every report is listed in the Report economics table further up this page, and it is the same figure the platform charges when you generate one. There is no separate internal price list.",
           "Costs are set centrally and can change as reports get more capable. Any change applies from the moment it is published; it never re-prices something you have already generated.",
         ],
       },
@@ -110,20 +110,20 @@ const FAQ_GROUPS: FaqGroup[] = [
         q: "Do credits expire?",
         a: [
           "Credits stay spendable for 30 days from the day they are issued, whether they came from your plan allowance or a top-up pack.",
-          "Nothing is wiped at the end of a billing period. Unused credits roll over and run out on their own 30-day clock, and when you generate a report we always spend the soonest-to-expire credits first — so what stays in your balance is always the credit with the most time left on it.",
+          "Nothing is wiped at the end of a billing period. Unused credits roll over and run out on their own 30-day clock, and when you generate a report we always spend the soonest-to-expire credits first, so what stays in your balance is always the credit with the most time left on it.",
         ],
       },
       {
         q: "What happens if a report fails to generate?",
         a: [
           "It costs you nothing. Credits are held when a report starts and only actually charged once it finishes, so a run that fails part-way releases the hold rather than consuming it.",
-          "That holds for every way a generation can end badly — an error mid-way, a model timeout, closing the tab, or stopping it yourself. If a failure somehow occurs after the credits were charged, the charge is reversed automatically rather than waiting for you to notice and ask.",
+          "That holds for every way a generation can end badly: an error mid-way, a model timeout, closing the tab, or stopping it yourself. If a failure somehow occurs after the credits were charged, the charge is reversed automatically rather than waiting for you to notice and ask.",
         ],
       },
       {
         q: "What if I run out of credits mid-month?",
         a: [
-          "Buy a top-up pack and keep going — packs run from 250 credits up to 15,000 and credit your balance immediately, without changing your plan or your billing date.",
+          "Buy a top-up pack and keep going. Packs run from 250 credits up to 15,000 and credit your balance immediately, without changing your plan or your billing date.",
           "Bigger packs cost less per credit: the largest works out around 43% cheaper per credit than the smallest, and every card above shows its own rate so you can compare them directly rather than by dividing prices yourself.",
           "Top-up credits follow the same 30-day rule as everything else, and because spend always takes the soonest-to-expire credit first, a top-up does not push your existing balance closer to lapsing.",
         ],
@@ -131,7 +131,7 @@ const FAQ_GROUPS: FaqGroup[] = [
       {
         q: "Which top-up pack should I buy?",
         a: [
-          "Work backwards from the report you need. The Report economics table lists what each report type costs, so a month of planned output multiplied by its credit cost is the size you are actually after — the pack labels above say the same thing in words, from an emergency top-up through to high-volume monthly overflow.",
+          "Work backwards from the report you need. The Report economics table lists what each report type costs, so a month of planned output multiplied by its credit cost is the size you are actually after. The pack labels above say the same thing in words, from an emergency top-up through to high-volume monthly overflow.",
           "Buying one larger pack is always cheaper per credit than buying the same credits in smaller ones, but credits lapse 30 days after they are issued, so the right pack is the biggest one you will genuinely spend inside a month rather than the biggest one on the page.",
         ],
       },
@@ -157,14 +157,14 @@ const FAQ_GROUPS: FaqGroup[] = [
       {
         q: "What happens if I outgrow my seat band?",
         a: [
-          "Seat bands are inclusive ranges, not hard caps you hit without warning. When your team passes the top of your band, moving up a tier is the cleanest path — it brings the extra seats and the additional modules together.",
+          "Seat bands are inclusive ranges, not hard caps you hit without warning. When your team passes the top of your band, moving up a tier is the cleanest path. It brings the extra seats and the additional modules together.",
           "If you are close to the edge of a band, or sit awkwardly between two, get in touch and we will size it properly rather than pushing you into a tier you do not need.",
         ],
       },
       {
         q: "Can I add individual modules to my plan?",
         a: [
-          "Yes. Every module is listed with its own monthly price in the Modules section on this page, including the ones already bundled into higher tiers — so a firm on Launch that needs only the deal pipeline can take that one module instead of moving up a whole tier.",
+          "Yes. Every module is listed with its own monthly price in the Modules section on this page, including the ones already bundled into higher tiers, so a firm on Launch that needs only the deal pipeline can take that one module instead of moving up a whole tier.",
           "Modules are added to an existing subscription rather than bought as a separate checkout, so get in touch or ask through your workspace and we will attach them to your next invoice.",
         ],
       },
@@ -172,7 +172,7 @@ const FAQ_GROUPS: FaqGroup[] = [
         q: "Why are two prices shown for each plan?",
         a: [
           "Every plan is quoted with the AML/CTF Compliance module included, because most firms in this market need it. The second, lower figure is the same plan without that module, for firms whose compliance obligations are already covered elsewhere.",
-          "The difference is exactly the module's own price of $195 a month, on every tier — so the two figures can never drift apart, and adding compliance later costs the same as having taken it from the start.",
+          "The difference is exactly the module's own price of $195 a month, on every tier, so the two figures can never drift apart, and adding compliance later costs the same as having taken it from the start.",
         ],
       },
     ],
@@ -183,14 +183,14 @@ const FAQ_GROUPS: FaqGroup[] = [
       {
         q: "Are prices inclusive of GST?",
         a: [
-          "Yes. Every figure on this page is the amount you actually pay, with Australian GST already contained in it — nothing is added at checkout. Each plan card also shows how much of the price is GST.",
+          "Yes. Every figure on this page is the amount you actually pay, with Australian GST already contained in it. Nothing is added at checkout. Each plan card also shows how much of the price is GST.",
           "Your tax invoice breaks the same amount into its GST-exclusive value and the GST component, so it reconciles against what you were charged to the cent.",
         ],
       },
       {
         q: "Do you offer annual billing?",
         a: [
-          "Yes — switch the toggle at the top of the page. Annual plans bill twelve months up front at a 10% discount, and the annual figure shown is the amount charged, not an equivalent monthly rate.",
+          "Yes. Switch the toggle at the top of the page. Annual plans bill twelve months up front at a 10% discount, and the annual figure shown is the amount charged, not an equivalent monthly rate.",
           "Multi-year terms are available for Enterprise customers.",
         ],
       },
@@ -198,7 +198,7 @@ const FAQ_GROUPS: FaqGroup[] = [
         q: "How do payments work, and can I save a card?",
         a: [
           "Payments run through Stripe. Card details are entered on Stripe's own hosted page and never touch our systems or our servers.",
-          "You can save a card for future purchases so top-ups and renewals do not need re-entering, and you can hold more than one — a primary plus a backup — so a single expired card does not interrupt anything.",
+          "You can save a card for future purchases so top-ups and renewals do not need re-entering, and you can hold more than one, a primary plus a backup, so a single expired card does not interrupt anything.",
         ],
       },
       {
@@ -531,7 +531,7 @@ export default function Pricing() {
             className="pricing-reveal-up mx-auto mt-8 max-w-2xl text-balance text-[15px] leading-relaxed text-[#94A3B8] md:text-lg"
             style={{ animationDelay: "240ms" }}
           >
-            Pick a plan. Scale seats. Top up credits as you grow. Every tier, module and add-on —
+            Pick a plan. Scale seats. Top up credits as you grow. Every tier, module and add-on,
             laid bare below, with{" "}
             <span className="font-display italic text-white">no surprises</span>.
           </p>
@@ -806,7 +806,7 @@ export default function Pricing() {
               Top up <span className="font-display italic text-[#C89B3C]">on demand</span>.
             </>
           }
-          description="Generate more reports, scenarios and AI insights with credit packs. The bigger the pack, the cheaper the credit — every pack lands in your balance the moment payment clears."
+          description="Generate more reports, scenarios and AI insights with credit packs. The bigger the pack, the cheaper the credit. Every pack lands in your balance the moment payment clears."
           icon={<Zap className="h-4 w-4" />}
         />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -924,7 +924,7 @@ export default function Pricing() {
               <p className="border-t border-white/[0.07] pt-6 text-xs leading-relaxed text-[#94A3B8]">
                 Each module is billed as its own monthly subscription in AUD, incl. GST, and can be
                 cancelled independently of your plan. Name the account it is for at checkout and the
-                team enables it — usually within one business day.
+                team enables it, usually within one business day.
               </p>
             </div>
           }
@@ -1084,7 +1084,7 @@ export default function Pricing() {
           <p className="mx-auto mt-5 max-w-xl text-balance text-[#94A3B8] md:text-lg">
             {canBuy
               ? "Pick a plan above, or book a walkthrough with our team to see it on your data."
-              : "Already a client? Start any purchase from inside your command center — it carries your workspace and account straight into checkout. New here? Talk to us."}
+              : "Already a client? Start any purchase from inside your command center. It carries your workspace and account straight into checkout. New here? Talk to us."}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             <Link
@@ -2020,7 +2020,7 @@ function AddonAction({
         {/* The module is named for a screen reader, which hears this link out
             of the context of the card it sits in. */}
         <span aria-hidden="true">Add module</span>
-        <span className="sr-only">Add the {name} module — opens Stripe in a new tab</span>
+        <span className="sr-only">Add the {name} module, opens Stripe in a new tab</span>
         <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
       </a>
     );

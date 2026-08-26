@@ -171,7 +171,7 @@ function LockedBody({ section, identified }: { section: DeliveredSection; identi
         <>
           <p className="text-[#9CA3AF] font-light leading-relaxed mb-4">
             Full documentation for this module is available to customers whose plan includes it. Open the
-            documentation from your Command Center — under User Guide — and it will unlock automatically.
+            documentation from your Command Center, under User Guide, and it will unlock automatically.
           </p>
           <Link
             to="/pricing"
@@ -264,7 +264,7 @@ export default function Docs() {
             <span className="text-chrome-prismatic italic drop-shadow-2xl">Documentation.</span>
           </motion.h1>
           <p className="text-xl text-[#9CA3AF] font-light leading-relaxed max-w-2xl mb-8">
-            The complete reference for the Aurixa Command Center — every module, every workflow, and the
+            The complete reference for the Aurixa Command Center: every module, every workflow, and the
             reasoning underneath. Written for the people who use it all day.
           </p>
 
@@ -274,7 +274,7 @@ export default function Docs() {
               <ShieldCheck className="w-4 h-4 text-[#00A8B5]" />
               <span className="text-sm text-[#9CA3AF] font-light">
                 Showing documentation for your workspace
-                {planSlug && PLAN_LABELS[planSlug] ? ` — ${PLAN_LABELS[planSlug]} plan` : ""}.{" "}
+                {planSlug && PLAN_LABELS[planSlug] ? ` on the ${PLAN_LABELS[planSlug]} plan` : ""}.{" "}
                 <span className="text-white">{readable}</span> of {sections.length} sections available.
               </span>
             </div>
@@ -283,8 +283,8 @@ export default function Docs() {
             <div className="inline-flex items-start gap-3 border border-[#C89B3C]/25 bg-[#C89B3C]/[0.03] rounded-sm px-5 py-3 text-left max-w-2xl">
               <Lock className="w-4 h-4 text-[#C89B3C] mt-0.5 shrink-0" />
               <span className="text-sm text-[#9CA3AF] font-light">
-                You are viewing the public index. Open documentation from your Command Center — under{" "}
-                <span className="text-white">User Guide</span> — to unlock the full text for every module
+                You are viewing the public index. Open documentation from your Command Center, under{" "}
+                <span className="text-white">User Guide</span>, to unlock the full text for every module
                 your plan includes.
               </span>
             </div>

@@ -251,7 +251,7 @@ export default function PricingMock() {
           Every tier, module, credit pack and onboarding package from the signed-off price
           list, reminted in Stripe at {formatAud(MOCK_PRICE_CENTS)} each so the checkout
           workflow can be driven end to end from the prime repo without moving real money at
-          real prices. Each mock bills exactly the way the product it stands in for bills —
+          real prices. Each mock bills exactly the way the product it stands in for bills:
           plans recur, packs and onboarding are one-off, and every figure is GST-inclusive.
         </p>
 
@@ -275,7 +275,7 @@ export default function PricingMock() {
                 Nothing is provisioned by paying one. A Payment Link reaches Mission
                 Control's webhook without the <code className="font-mono">mode</code> and{" "}
                 <code className="font-mono">item_id</code> metadata fulfilment needs, so the
-                event is recorded and stops — no plan, no credits, no module. That is also
+                event is recorded and stops: no plan, no credits, no module. That is also
                 how the live add-on links behave.
               </p>
             </div>
@@ -296,7 +296,7 @@ export default function PricingMock() {
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Filter by slug, name or category — e.g. deal-pipeline"
+            placeholder="Filter by slug, name or category, e.g. deal-pipeline"
             aria-label="Filter the mock catalogue"
             className={`${PANEL} w-full py-3 pl-11 pr-4 text-sm text-white placeholder:text-[#94A3B8]/50 focus:border-[#00A8B5]/50 focus:outline-none`}
           />
@@ -318,7 +318,7 @@ export default function PricingMock() {
               Monthly and annual are separate Stripe prices on one product, mirroring
               Mission Control's <code className="font-mono">seat_plans.stripe_price_id</code>{" "}
               and <code className="font-mono">metadata.annual_stripe_price_id</code>. Every
-              tier's live headline already contains the AML / CTF module — that is the $195
+              tier's live headline already contains the AML / CTF module. That is the $195
               gap between each tier's two published figures.
             </p>
           )}
@@ -419,8 +419,8 @@ export default function PricingMock() {
                 None of them use{" "}
                 <code className="font-mono">aurixa_tier</code>,{" "}
                 <code className="font-mono">aurixa_module</code> or{" "}
-                <code className="font-mono">aurixa_pack</code> — the keys Mission Control's
-                catalogue, module and pack syncs search on — so no Apply in Mission Control
+                <code className="font-mono">aurixa_pack</code>, the keys Mission Control's
+                catalogue, module and pack syncs search on, so no Apply in Mission Control
                 can ever adopt a mock as the live product for a real catalogue row.
               </p>
             </div>

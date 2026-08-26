@@ -342,7 +342,7 @@ function StrategicReviewBookingPanel({
           <p className="review-eyebrow">SELECT A TIME</p>
           <h2 id="review-booking-heading">Choose a Suitable Appointment.</h2>
           <p className="review-copy">
-            Pick a date, then a time that suits you. Availability is shown in {zone.label} ({zone.offsetLabel}) —
+            Pick a date, then a time that suits you. Availability is shown in {zone.label} ({zone.offsetLabel}),
             detected from your device and adjustable above the calendar.
           </p>
         </div>

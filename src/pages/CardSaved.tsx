@@ -102,7 +102,7 @@ export default function CardSaved() {
               <div className="flex items-center gap-2 rounded-md border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
                 <CheckCircle2 className="h-4 w-4" /> This card is now available on your
                 workspace's Billing &amp; Usage page. Only the brand, last four digits and expiry
-                are stored — the card itself stays with Stripe.
+                are stored. The card itself stays with Stripe.
               </div>
             )}
             {(timedOut || error) && (

@@ -23,7 +23,7 @@ export const SITE_ORIGIN = "https://www.aurixasystems.com.au";
 export const SITE_NAME = "Aurixa Systems";
 export const DEFAULT_TITLE = "Aurixa Systems";
 export const DEFAULT_DESCRIPTION =
-  "Aurixa Systems builds governed AI operating systems for Australian property, finance and advisory firms — client intelligence, financial modelling, voice agents and compliance oversight in one controlled platform.";
+  "Aurixa Systems builds governed AI operating systems for Australian property, finance and advisory firms: client intelligence, financial modelling, voice agents and compliance oversight in one controlled platform.";
 export const DEFAULT_OG_IMAGE = "/brand/og-default.png";
 
 export type RouteMetadata = {
@@ -48,7 +48,7 @@ export type RouteMetadata = {
 export const ROUTE_METADATA: RouteMetadata[] = [
   {
     path: "/",
-    title: "Aurixa Systems — Governed AI Operating Systems for Property & Finance",
+    title: "Aurixa Systems: Governed AI Operating Systems for Property & Finance",
     description: DEFAULT_DESCRIPTION,
     indexable: true,
     changefreq: "weekly",
@@ -130,7 +130,7 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: "/compliance-passport",
     title: "AML/CTF Compliance Passport | Aurixa Systems",
     description:
-      "The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey — connecting clients, your team and authorised property professionals from onboarding through to transaction completion.",
+      "The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey, connecting clients, your team and authorised property professionals from onboarding through to transaction completion.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.8,

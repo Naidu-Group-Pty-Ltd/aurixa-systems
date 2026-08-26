@@ -108,7 +108,7 @@ export default function Home() {
                 They need connected infrastructure that helps them manage opportunity, capital, clients, data, compliance, and growth with greater clarity.
               </p>
               <p className="text-gray-400 text-lg font-light leading-7">
-                Each layer supports the systems behind modern property businesses — from market intelligence, portfolio insights, investor communication, finance coordination, and strategic forecasting through to administration, compliance, and operational oversight.
+                Each layer supports the systems behind modern property businesses, from market intelligence, portfolio insights, investor communication, finance coordination, and strategic forecasting through to administration, compliance, and operational oversight.
               </p>
               <p className="text-gray-400 text-lg font-light leading-7">
                 Rather than operating through fragmented systems, businesses can create a clearer view of opportunity, performance, risk, and long-term wealth creation.
