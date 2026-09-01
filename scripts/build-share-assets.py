@@ -26,6 +26,23 @@ on an opaque dark ground rather than shipping transparency: we do not control
 what an unfurler or an OS composites behind it, and gold on white is the weak
 case.
 
+**The tab icon may come from its own file.** `brand-source/aurixa-icon-source.png`
+is optional; when it is present the favicon and the apple-touch icon are drawn
+from it instead of from the left half of the lockup. That exists because the
+platform mark is one artwork across three deployments — this site, Mission
+Control and every clone whose brand settings are empty — and a tab icon
+recovered by cropping a wordmark off a lockup is a fourth thing that only
+resembles it. The OG card and the on-page marks keep coming from the lockup:
+the card needs the WORDMARK (a symbol alone in a feed is not a brand card), and
+the on-page symbol is painted onto the site's own dark ground, where an icon
+carrying its own light ground would print as a pale square.
+
+An icon source that is opaque is used as supplied — it already carries the
+ground its designer chose, and re-compositing it onto the brand tile would
+paint that ground as a square inside ours. One that carries alpha is composited
+like the lockup, for the gold-on-white reason above. Which of the two it is, is
+measured rather than declared.
+
     python3 scripts/build-share-assets.py
 """
 
@@ -49,6 +66,11 @@ brand = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(brand)
 
 SOURCE = ROOT / "brand-source" / "aurixa-lockup-source.png"
+
+# Optional. Absent, the icons are cropped out of the lockup exactly as before,
+# so this file existing is the only thing that changes their appearance.
+ICON_SOURCE = ROOT / "brand-source" / "aurixa-icon-source.png"
+
 BRAND_DIR = ROOT / "public" / "brand"
 
 # Open Graph's canonical size. 1.91:1 — the ratio Facebook, LinkedIn, Slack and
@@ -73,6 +95,48 @@ LOCKUP_WIDTH = 720
 SYMBOL_PX = 192
 
 
+def square(art: Image.Image, size: int) -> Image.Image:
+    """Centre-crop to a square, then resize. A square input is just a resize."""
+    w, h = art.size
+    edge = min(w, h)
+    box = ((w - edge) // 2, (h - edge) // 2)
+    cropped = art.crop((box[0], box[1], box[0] + edge, box[1] + edge))
+    return cropped.resize((size, size), Image.LANCZOS).convert("RGBA")
+
+
+def resolve_icon_art(fallback: Image.Image) -> tuple[Image.Image, bool]:
+    """The tab icon's artwork, and whether it carries its own ground.
+
+    Returns the lockup-derived symbol unchanged when no dedicated icon source
+    is on disk, so adding this parameter changed nothing about the output.
+
+    Opacity is MEASURED, not declared, because getting it wrong is silent in
+    both directions: composite an opaque icon onto the brand tile and its own
+    ground prints as a square inside ours; put a transparent one on no ground
+    at all and the PNG flattens gold onto black or white depending on what
+    Pillow feels like. A stray anti-aliased pixel must not decide it either,
+    so the test is the SHARE of the image that is meaningfully transparent
+    rather than whether any pixel is.
+    """
+    if not ICON_SOURCE.exists():
+        return fallback, False
+
+    art = Image.open(ICON_SOURCE).convert("RGBA")
+    alpha = art.getchannel("A")
+    # Pixel count below full opacity, via the histogram — no per-pixel Python.
+    soft = sum(alpha.histogram()[:250])
+    transparent_share = soft / (art.width * art.height)
+
+    if transparent_share < 0.01:
+        # Opaque: the artwork is the tile. Nothing to crop to, because the
+        # margin around the mark is part of what was supplied.
+        return art, True
+
+    # Transparent: trim to the artwork so `place` scales the mark and not its
+    # padding, then let the caller composite it onto the brand ground.
+    return art.crop(brand.bbox(art)), False
+
+
 def main() -> int:
     if not SOURCE.exists():
         print(f"missing source: {SOURCE}", file=sys.stderr)
@@ -81,6 +145,8 @@ def main() -> int:
     source = Image.open(SOURCE).convert("RGBA")
     lockup = source.crop(brand.bbox(source))
     symbol = source.crop(brand.bbox(source, (0, 0, brand.SPLIT_X, source.height)))
+
+    icon_art, icon_has_own_ground = resolve_icon_art(symbol)
 
     written: list[Path] = []
 
@@ -98,11 +164,18 @@ def main() -> int:
     written.append(path)
 
     # --- Raster app icons ----------------------------------------------------
+    # A favicon is read at 16px in a strip of other tabs, so the mark is set
+    # large in its square: 0.78 of the edge when we supply the ground, and full
+    # bleed when the artwork brought its own (cropping in past the artwork's
+    # own margin is the designer's call, not this script's).
     for size, name in ((APPLE_TOUCH, "apple-touch-icon.png"), (FAVICON, "favicon-32.png")):
         canvas = (size, size)
-        icon = brand.ground(canvas, (size / 2, size / 2), size * 0.9).convert("RGBA")
-        art, at, _ = brand.place(symbol, canvas, 0.78)
-        icon.alpha_composite(art, at)
+        if icon_has_own_ground:
+            icon = square(icon_art, size)
+        else:
+            icon = brand.ground(canvas, (size / 2, size / 2), size * 0.9).convert("RGBA")
+            art, at, _ = brand.place(icon_art, canvas, 0.78)
+            icon.alpha_composite(art, at)
         path = BRAND_DIR / name
         icon.convert("RGB").save(path, "PNG", optimize=True)
         written.append(path)
@@ -157,7 +230,15 @@ def main() -> int:
         for f in failures:
             print(f"FAIL {f}", file=sys.stderr)
         return 1
-    print("\nShare assets: 1200x630 OG card, 180px apple-touch icon, 32px favicon.")
+    # Say which source drew the icons. Dropping the artwork in under a
+    # misspelt name is silent otherwise — the script succeeds, prints the same
+    # five lines, and rebuilds the old icons from the lockup.
+    if ICON_SOURCE.exists():
+        ground = "its own ground" if icon_has_own_ground else "the brand ground"
+        print(f"\nIcons drawn from {ICON_SOURCE.relative_to(ROOT)} on {ground}.")
+    else:
+        print(f"\nIcons cropped from the lockup ({ICON_SOURCE.relative_to(ROOT)} is absent).")
+    print("Share assets: 1200x630 OG card, 180px apple-touch icon, 32px favicon.")
     print("Display assets: transparent lockup and symbol, sized for their boxes.")
     return 0
 
