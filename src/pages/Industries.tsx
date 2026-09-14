@@ -154,6 +154,22 @@ export default function Industries() {
            </div>
         </div>
 
+        {/* The supply side of the same market. Firms on this page place clients
+            into stock; the people building it have their own network. */}
+        <div className="-mt-20 mb-32 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 border-l-2 border-[#C89B3C]/40 pl-6 sm:pl-8 py-4">
+          <p className="text-[#9CA3B8] font-light leading-relaxed text-sm max-w-2xl">
+            Building or developing the stock itself? Builders and developers publish availability to these firms
+            through the Aurixa Builders Network.
+          </p>
+          <Link
+            to="/builders"
+            className="group inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.25em] uppercase text-[#00A8B5] hover:text-[#5EDDE8] transition-colors whitespace-nowrap"
+          >
+            For Builders &amp; Developers
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+
         {/* Bottom CTA */}
         <div className="mt-20 glass-panel p-6 sm:p-16 text-center shadow-2xl relative overflow-hidden border border-white/10">
           <div className="absolute inset-0 bg-chrome-prismatic opacity-10 pointer-events-none" />

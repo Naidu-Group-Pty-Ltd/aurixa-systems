@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 import Platform from "./pages/Platform";
 import Solutions from "./pages/Solutions";
 import Industries from "./pages/Industries";
+import Builders from "./pages/Builders";
 import About from "./pages/About";
 import Resources from "./pages/Resources";
 import Docs from "./pages/Docs";
@@ -117,6 +118,7 @@ export function AppShell() {
             <Route path="/platform" element={<Platform />} />
             <Route path="/solutions" element={<Solutions />} />
             <Route path="/industries" element={<Industries />} />
+            <Route path="/builders" element={<Builders />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/pricing/success" element={<PricingSuccess />} />
             <Route path="/pricing/cancel" element={<PricingCancel />} />
