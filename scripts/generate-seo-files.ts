@@ -91,7 +91,7 @@ function llmsTxt(): string {
     `rather than self-serve signup, and pricing is not published on the public`,
     `site. The Contact page is the entry point for both.`,
     ``,
-    section("Product", ["/platform", "/solutions", "/compliance-passport", "/industries", "/docs"]),
+    section("Product", ["/platform", "/solutions", "/compliance-passport", "/industries", "/builders", "/docs"]),
     section("Company", ["/about", "/compliance", "/contact"]),
     section("Legal", ["/privacy-policy", "/terms-and-conditions"]),
     section("Optional", ["/resources", "/status"]),

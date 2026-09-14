@@ -12,6 +12,7 @@ site. The Contact page is the entry point for both.
 - [Solutions](https://www.aurixasystems.com.au/solutions): How Aurixa is applied: strategic intelligence, financial modelling, client operations and enterprise governance, configured to the way your firm already works.
 - [AML/CTF Compliance Passport](https://www.aurixasystems.com.au/compliance-passport): The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey, connecting clients, your team and authorised property professionals from onboarding through to transaction completion.
 - [Industries](https://www.aurixasystems.com.au/industries): Aurixa serves buyer's agents, property advisory, mortgage and finance, development, accounting and SMSF, conveyancing and multi-service groups across Australia.
+- [For Builders & Developers](https://www.aurixasystems.com.au/builders): The Aurixa Builders Network: builders and developers publish stock once and reach the advisory firms placing clients into it, with connections granted one firm at a time.
 - [Documentation](https://www.aurixasystems.com.au/docs): Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.
 
 ## Company

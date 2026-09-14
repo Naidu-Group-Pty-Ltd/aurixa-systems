@@ -82,6 +82,15 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     priority: 0.8,
   },
   {
+    path: "/builders",
+    title: "For Builders & Developers | Aurixa Systems",
+    description:
+      "The Aurixa Builders Network: builders and developers publish stock once and reach the advisory firms placing clients into it, with connections granted one firm at a time.",
+    indexable: true,
+    changefreq: "monthly",
+    priority: 0.8,
+  },
+  {
     path: "/about",
     title: "About | Aurixa Systems",
     description:
