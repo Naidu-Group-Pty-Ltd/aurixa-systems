@@ -8,6 +8,11 @@ Stage 1 (`/contact`) retains its existing form and direct Make.com payload. Stag
 sequence and the CRM routing in sections 7, 10 and 11 are not part of this
 change.
 
+> **The service below is written and switched off, and the Stage 2 gate is not a
+> gate until it is on.** What that costs, why raising the Airtable token's
+> entropy is the wrong repair, and the steps to activate it are in
+> [`readiness-questionnaire-activation.md`](./readiness-questionnaire-activation.md).
+
 ## Files
 
 | File | Purpose |
