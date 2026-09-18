@@ -47,6 +47,7 @@ import {
   BuilderApplicationField,
   BuilderApplicationValues,
   EMPTY_BUILDER_APPLICATION,
+  HONEYPOT_FIELD,
   MAX_MESSAGE,
   buildBuilderApplicationPayload,
   cleanEmailValue,
@@ -125,10 +126,25 @@ export default function BuilderApply() {
   const [decoy, setDecoy] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
-  // When this page was drawn. The endpoint refuses a submission faster than a
-  // person could type one — a cost raiser, not a boundary, and forgeable by
-  // anybody who reads this file.
-  const renderedAt = useMemo(() => new Date().toISOString(), []);
+  /*
+   * How long this page has been open, by ITS OWN clock.
+   *
+   * It used to send the wall-clock time it was drawn, which the server
+   * subtracted from its own wall clock — two independent clocks, so a
+   * visitor's machine running half a minute fast made a form open for twenty
+   * seconds look instant, and it was refused. `performance.now()` counts from
+   * this document's load, so both ends of the subtraction are one clock.
+   *
+   * Still a cost raiser, still forgeable by anybody who reads this file.
+   */
+  const openedAt = useMemo(
+    () => (typeof performance !== "undefined" ? performance.now() : null),
+    [],
+  );
+  const elapsedMs = () =>
+    openedAt === null || typeof performance === "undefined"
+      ? null
+      : Math.round(performance.now() - openedAt);
   const captcha = useTurnstile(TURNSTILE_SITE_KEY.length > 0);
 
   const set =
@@ -162,10 +178,16 @@ export default function BuilderApply() {
     setIsSubmitting(true);
     try {
       const result = await submitBuilderApplication(
-        buildBuilderApplicationPayload(values, renderedAt, decoy, captcha.token || undefined),
+        buildBuilderApplicationPayload(values, elapsedMs(), decoy, captcha.token || undefined),
       );
 
       if (result.ok === false) {
+        // If a browser filled the hidden field anyway, clear it so pressing
+        // submit again works. This costs nothing against the automation the
+        // decoy is for — a bot that does not read the error never reaches
+        // this line — and it is the difference between a person having a way
+        // past and being stuck in a loop.
+        if (decoy) setDecoy("");
         const refusal = readApplicationRefusal(result.code);
         setSubmissionError(refusal.sentence);
         if (refusal.field) {
@@ -300,16 +322,24 @@ export default function BuilderApply() {
 
           <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-8">
             {/*
-              The decoy. Hidden from sight AND from assistive technology, out
-              of the tab order, and never autofilled — a real person cannot
-              reach it, which is the only thing that makes refusing a filled
-              one safe.
+              The decoy.
+
+              It was `company_website`, labelled "Company website", and pushed
+              off-screen. A password manager filled it and a real applicant
+              was refused within thirty seconds of opening the page — `company`
+              and `website` are both autofill tokens, the label is itself a
+              signal, `autocomplete="off"` is ignored for profile fields, and
+              an off-screen input is autofilled where `display: none` is not.
+
+              So: a name outside every autofill category, no label wording to
+              match on, and `display: none`. Still out of the tab order and
+              still `aria-hidden`, because a screen reader user filling in a
+              trap is the one failure this must never have.
             */}
-            <div aria-hidden="true" style={{ position: "absolute", left: "-9999px" }}>
-              <label htmlFor="company_website">Company website</label>
+            <div aria-hidden="true" style={{ display: "none" }}>
               <input
-                id="company_website"
-                name="company_website"
+                id={HONEYPOT_FIELD}
+                name={HONEYPOT_FIELD}
                 type="text"
                 tabIndex={-1}
                 autoComplete="off"

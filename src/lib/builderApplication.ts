@@ -58,6 +58,23 @@ export const AU_STATE_OPTIONS: Option[] = [
 
 export const MAX_MESSAGE = 2000;
 
+/**
+ * The hidden field a person never sees and never fills.
+ *
+ * Named OUTSIDE the browser autofill taxonomy. The first version called it
+ * `company_website` — a plausible name, chosen so a bot skipping a field
+ * called `honeypot` would still fill it — and a password manager filled it
+ * for a real applicant, who was refused within thirty seconds of opening the
+ * page with advice ("reload and fill it in again") that could not have
+ * worked, because autofill would have filled it again.
+ *
+ * Mission Control names the same field and a test there asserts it contains
+ * no autofill token. Two spellings of one field name is how a honeypot stops
+ * being read at all, so the endpoint's allow-list never carries it and this
+ * is the only place the page writes it.
+ */
+export const HONEYPOT_FIELD = "application_slot";
+
 export const BUILDER_APPLICATION_COPY = {
   heading: "Apply for Builders Network access",
   supporting:
@@ -216,12 +233,18 @@ export function validateBuilderApplication(
 /**
  * What is posted.
  *
- * `rendered_at` and the decoy field are part of it: the endpoint refuses a
+ * `elapsed_ms` and the decoy field are part of it: the endpoint refuses a
  * form submitted faster than a person could fill it, and one whose hidden
  * field has been filled in. Neither is a security boundary — anybody who
  * reads this page defeats both — and they are here because the overwhelming
  * majority of what reaches a public form is generic automation that fills
  * every input and posts at once.
+ *
+ * **`elapsed_ms` is measured by the page's own clock and is not a
+ * timestamp.** It used to send the wall-clock moment the page was drawn,
+ * which the server subtracted from its own wall clock; two independent
+ * clocks, so a visitor's machine running fast was refused within seconds of
+ * opening the form. A monotonic duration has one clock at both ends.
  *
  * `privacyAcknowledged` is deliberately NOT sent. The network has no column
  * for it, and a field that travels, is dropped by the endpoint's allow-list
@@ -231,7 +254,7 @@ export function validateBuilderApplication(
  */
 export function buildBuilderApplicationPayload(
   values: BuilderApplicationValues,
-  renderedAt: string,
+  elapsedMs: number | null,
   decoy: string,
   turnstileToken?: string,
 ) {
@@ -250,8 +273,11 @@ export function buildBuilderApplicationPayload(
     postcode: digitsOnly(values.postcode),
     message: cleanTextValue(values.message).slice(0, MAX_MESSAGE),
     form_version: BUILDER_APPLICATION_VERSION,
-    rendered_at: renderedAt,
-    company_website: decoy,
+    // Omitted rather than sent as null where the browser has no monotonic
+    // clock: the endpoint treats an absent duration as unknown and accepts
+    // it, which is what a cost raiser must do with data it cannot trust.
+    ...(elapsedMs === null ? {} : { elapsed_ms: elapsedMs }),
+    [HONEYPOT_FIELD]: decoy,
     ...(turnstileToken ? { turnstile_token: turnstileToken } : {}),
   };
 }
@@ -398,9 +424,16 @@ const AUTHORED: Record<string, Authored> = {
     field: null,
     kind: "application",
   },
+  /*
+   * Deliberately states NO cause. The first wording blamed a page left open
+   * too long, which was false for the applicant who met it and sent them to
+   * a reload that would have refused them again. This says what happened,
+   * offers the one step that always works, and names a way out that does not
+   * depend on the guess being right.
+   */
   submission_rejected: {
     sentence:
-      "We could not accept that submission. If you left this page open for a while, please reload it and fill the form in again.",
+      "We could not accept that submission. Please try again \u2014 and if it happens a second time, get in touch and we will register you ourselves.",
     field: null,
     kind: "application",
   },
