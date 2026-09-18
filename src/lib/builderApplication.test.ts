@@ -26,6 +26,7 @@ import {
   BUILDER_ORG_TYPE_OPTIONS,
   BuilderApplicationValues,
   EMPTY_BUILDER_APPLICATION,
+  HONEYPOT_FIELD,
   MAX_MESSAGE,
   buildBuilderApplicationPayload,
   cleanTextValue,
@@ -156,7 +157,7 @@ test("the reported order is the reading order, not the object's", () => {
 test("the payload is normalised, so a padded value is the same value", () => {
   const payload = buildBuilderApplicationPayload(
     filled({ legalName: "  Hawthorn   Homes  ", abn: "12 345 678 901" }),
-    "2026-09-18T00:00:00.000Z",
+    30_000,
     "",
   );
   assert.equal(payload.legal_name, "Hawthorn Homes");
@@ -172,7 +173,7 @@ test("a control character never reaches a stored name", () => {
   // reformats it away, at which point the test passes and checks nothing.
   const payload = buildBuilderApplicationPayload(
     filled({ legalName: "Haw\u0000thorn\u0009Homes\u000A" }),
-    "2026-09-18T00:00:00.000Z",
+    30_000,
     "",
   );
   assert.equal(payload.legal_name, "Haw thorn Homes");
@@ -184,29 +185,106 @@ test("the acknowledgement is never sent as though it were recorded", () => {
   // The network has no column for it. A field that travels, is dropped by the
   // endpoint's allow-list and reads to a maintainer as a stored consent is
   // worse than no field at all.
-  const payload = buildBuilderApplicationPayload(filled(), "2026-09-18T00:00:00.000Z", "");
+  const payload = buildBuilderApplicationPayload(filled(), 30_000, "");
   assert.equal("privacyAcknowledged" in payload, false);
   assert.equal("privacy_acknowledged" in payload, false);
 });
 
 test("the decoy and the clock travel, and the captcha token only when held", () => {
-  const without = buildBuilderApplicationPayload(filled(), "2026-09-18T00:00:00.000Z", "");
-  assert.equal(without.company_website, "");
-  assert.equal(without.rendered_at, "2026-09-18T00:00:00.000Z");
+  const without = buildBuilderApplicationPayload(filled(), 30_000, "");
+  assert.equal(without[HONEYPOT_FIELD], "");
+  assert.equal(without.elapsed_ms, 30_000);
   assert.equal("turnstile_token" in without, false);
 
-  const withToken = buildBuilderApplicationPayload(filled(), "2026-09-18T00:00:00.000Z", "", "tok");
+  const withToken = buildBuilderApplicationPayload(filled(), 30_000, "", "tok");
   assert.equal(withToken.turnstile_token, "tok");
+});
+
+test("the fill clock is a DURATION, never a timestamp", () => {
+  // The first version sent the wall-clock moment the page was drawn and the
+  // server subtracted it from its own wall clock. Two independent clocks: a
+  // visitor's machine running half a minute fast made a form open for twenty
+  // seconds look instant, and it was refused within thirty seconds of the
+  // page opening. A monotonic duration has one clock at both ends.
+  const payload = buildBuilderApplicationPayload(filled(), 30_000, "");
+  assert.equal(typeof payload.elapsed_ms, "number");
+  assert.ok(!("rendered_at" in payload), "a timestamp is being sent again");
+  const page = code(PAGE);
+  assert.match(page, /performance\.now\(\)/);
+  assert.ok(
+    !/new Date\(\)\.toISOString\(\)/.test(page),
+    "the page is stamping a wall-clock time again",
+  );
+});
+
+test("a browser with no monotonic clock omits the duration rather than lying", () => {
+  // The endpoint treats an absent duration as unknown and accepts it, which
+  // is what a cost raiser must do with data it cannot trust. Sending a zero
+  // or a null would be refused or coerced.
+  const payload = buildBuilderApplicationPayload(filled(), null, "");
+  assert.ok(!("elapsed_ms" in payload), "a value is sent where none was measured");
+});
+
+test("the decoy is named outside the browser autofill taxonomy", () => {
+  // `company_website` was chosen as a plausible name so a bot skipping
+  // `honeypot` would still fill it. The flip side cost a real applicant: a
+  // plausible name is exactly what a password manager fills.
+  const tokens = [
+    "address", "city", "company", "country", "email", "name", "organization",
+    "phone", "postal", "postcode", "state", "street", "suburb", "tel",
+    "title", "url", "website", "zip",
+  ];
+  for (const token of tokens) {
+    assert.ok(!HONEYPOT_FIELD.includes(token), `${HONEYPOT_FIELD} contains "${token}"`);
+  }
+  // And it still does not announce itself to a bot reading field names.
+  for (const giveaway of ["honey", "trap", "bot", "spam", "decoy"]) {
+    assert.ok(!HONEYPOT_FIELD.includes(giveaway), giveaway);
+  }
+});
+
+test("the decoy is display:none and carries no label to match on", () => {
+  // An off-screen input is autofilled where a `display: none` one generally
+  // is not, and the label text is itself a matching signal.
+  const page = code(PAGE);
+  const block = page.slice(
+    page.indexOf('aria-hidden="true"'),
+    page.indexOf("<section"),
+  );
+  assert.match(block, /display: "none"/);
+  assert.ok(!/left: "-9999px"/.test(block), "still hidden by position");
+  assert.ok(!/<label/.test(block), "the decoy carries a label to match on");
+  assert.match(block, /tabIndex=\{-1\}/);
+  assert.match(block, /autoComplete="off"/);
+});
+
+test("a refusal clears the decoy, so a person has a way past", () => {
+  // A browser that filled it once will fill it again on reload, so without
+  // this the applicant is in a loop they cannot break. It costs nothing
+  // against the automation the decoy is for: a bot that does not read the
+  // error never reaches that line.
+  const page = code(PAGE);
+  assert.match(page, /if \(decoy\) setDecoy\(""\);/);
+});
+
+test("the refusal for a tripped heuristic asserts no cause", () => {
+  // The first wording blamed a page left open too long, which was false for
+  // the applicant who met it and sent them to a reload that would have
+  // refused them again.
+  const { sentence } = readApplicationRefusal("submission_rejected");
+  assert.ok(!/left this page open/i.test(sentence), sentence);
+  assert.ok(!/reload/i.test(sentence), sentence);
+  // And it names a way out that does not depend on a guess being right.
+  assert.match(sentence, /get in touch/i);
 });
 
 test("the decoy is hidden from assistive technology, not only from sight", () => {
   // A screen reader user filling in a trap is the one failure this control
-  // must not have, and `display: none` alone does not guarantee it.
+  // must not have.
   const source = code(PAGE);
-  const block = source.slice(source.indexOf('aria-hidden="true"'), source.indexOf("</section>"));
-  assert.match(block, /name="company_website"/);
+  const block = source.slice(source.indexOf('aria-hidden="true"'), source.indexOf("<section"));
+  assert.match(block, /name=\{HONEYPOT_FIELD\}/);
   assert.match(block, /tabIndex=\{-1\}/);
-  assert.match(block, /autoComplete="off"/);
 });
 
 test("every posted field carries a name the focus logic can find", () => {
