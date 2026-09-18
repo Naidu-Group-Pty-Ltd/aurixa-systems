@@ -23,6 +23,10 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.aurixasystems.com.au/builders/apply</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.aurixasystems.com.au/about</loc>
     <priority>0.6</priority>
   </url>
