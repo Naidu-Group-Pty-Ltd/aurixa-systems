@@ -91,6 +91,15 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     priority: 0.8,
   },
   {
+    path: "/builders/apply",
+    title: "Apply for Builders Network Access | Aurixa Systems",
+    description:
+      "Builders, developers and sales representatives apply for access to the Aurixa Builders Network. We set up your organisation and email your access link.",
+    indexable: true,
+    changefreq: "monthly",
+    priority: 0.7,
+  },
+  {
     path: "/about",
     title: "About | Aurixa Systems",
     description:

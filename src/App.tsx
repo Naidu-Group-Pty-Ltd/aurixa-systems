@@ -19,6 +19,10 @@ import Platform from "./pages/Platform";
 import Solutions from "./pages/Solutions";
 import Industries from "./pages/Industries";
 import Builders from "./pages/Builders";
+// Eager because it is indexable, which is the rule stated above rather
+// than a judgement about traffic: a lazy indexable page prerenders as an
+// empty Suspense fallback.
+import BuilderApply from "./pages/BuilderApply";
 import About from "./pages/About";
 import Resources from "./pages/Resources";
 import Docs from "./pages/Docs";
@@ -119,6 +123,7 @@ export function AppShell() {
             <Route path="/solutions" element={<Solutions />} />
             <Route path="/industries" element={<Industries />} />
             <Route path="/builders" element={<Builders />} />
+            <Route path="/builders/apply" element={<BuilderApply />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/pricing/success" element={<PricingSuccess />} />
             <Route path="/pricing/cancel" element={<PricingCancel />} />
