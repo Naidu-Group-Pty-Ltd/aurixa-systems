@@ -10,8 +10,8 @@ import {
 
 const addon = (overrides: Partial<PurchasableAddon> = {}): PurchasableAddon => ({
   slug: "deal-pipeline",
-  price_min_cents: 9900,
-  price_max_cents: 9900,
+  price_min_cents: 14900,
+  price_max_cents: 14900,
   currency: "AUD",
   included_in_plans: [],
   ...overrides,
@@ -34,18 +34,26 @@ test("a module with a link, a fixed price and no plan of its own is buyable", ()
   const purchase = resolveAddonPurchase(addon());
   assert.deepEqual(purchase, {
     available: true,
-    url: "https://buy.stripe.com/00waEQd6GcHk3m77Oc0co06",
-    amountCents: 9900,
+    url: "https://buy.stripe.com/9B6cMY6Ii6iW9Kv6K80co1f",
+    amountCents: 14900,
   });
 });
 
-test("a module nobody sells yet has no button", () => {
+test("a module nobody sells here has no button, whichever reason applies", () => {
   // `lenders` is in development: no Stripe product, so no link, by design.
   assert.equal(ADDON_PURCHASE_LINKS.lenders, undefined);
   assert.deepEqual(resolveAddonPurchase(addon({ slug: "lenders", price_min_cents: 9900 })), {
     available: false,
     reason: "not_sold",
   });
+  // The Builder / Developer Portal is the other reason, and the newer one: it
+  // has a price and it is real, but it is sold directly on another deployment.
+  // A priced module is therefore not evidence that this page may charge for it.
+  assert.equal(ADDON_PURCHASE_LINKS["builder-developer-portal"], undefined);
+  assert.deepEqual(
+    resolveAddonPurchase(addon({ slug: "builder-developer-portal", price_min_cents: 69900 })),
+    { available: false, reason: "not_sold" },
+  );
   // A module the catalog adds tomorrow behaves the same way rather than erroring.
   assert.deepEqual(resolveAddonPurchase(addon({ slug: "something-new" })), {
     available: false,
@@ -55,15 +63,17 @@ test("a module nobody sells yet has no button", () => {
 
 test("the catalog price and the link price must agree before anything is offered", () => {
   // The card quotes the catalog. Charging a different number would be the page
-  // lying about the price, so no link is offered at all.
-  assert.deepEqual(resolveAddonPurchase(addon({ price_min_cents: 8900, price_max_cents: 8900 })), {
+  // lying about the price, so no link is offered at all. 9900 is this module's
+  // pre-2026 figure, which is the shape this guard actually meets: a reprice
+  // that reached one system and not the other.
+  assert.deepEqual(resolveAddonPurchase(addon({ price_min_cents: 9900, price_max_cents: 9900 })), {
     available: false,
     reason: "price_mismatch",
   });
 });
 
 test("a price quoted as a range cannot be a single payment link", () => {
-  assert.deepEqual(resolveAddonPurchase(addon({ price_min_cents: 9900, price_max_cents: 19900 })), {
+  assert.deepEqual(resolveAddonPurchase(addon({ price_min_cents: 14900, price_max_cents: 29900 })), {
     available: false,
     reason: "not_a_fixed_price",
   });
@@ -103,7 +113,7 @@ test("the account reference rides along as Stripe's client_reference_id", () => 
   const purchase = resolveAddonPurchase(addon(), { accountReference: "Northbridge Finance" });
   assert.equal(purchase.available, true);
   const url = new URL(purchase.available ? purchase.url : "");
-  assert.equal(url.origin + url.pathname, "https://buy.stripe.com/00waEQd6GcHk3m77Oc0co06");
+  assert.equal(url.origin + url.pathname, "https://buy.stripe.com/9B6cMY6Ii6iW9Kv6K80co1f");
   assert.equal(url.searchParams.get("client_reference_id"), "Northbridge-Finance");
 });
 
@@ -127,7 +137,7 @@ test("the reference is reduced to what Stripe accepts, and never breaks the URL"
 
 test("an empty reference leaves the link untouched rather than trailing a ?", () => {
   const purchase = resolveAddonPurchase(addon(), { accountReference: "   " });
-  assert.equal(purchase.available && purchase.url, "https://buy.stripe.com/00waEQd6GcHk3m77Oc0co06");
+  assert.equal(purchase.available && purchase.url, "https://buy.stripe.com/9B6cMY6Ii6iW9Kv6K80co1f");
 });
 
 // The card is a component, so how it uses this module is asserted from the

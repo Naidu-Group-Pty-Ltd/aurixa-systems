@@ -5,7 +5,7 @@
  * created from the same product and price Mission Control's catalog quotes. The
  * table below is the only place those URLs live in this repo.
  *
- * Two things about the shape of this, both deliberate:
+ * Three things about the shape of this, all deliberate:
  *
  *   1. **The amount is recorded next to the URL.** A Payment Link charges
  *      whatever its price says, and the card quotes whatever the catalog says.
@@ -15,11 +15,23 @@
  *      and the link's price agree; when they do not, the card simply falls back
  *      to the enquiry route and nobody is charged a stale price.
  *
- *   2. **A missing slug is a normal answer, not an error.** Not every module is
+ *   2. **A reprice replaces the link; it never edits one.** A Stripe price is
+ *      immutable, so a new price is minted and the old one archived — and
+ *      archiving a price DEACTIVATES every Payment Link built on it. Measured
+ *      on the 2026 Final Review reprice: of the twenty-two links in this table,
+ *      twenty-one went dead the moment their prices were archived, and the one
+ *      survivor was the single module whose price did not move. So a reprice is
+ *      always a new URL here, and the guard in rule 1 is the second line of
+ *      defence rather than the first: it would have hidden the buttons anyway,
+ *      but the links were already gone.
+ *
+ *   3. **A missing slug is a normal answer, not an error.** Not every module is
  *      buyable — `lenders` is still in development and has no Stripe product at
- *      all — and a module the catalog adds tomorrow will not be in this table
- *      either. Both cases resolve to `null` and the card renders without a
- *      purchase button, which is the safe direction to fail in.
+ *      all, and `builder-developer-portal` is priced but sold directly, on
+ *      another deployment — and a module the catalog adds tomorrow will not be
+ *      in this table either. All three cases resolve to `null` and the card
+ *      renders without a purchase button, which is the safe direction to fail
+ *      in.
  *
  * A Payment Link creates its own subscription; it cannot be attached to a plan
  * the customer already has. That is why each link asks for the account name and
@@ -39,28 +51,29 @@ export type AddonPurchaseLink = {
  * always be traced back to the module it sells.
  */
 export const ADDON_PURCHASE_LINKS: Readonly<Record<string, AddonPurchaseLink>> = {
-  "aurixa-agent": { url: "https://buy.stripe.com/dRmcMY2s2ePs9KvgkI0co00", amountCents: 37500 },
-  "api-usage": { url: "https://buy.stripe.com/00w4gsd6G36K3m77Oc0co01", amountCents: 14900 },
-  integrations: { url: "https://buy.stripe.com/7sYeV66Ii22G5uf6K80co02", amountCents: 13500 },
-  "finance-portal": { url: "https://buy.stripe.com/eVq7sEc2CgXA1dZ1pO0co03", amountCents: 22500 },
-  "model-hub": { url: "https://buy.stripe.com/5kQaEQ6Ii22Ge0L6K80co04", amountCents: 19500 },
-  "aml-ctf": { url: "https://buy.stripe.com/eVq28k0jUcHkcWH2tS0co05", amountCents: 19500 },
-  "deal-pipeline": { url: "https://buy.stripe.com/00waEQd6GcHk3m77Oc0co06", amountCents: 9900 },
-  marketing: { url: "https://buy.stripe.com/8x23cofeOcHkaOzecA0co07", amountCents: 17900 },
-  agreements: { url: "https://buy.stripe.com/aFafZa3w6bDg1dZ9Wk0co08", amountCents: 6900 },
-  "client-ai": { url: "https://buy.stripe.com/00w5kweaK0YC8Gr5G40co09", amountCents: 7900 },
-  "borrowing-capacity": { url: "https://buy.stripe.com/9B6eV61nY36KaOz8Sg0co0a", amountCents: 22500 },
+  "aurixa-agent": { url: "https://buy.stripe.com/00w9AM0jUcHk4qbgkI0co1l", amountCents: 49500 },
+  "solicitor-portal": { url: "https://buy.stripe.com/aFa5kw5EedLo7Cn1pO0co1m", amountCents: 29900 },
+  "api-usage": { url: "https://buy.stripe.com/fZu28kaYybDg4qb2tS0co1k", amountCents: 19900 },
+  integrations: { url: "https://buy.stripe.com/eVq00ceaK6iW4qbb0o0co1j", amountCents: 19900 },
+  "finance-portal": { url: "https://buy.stripe.com/7sY5kwc2C4aO7Cn7Oc0co1i", amountCents: 34900 },
+  "model-hub": { url: "https://buy.stripe.com/28E4gs7Mm9v8f4P6K80co1h", amountCents: 24900 },
+  "aml-ctf": { url: "https://buy.stripe.com/8x23co0jUcHk9Kvc4s0co1g", amountCents: 15000 },
+  "deal-pipeline": { url: "https://buy.stripe.com/9B6cMY6Ii6iW9Kv6K80co1f", amountCents: 14900 },
+  marketing: { url: "https://buy.stripe.com/4gM28kc2C7n04qb9Wk0co1e", amountCents: 24900 },
+  agreements: { url: "https://buy.stripe.com/00weV61nYgXAcWH4C00co1d", amountCents: 12900 },
+  "client-ai": { url: "https://buy.stripe.com/3cI5kw3w622GaOz7Oc0co1c", amountCents: 12900 },
+  "borrowing-capacity": { url: "https://buy.stripe.com/bJe00c0jU7n08Gr7Oc0co1b", amountCents: 29500 },
   "client-forms": { url: "https://buy.stripe.com/28E5kw2s2fTw5uf5G40co0b", amountCents: 4900 },
-  "send-portfolio": { url: "https://buy.stripe.com/14A3coaYyazc8Grb0o0co0c", amountCents: 6900 },
-  "portfolio-analysis": { url: "https://buy.stripe.com/7sYfZac2CgXA5uf1pO0co0d", amountCents: 12500 },
-  "call-logs": { url: "https://buy.stripe.com/14A00c2s27n0e0L8Sg0co0e", amountCents: 22500 },
-  "email-copilot": { url: "https://buy.stripe.com/cNi14gc2CcHkg8T9Wk0co0f", amountCents: 9900 },
-  "cashflow-comparisons": { url: "https://buy.stripe.com/8x2bIUd6G5eS09V7Oc0co0g", amountCents: 9900 },
-  "report-comparisons": { url: "https://buy.stripe.com/6oU00c5Ee36K6yjgkI0co0h", amountCents: 9900 },
-  "intelligence-hub": { url: "https://buy.stripe.com/9B6aEQc2CfTwf4P5G40co0i", amountCents: 7900 },
-  "opportunity-marketplace": { url: "https://buy.stripe.com/5kQ4gsfeO36K2i3b0o0co0j", amountCents: 16900 },
-  "commercial-industrial": { url: "https://buy.stripe.com/5kQ8wI5EefTw5uf8Sg0co0k", amountCents: 16900 },
-  "market-updates": { url: "https://buy.stripe.com/5kQ3cod6Gazc7Cn0lK0co0l", amountCents: 5900 },
+  "send-portfolio": { url: "https://buy.stripe.com/cNidR23w65eS3m79Wk0co1a", amountCents: 9900 },
+  "portfolio-analysis": { url: "https://buy.stripe.com/6oU7sEaYy0YCg8T0lK0co19", amountCents: 17900 },
+  "call-logs": { url: "https://buy.stripe.com/9B6cMY2s20YC4qb8Sg0co18", amountCents: 24900 },
+  "email-copilot": { url: "https://buy.stripe.com/00w8wI4AabDg8Gr5G40co17", amountCents: 14900 },
+  "cashflow-comparisons": { url: "https://buy.stripe.com/fZu6oA7Mm5eScWH3xW0co16", amountCents: 12900 },
+  "report-comparisons": { url: "https://buy.stripe.com/6oUbIUd6GcHk09VfgE0co15", amountCents: 12900 },
+  "intelligence-hub": { url: "https://buy.stripe.com/5kQfZa0jUbDg3m75G40co14", amountCents: 12900 },
+  "opportunity-marketplace": { url: "https://buy.stripe.com/eVqbIU5EefTwaOzb0o0co13", amountCents: 24900 },
+  "commercial-industrial": { url: "https://buy.stripe.com/aFadR2c2Cazc3m78Sg0co12", amountCents: 24900 },
+  "market-updates": { url: "https://buy.stripe.com/bJecMY0jU8r46yj6K80co11", amountCents: 7900 },
 };
 
 /**
