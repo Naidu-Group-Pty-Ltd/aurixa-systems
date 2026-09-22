@@ -318,7 +318,7 @@ export default function PricingMock() {
               Monthly and annual are separate Stripe prices on one product, mirroring
               Mission Control's <code className="font-mono">seat_plans.stripe_price_id</code>{" "}
               and <code className="font-mono">metadata.annual_stripe_price_id</code>. Every
-              tier's live headline already contains the AML / CTF module. That is the $195
+              tier's live headline already contains the AML / CTF module. That is the $150
               gap between each tier's two published figures.
             </p>
           )}

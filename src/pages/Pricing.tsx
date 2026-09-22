@@ -172,7 +172,7 @@ const FAQ_GROUPS: FaqGroup[] = [
         q: "Why are two prices shown for each plan?",
         a: [
           "Every plan is quoted with the AML/CTF Compliance module included, because most firms in this market need it. The second, lower figure is the same plan without that module, for firms whose compliance obligations are already covered elsewhere.",
-          "The difference is exactly the module's own price of $195 a month, on every tier, so the two figures can never drift apart, and adding compliance later costs the same as having taken it from the start.",
+          "The with-AML option includes a $400 AML reference component and a $250 conditional Core Platform bundle discount, so removing both changes the subscription by $150 a month. That difference is the same on every tier, which is why the two figures can never drift apart, and adding compliance later costs the same as having taken it from the start.",
         ],
       },
     ],
