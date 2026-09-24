@@ -15,7 +15,8 @@
  * the user reflects the Make.com webhook alone.
  */
 
-const MISSION_CONTROL_URL = (
+/** Mission Control's origin, for everything this site asks of it. */
+export const MISSION_CONTROL_URL = (
   (import.meta.env.VITE_MISSION_CONTROL_URL as string | undefined) ??
   "https://mission-control.aurixasystems.com.au"
 ).replace(/\/+$/, "");

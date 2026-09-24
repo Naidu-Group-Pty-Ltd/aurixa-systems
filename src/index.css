@@ -825,6 +825,17 @@
   .scheduler-error{display:grid;gap:.3rem;margin-top:1.05rem;padding:.85rem .95rem;border:1px solid rgba(226,139,124,.4);background:rgba(226,139,124,.07);color:#d8c3bd;font-size:.76rem;font-weight:300;line-height:1.6}
   .scheduler-error strong{color:#f3d6cf;font-weight:500}
   .scheduler-error a{color:#f2d28d;text-decoration:underline;text-underline-offset:3px}
+  .scheduler-notice{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.75rem 1rem;margin:0;padding:.85rem 1.15rem;border-bottom:1px solid rgba(215,179,95,.28);background:rgba(200,155,60,.07);color:#e2d6bb;font-size:.76rem;font-weight:300;line-height:1.6}
+  .scheduler-notice>span{flex:1 1 18rem}
+  .scheduler-notice strong{color:#f7e6bd;font-weight:500}
+  .scheduler-notice--decision{margin-top:1.05rem;border:1px solid rgba(215,179,95,.4)}
+  .scheduler-notice--decision:focus{outline:2px solid #5edde8;outline-offset:2px}
+  .scheduler-notice .scheduler-actions{margin-top:0}
+  .scheduler-unavailable{padding:1.35rem 1.15rem 1.5rem}
+  .scheduler-unavailable .scheduler-error{margin-top:0}
+  .scheduler-empty svg{display:inline-block;width:.85rem;height:.85rem;margin-right:.35rem;vertical-align:-.12rem;color:#5edde8}
+  .scheduler-empty .is-spinning,.scheduler-notice .is-spinning{animation:scheduler-spin .9s linear infinite}
+  .scheduler-confirmed__facts dd a{color:#5edde8;text-decoration:underline;text-underline-offset:3px}
   .scheduler-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.2rem}
   .scheduler-button{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:2.85rem;padding:0 1.15rem;border:1px solid rgba(255,255,255,.17);color:#ced6e2;font:700 .5rem ui-monospace,monospace;letter-spacing:.16em;transition:border-color .25s,color .25s,background .25s}
   .scheduler-button:hover{border-color:#c89b3c;color:#fff;background:rgba(200,155,60,.05)}

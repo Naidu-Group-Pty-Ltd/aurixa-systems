@@ -55,6 +55,16 @@ test("validateBookingDetails caps the free-text fields", () => {
   assert.equal(validateBookingDetails({ ...long, notes: "x".repeat(2000) }).notes, undefined);
 });
 
+// Mission Control's booking endpoint refuses a name past 200 characters and a
+// phone number past 40; saying so on the field beats a refusal after the click.
+test("validateBookingDetails holds the name and phone to what the calendar accepts", () => {
+  const base = { ...EMPTY_BOOKING_DETAILS, fullName: "Ada", workEmail: "ada@example.com" };
+  assert.ok(validateBookingDetails({ ...base, fullName: "x".repeat(201) }).fullName);
+  assert.equal(validateBookingDetails({ ...base, fullName: "x".repeat(200) }).fullName, undefined);
+  assert.ok(validateBookingDetails({ ...base, phone: "0".repeat(41) }).phone);
+  assert.equal(validateBookingDetails({ ...base, phone: " +61 400 000 000 " }).phone, undefined);
+});
+
 test("buildBookingPayload trims the applicant's details for the backend", () => {
   const payload = buildPayload();
   assert.equal(payload.email, "ada@example.com");
@@ -123,6 +133,78 @@ test("buildBookingPayload summarises the request for the operator", () => {
   assert.equal(payload.message, payload.summaryText, "capture-lead stores this as the message");
 });
 
+// The request form is what runs on a deployment whose Mission Control has no
+// calendar yet, so its payload must be exactly the shape the Stage 3 scenario
+// has always received: a field added here is one the scenario's webhook has
+// never seen. The live calendar's fields travel on a confirmed booking only.
+test("a request is sent exactly as it always was", () => {
+  const payload = buildPayload();
+  assert.deepEqual(Object.keys(payload).sort(), [
+    "accessMode",
+    "applicantLocalTime",
+    "applicantOffset",
+    "applicantTimeZone",
+    "applicationId",
+    "applicationReference",
+    "company",
+    "durationMinutes",
+    "email",
+    "firstName",
+    "hostLocalTime",
+    "hostTimeZone",
+    "lastName",
+    "message",
+    "name",
+    "notes",
+    "page",
+    "phone",
+    "requestedEndUtc",
+    "requestedStartUtc",
+    "source",
+    "submissionType",
+    "submittedAt",
+    "summaryText",
+  ]);
+  assert.match(payload.summaryText, /^Strategic review requested\n/);
+});
+
+test("a booking the calendar confirmed says so, with its id and video link", () => {
+  const payload = buildBookingPayload({
+    slot: SLOT,
+    details,
+    applicantTimeZone: "Asia/Kuala_Lumpur",
+    applicationReference: "AX-7Q2M4L9XZ1",
+    confirmed: { uid: "bk_1", meetingUrl: "https://app.cal.com/video/bk_1" },
+    now: NOW,
+  });
+  assert.equal(payload.bookingStatus, "Confirmed");
+  assert.equal(payload.bookingProvider, "calcom");
+  assert.equal(payload.calBookingUid, "bk_1");
+  assert.equal(payload.meetingUrl, "https://app.cal.com/video/bk_1");
+  assert.equal(payload.rescheduledFromUtc, "");
+  assert.match(payload.summaryText, /^Strategic review booked\n/);
+  assert.match(payload.summaryText, /Video call: https:\/\/app\.cal\.com\/video\/bk_1/);
+  // The fields the Stage 3 scenario maps are exactly as a request's.
+  assert.equal(payload.requestedStartUtc, "2026-08-06T23:00:00.000Z");
+  assert.equal(payload.hostLocalTime, "Friday 7 August 2026, 9:00 am – 9:30 am");
+});
+
+test("a moved review names the time it replaced", () => {
+  const previous = zonedWallTimeToUtc(HOST_TIME_ZONE, 2026, 8, 6, 14, 0).toISOString();
+  const payload = buildBookingPayload({
+    slot: SLOT,
+    details,
+    applicantTimeZone: HOST_TIME_ZONE,
+    confirmed: { uid: "bk_2", meetingUrl: null, previousStart: previous },
+    now: NOW,
+  });
+  assert.equal(payload.rescheduledFromUtc, previous);
+  assert.match(payload.summaryText, /^Strategic review moved\n/);
+  assert.match(payload.summaryText, /Moved from: Thursday 6 August 2026, 2:00 pm – 2:30 pm \(Australia\/Sydney\)/);
+  assert.doesNotMatch(payload.summaryText, /Video call:/);
+  assert.equal(payload.meetingUrl, "");
+});
+
 test("buildBookingPayload omits absent optional context", () => {
   const payload = buildBookingPayload({
     slot: SLOT,
@@ -161,6 +243,28 @@ test("postBookingRequest accepts an empty acknowledgement", async () => {
     fetchImpl: (async () => responseOf("   ")) as unknown as typeof fetch,
   });
   assert.equal(result.ok, true);
+});
+
+// A Make scenario with no "Webhook response" module (the Stage 3 one has none)
+// answers every delivery with 200 and the word "Accepted". Reading that as a
+// failure told applicants a recorded request had not gone through.
+test("postBookingRequest accepts Make's own acknowledgement", async () => {
+  for (const body of ["Accepted", "accepted\n"]) {
+    const result = await postBookingRequest({
+      endpoint: "https://example.test/stage-3",
+      payload: buildPayload(),
+      fetchImpl: (async () => responseOf(body)) as unknown as typeof fetch,
+    });
+    assert.equal(result.ok, true, JSON.stringify(body));
+  }
+
+  // Only the bare word: anything else that is not JSON is still garbled.
+  const lookalike = await postBookingRequest({
+    endpoint: "https://example.test/stage-3",
+    payload: buildPayload(),
+    fetchImpl: (async () => responseOf("Accepted, but not by us")) as unknown as typeof fetch,
+  });
+  assert.deepEqual([lookalike.ok, lookalike.reason], [false, "invalid_response"]);
 });
 
 test("postBookingRequest distinguishes the ways a request can fail", async () => {
