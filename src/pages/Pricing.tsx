@@ -20,11 +20,12 @@ import {
 import { accountReference, resolveAddonPurchase } from "../lib/addonPurchaseLinks";
 import { featuresForTier, type TierFeatures } from "../lib/pricing/tierFeatures";
 import {
-  ANNUAL_DISCOUNT,
   acknowledgePlanChange,
+  annualSavingPercent,
   fetchCatalog,
   fetchPlanChange,
   gstComponentCents,
+  isQuotedPlan,
   packDiscountFraction,
   packPerCreditCents,
   packSavingCents,
@@ -79,7 +80,12 @@ const range = (min: number | null | undefined, max: number | null | undefined) =
   return `${aud(min)} – ${aud(max)}`;
 };
 
-type FaqEntry = { q: string; a: string[]; points?: string[] };
+/**
+ * What an answer may depend on beyond its own text. The annual-billing answer
+ * quotes the saving the plan cards show, so it cannot be written in advance.
+ */
+type FaqContext = { annualSavingPercent: number | null };
+type FaqEntry = { q: string; a: string[] | ((ctx: FaqContext) => string[]); points?: string[] };
 type FaqGroup = { heading: string; items: FaqEntry[] };
 
 /**
@@ -189,9 +195,14 @@ const FAQ_GROUPS: FaqGroup[] = [
       },
       {
         q: "Do you offer annual billing?",
-        a: [
-          "Yes. Switch the toggle at the top of the page. Annual plans bill twelve months up front at a 10% discount, and the annual figure shown is the amount charged, not an equivalent monthly rate.",
-          "Multi-year terms are available for Enterprise customers.",
+        // The percentage is the one the cards show (see annualSavingPercent),
+        // so this answer cannot promise a saving the checkout does not give.
+        a: ({ annualSavingPercent: saving }) => [
+          `Yes. Switch the toggle at the top of the page. An annual plan is a 12-month commitment billed up front${
+            saving === null ? " at a discount on the plan's price" : `, at ${saving}% off the plan's price`
+          }, and the annual figure shown is the amount charged, not an equivalent monthly rate.`,
+          "The discount is on the plan itself. Add-on modules and top-up packs stay at their listed prices, and your credit allowance still arrives each month rather than as a year of credits on day one.",
+          "The same 12-month commitment can instead be paid in monthly instalments under a Subscription Agreement. Get in touch and we will prepare one. Multi-year terms are available for Enterprise customers.",
         ],
       },
       {
@@ -447,6 +458,9 @@ export default function Pricing() {
   }, [handoff, credential, catalog, buy, saveCard, params]);
 
   const plans = useMemo(() => catalog?.plans ?? [], [catalog]);
+  // The saving the cards' own annual figures show, which is what the toggle,
+  // the footnote and the FAQ may claim. Null while the cards disagree.
+  const annualSaving = useMemo(() => annualSavingPercent(plans), [plans]);
   // Ranked by what they cost, so up/down follows the catalog rather than a
   // hardcoded list that would rot the next time a tier is added.
   const planRank = useMemo(() => {
@@ -552,7 +566,7 @@ export default function Pricing() {
                 }`}
               >
                 {b}
-                {b === "annual" && (
+                {b === "annual" && annualSaving !== null && (
                   <span
                     className={`ml-2 rounded-full px-2 py-0.5 text-[9px] font-bold tracking-wider ${
                       billing === "annual"
@@ -560,7 +574,7 @@ export default function Pricing() {
                         : "bg-[#C89B3C]/20 text-[#C89B3C]"
                     }`}
                   >
-                    -{Math.round(ANNUAL_DISCOUNT * 100)}%
+                    -{annualSaving}%
                   </span>
                 )}
               </button>
@@ -680,7 +694,8 @@ export default function Pricing() {
               const minP = meta.price_min_cents ?? p.price_cents;
               const maxP = meta.price_max_cents ?? p.price_cents;
               // The annual figure Mission Control minted in Stripe, so what is
-              // displayed is what will be charged. Twelve months less 10%.
+              // displayed is what will be charged: twelve months less the
+              // commitment discount.
               const annual = planAnnualCents(p);
               const display = billing === "annual" ? annual : minP;
               const gst = gstComponentCents(display);
@@ -689,9 +704,9 @@ export default function Pricing() {
               const isStarter = p.slug === "launch";
               const highlights: string[] = meta.highlights ?? [];
 
-              // Enterprise is quoted, not listed. Recognised by slug first so
-              // it survives someone changing the seat cap.
-              const isEnterprise = p.slug === "enterprise" || p.seat_limit >= 999;
+              // Enterprise is quoted, not listed — the same rule that keeps it
+              // out of the annual saving, since its card shows no figure.
+              const isEnterprise = isQuotedPlan(p);
               const tierFeatures = featuresForTier(p.slug);
               // Everything is purchasable once we have a purchase credential —
               // including Enterprise. Without one, Enterprise still routes to
@@ -746,8 +761,8 @@ export default function Pricing() {
         )}
 
         <p className="mt-8 text-center font-mono text-[10px] uppercase tracking-[0.3em] text-[#94A3B8]">
-          All prices in AUD · incl. GST · Annual saves{" "}
-          {Math.round(ANNUAL_DISCOUNT * 100)}%
+          All prices in AUD · incl. GST
+          {annualSaving !== null && <> · Annual saves {annualSaving}%</>}
         </p>
       </section>
 
@@ -1062,7 +1077,17 @@ export default function Pricing() {
               </div>
               <div className="space-y-2.5">
                 {group.items.map((item, i) => (
-                  <FaqItem key={item.q} index={faqNumbers.get(item.q) ?? i + 1} {...item} />
+                  <FaqItem
+                    key={item.q}
+                    index={faqNumbers.get(item.q) ?? i + 1}
+                    q={item.q}
+                    a={
+                      typeof item.a === "function"
+                        ? item.a({ annualSavingPercent: annualSaving })
+                        : item.a
+                    }
+                    points={item.points}
+                  />
                 ))}
               </div>
             </div>

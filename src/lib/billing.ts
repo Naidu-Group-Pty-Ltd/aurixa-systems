@@ -34,7 +34,6 @@ export type CheckoutMode = "topup" | "seat_plan" | "setup_package";
  * separate deployment that only talks to MC over HTTP.
  */
 export const GST_DIVISOR = 11;
-export const ANNUAL_DISCOUNT = 0.1;
 
 /** The GST contained within a tax-inclusive amount. */
 export const gstComponentCents = (inclGstCents: number): number =>
@@ -44,9 +43,17 @@ export const gstComponentCents = (inclGstCents: number): number =>
 export const exGstCents = (inclGstCents: number): number =>
   inclGstCents - gstComponentCents(inclGstCents);
 
-/** Annual charge for a monthly tax-inclusive price: twelve months less 10%. */
-export const annualCents = (monthlyInclGstCents: number): number =>
-  Math.round(monthlyInclGstCents * 12 * (1 - ANNUAL_DISCOUNT));
+// The annual plan is a 12-month commitment at the Subscription Agreement's
+// 15% (clause 5.1). Its arithmetic lives in a module node's test runner can
+// load, since this one reads `import.meta.env` as it loads.
+export {
+  ANNUAL_DISCOUNT,
+  COMMITMENT_DISCOUNT_BPS,
+  annualCents,
+  annualSavingPercent,
+  isQuotedPlan,
+  planAnnualCents,
+} from "./pricing/commitmentDiscount";
 
 export interface CatalogPlan {
   id: string;
@@ -70,8 +77,8 @@ export interface CatalogPlan {
     /**
      * The annual price as Mission Control minted it in Stripe. Preferred over
      * computing it here: what is displayed must be what is charged, and only
-     * the Stripe price is authoritative. Falls back to the 10% calculation for
-     * a catalog that predates the cutover.
+     * the Stripe price is authoritative. Falls back to twelve months less the
+     * commitment discount for a catalog that predates the cutover.
      */
     annual_price_cents?: number | null;
     tax_inclusive?: boolean | null;
@@ -86,10 +93,6 @@ export interface CatalogPlan {
     base_annual_price_cents?: number | null;
   } | null;
 }
-
-/** The annual figure to show: the minted price if we have one, else derived. */
-export const planAnnualCents = (plan: CatalogPlan): number =>
-  plan.metadata?.annual_price_cents ?? annualCents(plan.price_cents);
 
 /**
  * Report credits the plan includes every month, or null when it includes none.
