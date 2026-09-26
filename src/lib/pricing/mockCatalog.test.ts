@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
 import { ADDON_PURCHASE_LINKS } from "../addonPurchaseLinks";
+import { annualCents } from "./commitmentDiscount";
 import {
   MOCK_CATALOGUE,
   MOCK_EXCLUSIONS,
@@ -126,6 +127,22 @@ test("each tier's monthly and annual mocks sit on one product, with distinct pri
     assert.equal(byTier.get(slug)?.length, 2, `${slug} needs a monthly and an annual mock`);
   }
   assert.equal(byTier.get("enterprise")?.length, 1);
+});
+
+/**
+ * The annual live price is derived, not transcribed: twelve months of the
+ * tier's monthly price less the commitment discount, as Mission Control mints
+ * it. When the discount moved from 10% to 15% these three figures were the
+ * ones left behind, so they are checked against the rule rather than trusted.
+ */
+test("each tier's annual live price is twelve months less the commitment discount", () => {
+  const annual = MOCK_TIERS.filter((t) => t.period === "annual");
+  assert.equal(annual.length, 3);
+  for (const a of annual) {
+    const monthly = MOCK_TIERS.find((t) => t.slug === a.slug && t.period === "monthly");
+    assert.ok(monthly, `${a.slug} has a monthly mock`);
+    assert.equal(a.livePriceCents, annualCents(monthly.livePriceCents), a.slug);
+  }
 });
 
 /**
