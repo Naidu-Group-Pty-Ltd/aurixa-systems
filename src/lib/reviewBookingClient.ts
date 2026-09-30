@@ -47,8 +47,9 @@ function mirror(endpoint: string, payload: BookingPayload, label: string): void 
 }
 
 /**
- * Submits a requested review time. The applicant's result reflects the Stage 3
- * webhook alone — the mirrors run only after it succeeded and never change it.
+ * Submits a requested review time — the fallback form, used only where there
+ * is no live calendar. The applicant's result reflects the Stage 3 webhook
+ * alone — the mirrors run only after it succeeded and never change it.
  */
 export async function submitBookingRequest(input: SubmitBookingInput): Promise<BookingSubmissionResult> {
   const payload = buildBookingPayload(input);
@@ -64,5 +65,32 @@ export async function submitBookingRequest(input: SubmitBookingInput): Promise<B
   mirror(`${STOREFRONT_BASE}/capture-lead`, payload, "Booking capture-lead");
   mirrorLeadToMissionControl(payload as unknown as Record<string, unknown>);
 
+  return result;
+}
+
+/**
+ * Records a review the live calendar has ALREADY booked: the Stage 3 scenario
+ * writes the Strategic Review Bookings record and sends the branded
+ * confirmation, and the two mirrors keep the lead stores current.
+ *
+ * Nothing the applicant is told depends on this. Cal.com holds the booking and
+ * has sent the invitation whatever happens here, so the page shows the booking
+ * straight away and this runs behind it; a failure is logged, not shown. It
+ * sends exactly what the request form sends, so the scenario's CORS preflight
+ * sees nothing new.
+ */
+export async function announceConfirmedBooking(
+  payload: BookingPayload,
+  options: { fetchImpl?: typeof fetch; timeoutMs?: number } = {},
+): Promise<BookingSubmissionResult> {
+  mirror(`${STOREFRONT_BASE}/capture-lead`, payload, "Booking capture-lead");
+  mirrorLeadToMissionControl(payload as unknown as Record<string, unknown>);
+  const result = await postBookingRequest({
+    endpoint: MAKE_BOOKING_WEBHOOK_URL,
+    payload,
+    fetchImpl: options.fetchImpl,
+    timeoutMs: options.timeoutMs,
+  });
+  if (!result.ok) console.warn(`Stage 3 booking record failed (${result.reason}); the booking itself stands`);
   return result;
 }
