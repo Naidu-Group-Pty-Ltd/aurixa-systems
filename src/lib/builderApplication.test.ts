@@ -20,6 +20,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   APPLICATION_FAULT_SENTENCE,
+  BUILDER_APPLICATION_COPY,
   AUTHORED_REFUSAL_CODES,
   AU_STATE_OPTIONS,
   BUILDER_FIELD_ORDER,
@@ -442,6 +443,57 @@ test("the CAPTCHA is only half a control, and the page says which half", () => {
   // Cloudflare to discover it has no CAPTCHA is paying for one it lacks.
   assert.match(page, /TURNSTILE_SITE_KEY\.length > 0/);
   assert.match(page, /if \(!enabled \|\| !holder\.current\) return;/);
+});
+
+test("a refused submission spends its security token, and the page lets it go", () => {
+  // A Turnstile token is single-use and the server spends it whether or not
+  // the application is accepted. `turnstile.reset()` fires no callback, so a
+  // page that only reset the widget kept the spent token in state and sent it
+  // again with the corrected application — refused as a failed security
+  // check, which is how somebody fixing one field on 1 Oct 2026 was locked
+  // out of applying at all.
+  const page = code(PAGE);
+  const reset = page.slice(page.indexOf("const reset = () =>"));
+  assert.match(reset, /^const reset = \(\) => \{\s*setToken\(""\);/);
+  assert.match(page, /widgetId\.current = window\.turnstile\.render\(/);
+  // Every refusal goes through the hook's reset, never the bare widget call.
+  assert.match(page, /captcha\.reset\(\);/);
+  assert.ok(!/window\.turnstile\?\.reset\(\);/.test(page), "a reset that keeps the spent token");
+});
+
+test("a submission waits for a fresh security token rather than sending none", () => {
+  // Between the reset and the new token there is no token at all; sending
+  // then is refused exactly as a spent one would be. The page says so and
+  // does not submit — but only while a widget is actually on the page, so a
+  // blocked script never strands the form.
+  const page = code(PAGE);
+  assert.match(page, /const awaitingToken = enabled && rendered && !token;/);
+  const submit = page.slice(page.indexOf("if (captcha.awaitingToken)"));
+  assert.match(
+    submit,
+    /^if \(captcha\.awaitingToken\) \{\s*setSubmissionError\(BUILDER_APPLICATION_COPY\.securityCheckPending\);\s*return;/,
+  );
+  assert.ok(
+    page.indexOf("if (captcha.awaitingToken)") < page.indexOf("setIsSubmitting(true)"),
+    "the wait is checked after the submission has started",
+  );
+});
+
+test("the captcha refusal no longer sends a corrected application to reload the page", () => {
+  const sentence = readApplicationRefusal("captcha_failed").sentence;
+  assert.match(sentence, /wait for it to finish/i);
+  assert.ok(BUILDER_APPLICATION_COPY.securityCheckPending.length > 0);
+  assert.ok(!/\d/.test(BUILDER_APPLICATION_COPY.securityCheckPending));
+});
+
+test("the address window does not claim to hold an application we refused", () => {
+  // Only an application that was set up, or one still being set up, counts
+  // against an address. A refused one never does, so the sentence must not
+  // read "we already have your application" to somebody whose first attempt
+  // we turned down.
+  const sentence = readApplicationRefusal("an_application_for_that_address_is_already_with_us").sentence;
+  assert.match(sentence, /set it up|being set up/i);
+  assert.ok(!/\d/.test(sentence));
 });
 
 test("the confirmation tells the truth when the email did not send", () => {

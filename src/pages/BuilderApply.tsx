@@ -83,7 +83,9 @@ declare global {
  */
 function useTurnstile(enabled: boolean) {
   const holder = useRef<HTMLDivElement>(null);
+  const widgetId = useRef<string | null>(null);
   const [token, setToken] = useState("");
+  const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
     if (!enabled || !holder.current) return;
@@ -91,13 +93,14 @@ function useTurnstile(enabled: boolean) {
 
     const render = () => {
       if (!window.turnstile || el.childElementCount > 0) return;
-      window.turnstile.render(el, {
+      widgetId.current = window.turnstile.render(el, {
         sitekey: TURNSTILE_SITE_KEY,
         theme: "dark",
         callback: (value: string) => setToken(value),
         "expired-callback": () => setToken(""),
         "error-callback": () => setToken(""),
       });
+      setRendered(true);
     };
 
     if (window.turnstile) {
@@ -112,7 +115,27 @@ function useTurnstile(enabled: boolean) {
     document.head.appendChild(script);
   }, [enabled]);
 
-  return { holder, token };
+  /*
+   * A token is single-use, and the server spends it whether or not the
+   * application is accepted. `turnstile.reset()` starts a fresh check but
+   * fires none of the callbacks above, so the spent token stayed in state and
+   * the next submit — the applicant correcting the field we had just named —
+   * sent it again and was refused as a failed security check. Clearing it
+   * here is what lets a corrected application go through.
+   */
+  const reset = () => {
+    setToken("");
+    window.turnstile?.reset(widgetId.current ?? undefined);
+  };
+
+  /*
+   * Waiting is only meaningful once a widget is on the page. Where the script
+   * never loaded (a blocker, a network fault) there is no token coming, so
+   * the submission goes as it always did and the server decides.
+   */
+  const awaitingToken = enabled && rendered && !token;
+
+  return { holder, token, reset, awaitingToken };
 }
 
 export default function BuilderApply() {
@@ -175,6 +198,11 @@ export default function BuilderApply() {
       return;
     }
 
+    if (captcha.awaitingToken) {
+      setSubmissionError(BUILDER_APPLICATION_COPY.securityCheckPending);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const result = await submitBuilderApplication(
@@ -198,7 +226,7 @@ export default function BuilderApply() {
         } else {
           formRef.current?.scrollIntoView({ block: "start", behavior: "smooth" });
         }
-        window.turnstile?.reset();
+        captcha.reset();
         return;
       }
 
