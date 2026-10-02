@@ -87,6 +87,14 @@ export const BUILDER_APPLICATION_COPY = {
     "We create your organisation immediately and email your access link to the address below. Your listing is reviewed before it appears in the marketplace.",
   submitButton: "Apply For Access",
   submittingButton: "Submitting Application...",
+  /*
+   * Shown, without submitting, while the security check is still issuing a
+   * fresh token. Each token is single-use and every refused submission spends
+   * one, so sending again before the new one arrives would be refused as a
+   * failed check — and told to reload the page over a form that was fine.
+   */
+  securityCheckPending:
+    "The security check below is still finishing. Give it a moment, then submit again.",
   helper: {
     legalName: "The registered name of your entity, as it appears on your ABN record.",
     tradingName: "Optional. The name your clients know you by, where it differs.",
@@ -369,9 +377,16 @@ const AUTHORED: Record<string, Authored> = {
     kind: "field",
   },
 
+  /*
+   * Only an application that SUCCEEDED for this address in the last day, or
+   * one still being set up in the last few minutes, reaches this. One we
+   * refused is never counted, so somebody correcting a mistake is not told we
+   * "already have" what we turned down — which is exactly what the earlier
+   * wording said to an applicant fixing a mistyped ABN on 1 Oct 2026.
+   */
   an_application_for_that_address_is_already_with_us: {
     sentence:
-      "We already have an application from this address today. Check your inbox — including your spam folder — for a message from us, and get in touch if nothing arrived.",
+      "This email address already has an application with us — either we have set it up in the last day, or one is being set up right now. Check your inbox, including your spam folder, for a message from us. If nothing arrives within a few minutes, please get in touch.",
     field: "contactEmail",
     kind: "application",
   },
@@ -438,7 +453,8 @@ const AUTHORED: Record<string, Authored> = {
     kind: "application",
   },
   captcha_failed: {
-    sentence: "The security check did not pass. Please reload the page and try again.",
+    sentence:
+      "The security check did not pass. Please wait for it to finish again below, then submit — or reload the page if it does not.",
     field: null,
     kind: "application",
   },
