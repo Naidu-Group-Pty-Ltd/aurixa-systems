@@ -355,6 +355,79 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
     ],
   },
   {
+    slug: "accountant-portal",
+    title: "Accountant Portal",
+    summary: "The client's accountant, working beside the broker and the solicitor on a purchase.",
+    group: "Portals",
+    moduleSlug: "finance-portal",
+    guideSectionId: "accountant-portal",
+    readMinutes: 6,
+    blocks: [
+      {
+        kind: "prose",
+        text:
+          "The accountant is the fourth professional on a purchase, and owns the fact the others most need: the purchasing entity the contract and the loan are written in. The Accountant Portal gives them a place to record it, alongside income evidence and the depreciation position, where the broker, the solicitor and your team can see it.",
+      },
+      {
+        kind: "steps",
+        title: "Adding an accountant",
+        items: [
+          "Start from the Portal users tab, from a practice's row, or from the Accountant card on a client",
+          "Enter the practice, the person and the clients they will work on — the practice does not need to exist first",
+          "Send the invitation; the accountant sets a password and accepts the portal agreement",
+          "Their allocated clients appear in their portal straight away",
+        ],
+      },
+      {
+        kind: "list",
+        title: "What the accountant works on",
+        items: [
+          "The purchasing entity: individual, joint, company, trust or SMSF",
+          "Whether income evidence is ready for the broker",
+          "The depreciation position",
+          "A client-facing summary, and a separate team note the client never sees",
+          "Requests to the client for documents or information, and a message thread with your team",
+          "The client's purchases, read from the deal pipeline",
+        ],
+      },
+      {
+        kind: "fields",
+        title: "Allocations",
+        rows: [
+          {
+            name: "Active",
+            detail: "The accountant can read and update the client within the permissions set for them.",
+          },
+          {
+            name: "Paused",
+            detail: "The client stays on the accountant's list, read-only.",
+          },
+          {
+            name: "Ended",
+            detail: "The client leaves the accountant's list.",
+          },
+          {
+            name: "Permissions",
+            detail:
+              "Set per client, with defaults for the accountant and for the practice. A permission not set at any of those levels uses the standard setting.",
+          },
+        ],
+      },
+      {
+        kind: "note",
+        tone: "tip",
+        text:
+          "When the accountant confirms the purchasing entity, the client's buyer's agent is told, because the contract and the loan are written in that entity.",
+      },
+      {
+        kind: "note",
+        tone: "compliance",
+        text:
+          "An accountant reaches a client only through an allocation your team makes. A Compliance Passport is a separate disclosure: it is shared from the client's AML case, not by allocating the client.",
+      },
+    ],
+  },
+  {
     slug: "builder-portal",
     title: "Builder Portal",
     summary: "The builder-facing surface for construction progress and invoicing.",

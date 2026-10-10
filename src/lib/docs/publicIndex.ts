@@ -84,6 +84,7 @@ export const PUBLIC_DOCS_INDEX: PublicDocsEntry[] = [
   { slug: "client-portal", title: "Client Portal", summary: "The client-facing login: what they see, what they can do, and how to control it.", group: "Portals", moduleSlug: null, readMinutes: 8 },
   { slug: "finance-portal", title: "Finance Portal", summary: "The broker-facing surface for finance referrals, documents and messaging.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 9 },
   { slug: "solicitor-portal", title: "Solicitor Portal", summary: "The legal-partner surface for conveyancing and matter management.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 7 },
+  { slug: "accountant-portal", title: "Accountant Portal", summary: "The client's accountant, working beside the broker and the solicitor on a purchase.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 6 },
   { slug: "builder-portal", title: "Builder Portal", summary: "The builder-facing surface for construction progress and invoicing.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 6 },
   { slug: "partner-network", title: "Partner Network", summary: "Managing the referral partners around your business and the agreements with them.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 5 },
 
