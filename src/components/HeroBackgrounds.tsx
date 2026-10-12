@@ -66,9 +66,9 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
   switch (variant) {
     case 'home':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#0A192F]">
           {/* LAYER 1: Deep Vignette & Structural Gradients */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#040B16_100%)] z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0A192F_100%)] z-10" />
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(200,155,60,0.05),transparent_70%)] blur-[100px]" />
           <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(0,168,181,0.05),transparent_70%)] blur-[100px]" />
 
@@ -126,13 +126,13 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
             <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[#00A8B5]/40" />
             
             {/* Live Telemetry Data */}
-            <div className="absolute top-2 left-12 flex flex-col gap-0.5 font-mono text-[9px] uppercase tracking-widest text-[#00A8B5]/60">
+            <div className="absolute top-2 left-12 flex flex-col gap-0.5 font-mono text-[9px] uppercase tracking-widest text-[#00A8B5]/90">
               <span className="flex items-center gap-2"><span className="w-1 h-1 bg-[#C89B3C] animate-pulse" /> SYNC_RATE: 99.98%</span>
               <span>LAT: 45.92.11 / LONG: -12.44.09</span>
               <span className="text-[#C89B3C] opacity-80">SYS.CORE.ACTIVE</span>
             </div>
             
-            <div className="absolute bottom-2 right-12 flex flex-col gap-0.5 items-end font-mono text-[9px] uppercase tracking-widest text-[#00A8B5]/60">
+            <div className="absolute bottom-2 right-12 flex flex-col gap-0.5 items-end font-mono text-[9px] uppercase tracking-widest text-[#00A8B5]/90">
               <span>MEM_ALLOC: 124.8GB</span>
               <span>NETWORK_STATE: ISOLATED</span>
               <div className="w-24 h-[1px] bg-[#00A8B5]/30 mt-1 relative overflow-hidden">

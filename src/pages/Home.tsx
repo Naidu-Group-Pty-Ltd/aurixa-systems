@@ -3,11 +3,12 @@ import { ArrowRight, BarChart3, Database, ShieldCheck, Zap } from "lucide-react"
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { useRouteMetadata } from "../lib/pageMetadata";
+import "./Home.css";
 
 export default function Home() {
   useRouteMetadata("/");
   return (
-    <div className="w-full relative pt-20 bg-[#040B16]">
+    <div className="home-page w-full relative pt-20 bg-[#040B16]">
 
       {/* Hero Section.
           Measured against the *small* viewport so the hero keeps its height
@@ -56,7 +57,7 @@ export default function Home() {
               <span className="drop-shadow-md">Book Your Free Demo</span>
               <ArrowRight className="w-[13px] h-[13px] ml-3 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
-            <Link to="/platform" className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 text-[9.6px] uppercase tracking-[0.25em] font-medium text-white border border-white/20 hover:bg-white/5 rounded-none transition-colors">
+            <Link to="/platform" className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 text-[9.6px] uppercase tracking-[0.25em] font-medium text-white border border-white/40 hover:bg-white/5 rounded-none transition-colors">
               Explore The Ecosystem
             </Link>
           </motion.div>
