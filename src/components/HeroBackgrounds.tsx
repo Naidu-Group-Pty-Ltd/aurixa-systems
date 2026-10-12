@@ -66,9 +66,9 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
   switch (variant) {
     case 'home':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#0A192F]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page">
           {/* LAYER 1: Deep Vignette & Structural Gradients */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#0A192F_100%)] z-10" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--color-marketing-page)_100%)] z-10" />
           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(200,155,60,0.05),transparent_70%)] blur-[100px]" />
           <div className="absolute bottom-0 left-0 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(0,168,181,0.05),transparent_70%)] blur-[100px]" />
 
@@ -183,7 +183,7 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
 
     case 'platform':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16] perspective-[2000px]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page perspective-[2000px]">
           {/* Deep Core Glows */}
           <div className="absolute top-[10%] right-[10%] w-[600px] h-[600px] bg-[#00A8B5]/15 blur-[150px] rounded-full z-0" />
           <div className="absolute bottom-[0%] left-[5%] w-[800px] h-[800px] bg-[#C89B3C]/10 blur-[180px] rounded-full z-0" />
@@ -198,10 +198,10 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
                   <circle cx="60" cy="34.641" r="1" fill="#C89B3C" opacity="0.5" />
                 </pattern>
                 <linearGradient id="fadeGradiant" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#040B16" stopOpacity="1" />
-                  <stop offset="20%" stopColor="#040B16" stopOpacity="0" />
-                  <stop offset="80%" stopColor="#040B16" stopOpacity="0" />
-                  <stop offset="100%" stopColor="#040B16" stopOpacity="1" />
+                  <stop offset="0%" stopColor="var(--color-marketing-page)" stopOpacity="1" />
+                  <stop offset="20%" stopColor="var(--color-marketing-page)" stopOpacity="0" />
+                  <stop offset="80%" stopColor="var(--color-marketing-page)" stopOpacity="0" />
+                  <stop offset="100%" stopColor="var(--color-marketing-page)" stopOpacity="1" />
                 </linearGradient>
               </defs>
               <rect width="100%" height="100%" fill="url(#iso-grid-heavy)" />
@@ -241,17 +241,17 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
           </div>
 
           {/* Heavy Dark Vignette to sink it deep into the background behind content */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#040B16_90%)] z-20 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--color-marketing-page)_90%)] z-20 pointer-events-none" />
         </div>
       );
 
     case 'solutions':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16] perspective-[1000px]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page perspective-[1000px]">
           {/* LAYER 1: Deep Global Flash & Pro Noise Mask */}
-          <div className="absolute inset-0 bg-[#040B16] z-0" />
+          <div className="absolute inset-0 bg-marketing-recessed z-0" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-20 mix-blend-overlay z-10" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,#040B16_90%)] z-10 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,var(--color-marketing-page)_90%)] z-10 pointer-events-none" />
 
           {/* LAYER 2: Structural Glass Framing (Pro UI touch) */}
           <div className="absolute left-10 top-20 bottom-20 w-[1px] bg-gradient-to-b from-transparent via-[#00A8B5]/30 to-transparent hidden xl:block" />
@@ -293,7 +293,7 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
              <defs>
                <linearGradient id="wave-grad" x1="0" y1="0" x2="0" y2="1">
                  <stop offset="0%" stopColor="#00A8B5" stopOpacity="0.2" />
-                 <stop offset="100%" stopColor="#040B16" stopOpacity="1" />
+                 <stop offset="100%" stopColor="var(--color-marketing-page)" stopOpacity="1" />
                </linearGradient>
              </defs>
           </svg>
@@ -325,9 +325,9 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
 
     case 'industries':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16] perspective-[2000px]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page perspective-[2000px]">
           {/* LAYER 1: Deep Global Vignette & Noise */}
-          <div className="absolute inset-0 bg-[#040B16] z-0" />
+          <div className="absolute inset-0 bg-marketing-recessed z-0" />
           <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjZmZmIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')] opacity-20 mix-blend-overlay z-0" />
 
           {/* LAYER 2: Massive Scrolling Marquee Background (Frosted/Subtle) */}
@@ -361,7 +361,7 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
 
           {/* LAYER 5: Pro-Tier UI Data Cards Floating in 3D Space */}
           <div className="absolute z-10 hidden xl:block animate-[float-node_8s_ease-in-out_infinite]" style={{ top: '25%', right: '15%', transform: 'rotateY(-15deg)' }}>
-             <div className="p-5 rounded-2xl border border-[#C89B3C]/20 bg-[#040B16]/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+             <div className="p-5 rounded-2xl border border-[#C89B3C]/20 bg-marketing-recessed/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
                 <div className="text-[10px] text-[#C89B3C] tracking-widest font-mono mb-2">NEURAL NET STATUS</div>
                 <div className="text-3xl font-light text-white mb-1">99.9%</div>
                 <div className="w-full h-[1px] bg-[#C89B3C]/30 mb-2" />
@@ -373,7 +373,7 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
           </div>
 
           <div className="absolute z-10 hidden xl:block animate-[float-node_10s_ease-in-out_infinite_reverse]" style={{ bottom: '25%', left: '10%', transform: 'rotateY(15deg)' }}>
-             <div className="p-5 rounded-2xl border border-[#00A8B5]/20 bg-[#040B16]/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
+             <div className="p-5 rounded-2xl border border-[#00A8B5]/20 bg-marketing-recessed/60 backdrop-blur-xl shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
                 <div className="text-[10px] text-[#00A8B5] tracking-widest font-mono mb-2">SECTOR YIELD</div>
                 <div className="flex items-end gap-2 mb-3">
                   {[40, 70, 45, 90, 65, 100, 80].map((h, i) => (
@@ -393,13 +393,13 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
           </svg>
 
           {/* LAYER 7: Massive Center Vignette to keep content absolutely legible */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#040B16_70%)] z-10 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,var(--color-marketing-page)_70%)] z-10 pointer-events-none" />
         </div>
       );
 
     case 'about':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[600px] bg-[#00A8B5]/5 blur-[200px] rounded-full" />
           
           {/* The Cipher: Raining Hex/Data */}
@@ -417,8 +417,8 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
 
     case 'resources':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16]">
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0B162C]/20 to-[#040B16]" />
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page">
+          <div className="absolute inset-0 bg-gradient-to-b from-marketing-panel/20 to-marketing-recessed" />
           
           {/* Data Archive Grid */}
           <div className="absolute inset-0 grid grid-cols-6 grid-rows-4 opacity-[0.03]">
@@ -444,7 +444,7 @@ export function HeroBackground({ variant }: HeroBackgroundsProps) {
 
     case 'contact':
       return (
-        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#040B16]">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-marketing-page">
            {/* Pulsating Secure Beacon */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100px] h-[100px]">
              <div className="absolute inset-0 rounded-full border border-[#C89B3C]/80 shadow-[0_0_30px_#C89B3C] animate-ping" style={{ animationDuration: '3s' }} />

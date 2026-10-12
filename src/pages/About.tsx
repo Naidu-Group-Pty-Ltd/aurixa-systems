@@ -8,7 +8,7 @@ import { useRouteMetadata } from "../lib/pageMetadata";
 export default function About() {
   useRouteMetadata("/about");
   return (
-    <div className="w-full relative pt-32 pb-32 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-32 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="about" />
 
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
@@ -63,7 +63,7 @@ export default function About() {
                </div>
             </div>
             {/* Dark Aesthetic Node Interface */}
-            <div className="lg:col-span-6 relative h-[500px] w-full border border-[#00A8B5]/20 bg-gradient-to-br from-[#0B162C]/80 to-[#040B16] rounded-sm overflow-hidden flex items-center justify-center group shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+            <div className="lg:col-span-6 relative h-[500px] w-full border border-[#00A8B5]/20 bg-gradient-to-br from-marketing-panel/80 to-marketing-recessed rounded-sm overflow-hidden flex items-center justify-center group shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,168,181,0.08)_0%,transparent_70%)] pointer-events-none" />
                 <div className="absolute right-0 top-0 w-full h-full opacity-[0.05] pointer-events-none grid-hex" />
                 
@@ -77,7 +77,7 @@ export default function About() {
                        
                        {/* Floating Data Nodes */}
                        {[0, 60, 120, 180, 240, 300].map(degree => (
-                         <div key={degree} className="absolute w-5 h-5 bg-[#040B16] border border-[#00A8B5]/80 rounded-full shadow-[0_0_15px_#00A8B5] flex items-center justify-center" 
+                         <div key={degree} className="absolute w-5 h-5 bg-marketing-recessed border border-[#00A8B5]/80 rounded-full shadow-[0_0_15px_#00A8B5] flex items-center justify-center"
                               style={{ transform: `rotate(${degree}deg) translateY(-145px)` }}>
                             <div className="w-1.5 h-1.5 bg-[#C89B3C] rounded-full animate-ping" style={{ animationDelay: `${degree * 10}ms` }} />
                          </div>
@@ -98,7 +98,7 @@ export default function About() {
            
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {/* Pillar 1 */}
-              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-b from-[#0B162C]/90 to-[#040B16] transition-all duration-700 border border-white/5 hover:border-[#00A8B5]/40 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(0,168,181,0.1)]">
+              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-b from-marketing-panel/90 to-marketing-recessed transition-all duration-700 border border-white/5 hover:border-[#00A8B5]/40 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(0,168,181,0.1)]">
                  <div className="absolute -top-8 -right-8 text-[#00A8B5]/5 text-[10rem] font-display font-black group-hover:text-[#00A8B5]/10 transition-colors duration-700">01</div>
                  <Network className="w-12 h-12 mb-8 z-10" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h4 className="text-3xl font-display text-white mb-6 z-10 drop-shadow-md">Eradicate Friction</h4>
@@ -113,7 +113,7 @@ export default function About() {
               </div>
 
               {/* Pillar 2 (Featured Middle) */}
-              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-t from-[#0B162C]/90 to-[#040B16] transition-all duration-700 border-t-4 border-t-[#C89B3C] border-b border-l border-r border-[#1A202C] hover:border-white/20 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform lg:-translate-y-6">
+              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-t from-marketing-panel/90 to-marketing-recessed transition-all duration-700 border-t-4 border-t-[#C89B3C] border-b border-l border-r border-[#1A202C] hover:border-white/20 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform lg:-translate-y-6">
                  <div className="absolute inset-0 bg-gradient-to-b from-[#C89B3C]/5 to-transparent pointer-events-none" />
                  <div className="absolute -top-8 -right-8 text-[#C89B3C]/5 text-[10rem] font-display font-black group-hover:text-[#C89B3C]/10 transition-colors duration-700">02</div>
                  <Crosshair className="w-12 h-12 mb-8 z-10" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
@@ -128,7 +128,7 @@ export default function About() {
               </div>
 
               {/* Pillar 3 */}
-              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-b from-[#0B162C]/90 to-[#040B16] transition-all duration-700 border border-white/5 hover:border-[#00A8B5]/40 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(0,168,181,0.1)]">
+              <div className="glass-panel p-6 sm:p-10 group hover:bg-gradient-to-b from-marketing-panel/90 to-marketing-recessed transition-all duration-700 border border-white/5 hover:border-[#00A8B5]/40 flex flex-col items-start relative min-h-[460px] overflow-hidden shadow-xl hover:shadow-[0_20px_50px_rgba(0,168,181,0.1)]">
                  <div className="absolute -top-8 -right-8 text-[#00A8B5]/5 text-[10rem] font-display font-black group-hover:text-[#00A8B5]/10 transition-colors duration-700">03</div>
                  <Lock className="w-12 h-12 mb-8 z-10" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h4 className="text-3xl font-display text-white mb-6 z-10 drop-shadow-md">Enforce Compliance</h4>
@@ -143,7 +143,7 @@ export default function About() {
         </div>
 
         {/* THE OBFUSCATION PROTOCOL - Architectural Philosophy */}
-        <div className="mb-40 relative border border-[#1A202C]/60 bg-gradient-to-r from-[#040B16] to-[#0B162C]/30 rounded-xl p-6 sm:p-12 lg:p-20 overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.8)]">
+        <div className="mb-40 relative border border-[#1A202C]/60 bg-gradient-to-r from-marketing-recessed to-marketing-panel/30 rounded-xl p-6 sm:p-12 lg:p-20 overflow-hidden group shadow-[0_30px_80px_rgba(0,0,0,0.8)]">
            <div className="absolute inset-0 bg-[linear-gradient(to_right,#00A8B5_1px,transparent_1px),linear-gradient(to_bottom,#00A8B5_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-[0.03]" />
            <div className="absolute right-0 top-0 w-1/2 h-full bg-gradient-to-l from-[#00A8B5]/5 to-transparent skew-x-[-25deg] transform origin-top-right group-hover:bg-[#C89B3C]/5 transition-colors duration-1000 pointer-events-none" />
            
@@ -170,7 +170,7 @@ export default function About() {
                      `overflow: hidden` box, so on a 320px screen the longest
                      one was being cut mid-word. Padding and type step down with
                      the viewport; from 640px up nothing changes. */}
-                 <div className="w-full max-w-lg h-80 border border-[#C89B3C]/30 bg-[#040B16]/90 p-4 sm:p-8 flex flex-col relative overflow-hidden backdrop-blur-xl shadow-2xl rounded-lg transform lg:rotate-2 hover:rotate-0 transition-transform duration-700 ease-out">
+                 <div className="w-full max-w-lg h-80 border border-[#C89B3C]/30 bg-marketing-recessed/90 p-4 sm:p-8 flex flex-col relative overflow-hidden backdrop-blur-xl shadow-2xl rounded-lg transform lg:rotate-2 hover:rotate-0 transition-transform duration-700 ease-out">
                     {/* Secure Terminal UI Header */}
                     <div className="w-full flex justify-between items-center mb-8 pb-4 border-b border-white/10">
                        <span className="text-[#00A8B5] text-xs font-mono uppercase tracking-widest flex items-center gap-2"><Lock className="w-3 h-3"/> Core Server Access</span>
@@ -197,7 +197,7 @@ export default function About() {
         </div>
 
         {/* RESTRICTED ALLOCATION - The Syndicate Waitlist Block */}
-        <div className="relative mb-20 glass-panel p-6 sm:p-16 md:p-24 text-center shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden border border-[#C89B3C]/30 bg-gradient-to-t from-[#0B162C] to-[#040B16]">
+        <div className="relative mb-20 glass-panel p-6 sm:p-16 md:p-24 text-center shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden border border-[#C89B3C]/30 bg-gradient-to-t from-marketing-panel to-marketing-recessed">
           <div className="absolute inset-0 bg-chrome-prismatic opacity-[0.03] pointer-events-none" />
           
           {/* Tactical Target Reticle Corners */}

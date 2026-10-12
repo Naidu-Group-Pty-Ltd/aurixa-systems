@@ -209,7 +209,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="w-full relative pt-32 pb-20 min-h-dvh bg-[#040B16] overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 min-h-dvh bg-marketing-page overflow-hidden">
       {showHandoff && (
         <StageOneCompleteModal
           onProceed={() => navigate("/questionnaire")}
@@ -272,7 +272,7 @@ export default function Contact() {
           className="relative group p-[1px] self-start rounded-sm bg-gradient-to-br from-[#00A8B5]/20 via-[#C89B3C]/20 to-transparent"
         >
           <div className="absolute inset-0 bg-chrome-prismatic opacity-20 group-hover:opacity-40 transition-opacity duration-1000 pointer-events-none" />
-          <div className="bg-[#0B162C]/95 backdrop-blur-2xl p-6 sm:p-8 md:p-10 relative z-10 border border-t-white/10 border-l-white/10">
+          <div className="bg-marketing-panel/95 backdrop-blur-2xl p-6 sm:p-8 md:p-10 relative z-10 border border-t-white/10 border-l-white/10">
             {receipt ? (
               <ApplicationReceipt receipt={receipt} onCorrectEmail={handleCorrectEmail} />
             ) : (
@@ -553,7 +553,7 @@ export default function Contact() {
                   {/* The vertical padding sits on the summary rather than the
                       details, so the whole strip toggles the disclosure. On the
                       details it was decoration around an 18px-tall tap target. */}
-                  <details className="border border-white/10 bg-[#040B16]/60 px-4">
+                  <details className="border border-white/10 bg-marketing-recessed/60 px-4">
                     <summary className="cursor-pointer py-3 min-h-[44px] text-[11px] uppercase tracking-[0.12em] text-[#C3CCDD] font-bold list-none flex items-center gap-2">
                       <span className="text-[#C89B3C]" aria-hidden="true">+</span> Collection notice
                     </summary>

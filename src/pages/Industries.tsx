@@ -8,7 +8,7 @@ import { useRouteMetadata } from "../lib/pageMetadata";
 export default function Industries() {
   useRouteMetadata("/industries");
   return (
-    <div className="w-full relative pt-32 pb-20 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="industries" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.1fr)_minmax(420px,.9fr)] gap-8 items-center mb-24">
@@ -37,7 +37,7 @@ export default function Industries() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <UserCheck className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Buyers Agents</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -52,7 +52,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#00A8B5]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Landmark className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Wealth Advisors</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -67,7 +67,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#C89B3C]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Briefcase className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Enterprise Firms</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -81,7 +81,7 @@ export default function Industries() {
               </p>
               <div className="w-full h-px bg-white/20" />
            </div>
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <UserCheck className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Property Advisory Firms</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -93,7 +93,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#00A8B5]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Landmark className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Real Estate Agencies</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -105,7 +105,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#C89B3C]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Briefcase className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Mortgage & Finance Businesses</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -117,7 +117,7 @@ export default function Industries() {
               <div className="w-full h-px bg-white/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <UserCheck className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Investment Groups</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -129,7 +129,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#00A8B5]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Landmark className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Developers</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
@@ -141,7 +141,7 @@ export default function Industries() {
               <div className="w-full h-px bg-[#C89B3C]/20" />
            </div>
 
-           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+           <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
               <Briefcase className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Enterprise Property Networks</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">

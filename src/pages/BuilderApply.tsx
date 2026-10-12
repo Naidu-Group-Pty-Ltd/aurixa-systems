@@ -243,7 +243,7 @@ export default function BuilderApply() {
 
   if (accepted) {
     return (
-      <div className="min-h-screen bg-[#02060F] text-white">
+      <div className="marketing-page min-h-screen bg-marketing-page text-white">
         <HeroBackground variant="industries" />
         <div className="relative max-w-3xl mx-auto px-6 py-32">
           <div className="glass-panel border border-white/10 p-8 sm:p-12">
@@ -317,7 +317,7 @@ export default function BuilderApply() {
   }
 
   return (
-    <div className="min-h-screen bg-[#02060F] text-white">
+    <div className="marketing-page min-h-screen bg-marketing-page text-white">
       <HeroBackground variant="industries" />
       <div className="relative max-w-3xl mx-auto px-6 py-32">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

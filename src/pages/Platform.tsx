@@ -25,7 +25,7 @@ const SHOW_CORELOGIC_DATA_INTEGRATION = false;
 export default function Platform() {
   useRouteMetadata("/platform");
   return (
-    <div className="w-full relative pt-32 pb-20 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="platform" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         {/* Header */}
@@ -154,7 +154,7 @@ export default function Platform() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 relative z-10">
             
             {/* Add on 1: Borrowing Capacity (Massive Span) */}
-            <div className="md:col-span-12 lg:col-span-8 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#C89B3C]/20 hover:border-[#C89B3C]/60 transition-all duration-500 bg-gradient-to-br from-[#0B162C]/90 to-[#040B16] relative flex flex-col justify-between min-h-[450px]">
+            <div className="md:col-span-12 lg:col-span-8 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#C89B3C]/20 hover:border-[#C89B3C]/60 transition-all duration-500 bg-gradient-to-br from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
                <div className="absolute inset-0 bg-gradient-to-br from-[#00A8B5]/5 to-transparent pointer-events-none" />
                <div className="absolute right-0 top-0 w-2/3 h-full opacity-10 pointer-events-none grid-hex" />
                
@@ -167,7 +167,7 @@ export default function Platform() {
                </div>
                
                {/* High-End Graphic Component */}
-               <div className="absolute -bottom-8 -right-8 w-[110%] md:w-3/4 h-56 border border-[#1A202C]/60 bg-[#040B16]/90 backdrop-blur-md rounded-tl-2xl p-6 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] flex items-end gap-3 overflow-hidden transform md:rotate-2 group-hover:rotate-0 transition-transform duration-700 ease-out">
+               <div className="absolute -bottom-8 -right-8 w-[110%] md:w-3/4 h-56 border border-[#1A202C]/60 bg-marketing-recessed/90 backdrop-blur-md rounded-tl-2xl p-6 shadow-[0_-20px_50px_rgba(0,0,0,0.5)] flex items-end gap-3 overflow-hidden transform md:rotate-2 group-hover:rotate-0 transition-transform duration-700 ease-out">
                   <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-[#C89B3C] via-[#00A8B5] to-transparent" />
                   <div className="absolute top-5 left-8 text-[10px] font-mono tracking-widest text-[#00A8B5] uppercase flex items-center gap-2">
                      <span className="w-2 h-2 rounded-full bg-[#00A8B5] animate-pulse" /> Live Calculation Stream
@@ -180,7 +180,7 @@ export default function Platform() {
 
                   <div className="w-full flex items-end gap-2 px-4 h-32 relative z-10">
                     {[40, 65, 45, 80, 55, 95, 70, 85].map((h, i) => (
-                      <div key={i} className="flex-1 relative bg-[#0B162C]/50 overflow-hidden border border-[#1A202C] rounded-t-sm" style={{ height: `${h}%` }}>
+                      <div key={i} className="flex-1 relative bg-marketing-panel/50 overflow-hidden border border-[#1A202C] rounded-t-sm" style={{ height: `${h}%` }}>
                          <div className="absolute bottom-0 w-full bg-gradient-to-t from-[#00A8B5]/80 to-[#00A8B5]/40 transition-all duration-1000 group-hover:scale-y-110" style={{ height: `${h}%`, transformOrigin: 'bottom' }} />
                          <div className="absolute top-0 w-full h-1 bg-[#00A8B5] opacity-0 group-hover:opacity-100 transition-opacity delay-100" />
                       </div>
@@ -190,7 +190,7 @@ export default function Platform() {
             </div>
 
             {/* Add on 2: Customizable Reporting (Tall Box) */}
-            <div className="md:col-span-12 lg:col-span-4 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-gradient-to-bl from-[#0B162C]/90 to-[#040B16] relative flex flex-col justify-between min-h-[450px]">
+            <div className="md:col-span-12 lg:col-span-4 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
                <div className="relative z-10">
                  <FileText className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h3 className="text-white font-display text-3xl mb-4 tracking-wide">Custom Reporting</h3>
@@ -202,7 +202,7 @@ export default function Platform() {
                {/* Animated Document Stack */}
                <div className="relative mt-8 h-40 w-full perspective-[1200px] flex justify-center items-end pb-8">
                   <div className="absolute bottom-4 w-4/5 h-48 border border-[#C89B3C]/30 bg-[#0A192F]/80 backdrop-blur-sm shadow-2xl transform rotate-x-[20deg] rotate-y-[-10deg] translate-y-8 group-hover:-translate-y-4 group-hover:rotate-x-[10deg] transition-all duration-700 ease-out" />
-                  <div className="absolute bottom-0 w-5/6 h-52 border border-white/20 bg-[#040B16] shadow-xl transform rotate-x-[20deg] rotate-y-[-10deg] translate-y-4 group-hover:translate-y-2 group-hover:rotate-x-[15deg] transition-all duration-500 ease-out flex p-6 flex-col gap-4">
+                  <div className="absolute bottom-0 w-5/6 h-52 border border-white/20 bg-marketing-recessed shadow-xl transform rotate-x-[20deg] rotate-y-[-10deg] translate-y-4 group-hover:translate-y-2 group-hover:rotate-x-[15deg] transition-all duration-500 ease-out flex p-6 flex-col gap-4">
                      <div className="w-1/3 h-1.5 bg-[#00A8B5]/80 rounded-full" />
                      <div className="w-full h-px bg-white/10 mt-2" />
                      <div className="w-3/4 h-px bg-white/10" />
@@ -215,7 +215,7 @@ export default function Platform() {
             </div>
 
             {/* Add on 3: White-Label Dashboards (Square/Medium Span) */}
-            <div className="md:col-span-6 lg:col-span-5 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-[#0B162C]/80 relative flex flex-col justify-between min-h-[450px]">
+            <div className="md:col-span-6 lg:col-span-5 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-marketing-panel/80 relative flex flex-col justify-between min-h-[450px]">
                <div className="relative z-10 w-full max-w-sm">
                  <LayoutDashboard className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h3 className="text-white font-display text-3xl mb-4 tracking-wide shadow-black drop-shadow-lg">White-Label UI</h3>
@@ -225,7 +225,7 @@ export default function Platform() {
                </div>
                
                {/* UI Abstraction Dashboard Panel */}
-               <div className="absolute -bottom-6 -right-6 w-72 md:w-80 h-72 bg-[#040B16]/95 backdrop-blur-xl border border-white/10 rounded-tl-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden flex transform group-hover:-translate-y-2 group-hover:-translate-x-2 transition-transform duration-700 ease-out z-0">
+               <div className="absolute -bottom-6 -right-6 w-72 md:w-80 h-72 bg-marketing-recessed/95 backdrop-blur-xl border border-white/10 rounded-tl-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden flex transform group-hover:-translate-y-2 group-hover:-translate-x-2 transition-transform duration-700 ease-out z-0">
                   {/* Header line */}
                   <div className="absolute top-0 w-full h-1 bg-gradient-to-r from-[#C89B3C] to-transparent" />
                   
@@ -253,7 +253,7 @@ export default function Platform() {
             </div>
 
             {/* Add on 4: Suburb Snapshots (Wide Span) */}
-            <div className="md:col-span-6 lg:col-span-7 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#00A8B5]/20 hover:border-[#00A8B5]/60 transition-all duration-500 bg-gradient-to-bl from-[#0B162C]/90 to-[#040B16] relative flex flex-col justify-between min-h-[450px]">
+            <div className="md:col-span-6 lg:col-span-7 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#00A8B5]/20 hover:border-[#00A8B5]/60 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
                <div className="relative z-10 w-full max-w-sm">
                  <MapPin className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h3 className="text-white font-display text-3xl mb-4 tracking-wide shadow-black drop-shadow-lg">Suburb Snapshots</h3>
@@ -292,14 +292,14 @@ export default function Platform() {
 
             {/* Add on 5: CoreLogic Integration (Full Width Banner) */}
             {SHOW_CORELOGIC_DATA_INTEGRATION && (
-              <div className="md:col-span-12 lg:col-span-12 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#C89B3C]/30 hover:border-[#C89B3C]/80 transition-all duration-500 bg-[#0B162C]/90 relative flex flex-col md:flex-row items-center border-l-[6px] min-h-[350px]">
+              <div className="md:col-span-12 lg:col-span-12 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#C89B3C]/30 hover:border-[#C89B3C]/80 transition-all duration-500 bg-marketing-panel/90 relative flex flex-col md:flex-row items-center border-l-[6px] min-h-[350px]">
                <div className="absolute inset-0 bg-gradient-to-r from-[#00A8B5]/10 to-transparent pointer-events-none" />
                <div className="absolute right-0 top-0 w-3/4 h-full opacity-10 pointer-events-none grid-hex" />
                
                <div className="relative z-10 w-full md:w-1/2 pr-0 md:pr-12 mb-12 md:mb-0">
                  <div className="flex items-center gap-4 mb-8">
                      <Database className="w-12 h-12" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
-                     <span className="px-3 py-1 bg-[#040B16] border border-[#00A8B5]/30 text-[#00A8B5] text-[10px] font-mono tracking-widest uppercase rounded flex items-center gap-2">
+                     <span className="px-3 py-1 bg-marketing-recessed border border-[#00A8B5]/30 text-[#00A8B5] text-[10px] font-mono tracking-widest uppercase rounded flex items-center gap-2">
                         <span className="w-1.5 h-1.5 bg-[#00A8B5] rounded-full animate-pulse" /> Live Link Active
                      </span>
                  </div>
@@ -311,7 +311,7 @@ export default function Platform() {
                
                {/* Asymmetric CoreLogic Data Visualization */}
                <div className="relative z-10 w-full md:w-1/2 h-full min-h-[200px] flex justify-end items-center">
-                  <div className="w-full max-w-lg h-48 border border-white/10 bg-[#040B16]/80 flex relative overflow-hidden backdrop-blur-md rounded-lg shadow-2xl">
+                  <div className="w-full max-w-lg h-48 border border-white/10 bg-marketing-recessed/80 flex relative overflow-hidden backdrop-blur-md rounded-lg shadow-2xl">
                       {/* Grid background */}
                       <div className="absolute inset-0 grid grid-cols-10 grid-rows-5 opacity-20">
                          {[...Array(50)].map((_, i) => <div key={i} className="border-r border-b border-[#00A8B5]" />)}
@@ -357,19 +357,19 @@ export default function Platform() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="p-8 border border-white/5 bg-[#0B162C] relative overflow-hidden group">
+            <div className="p-8 border border-white/5 bg-marketing-panel relative overflow-hidden group">
               <div className="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 bg-gradient-to-b from-[#00A8B5]/5 to-transparent pointer-events-none" />
               <Network className="w-8 h-8 mb-6" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h3 className="text-white font-display text-xl mb-4">Neural Integration</h3>
               <p className="text-gray-500 font-light text-sm">Hooks directly into HubSpot, Salesforce, and bespoke database architectures to form a seamless bi-directional data flow. Integrated client ecosystems consolidate communication, delivery, and lifecycle touchpoints.</p>
             </div>
-            <div className="p-8 border border-white/5 bg-[#0B162C] relative overflow-hidden group">
+            <div className="p-8 border border-white/5 bg-marketing-panel relative overflow-hidden group">
               <div className="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 bg-gradient-to-b from-[#C89B3C]/5 to-transparent pointer-events-none" />
               <ShieldCheck className="w-8 h-8 mb-6" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h3 className="text-white font-display text-xl mb-4">Absolute Compliance</h3>
               <p className="text-gray-500 font-light text-sm">Mathematics govern everything. Calculations are permanently anchored to federal compliance and regulatory buffer mandates. Role-based permissions, data governance, and oversight mechanisms protect your brand and enforce compliance.</p>
             </div>
-            <div className="p-8 border border-white/5 bg-[#0B162C] relative overflow-hidden group">
+            <div className="p-8 border border-white/5 bg-marketing-panel relative overflow-hidden group">
               <div className="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />
               <Zap className="w-8 h-8 mb-6" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h3 className="text-white font-display text-xl mb-4">Asymmetrical Speed</h3>

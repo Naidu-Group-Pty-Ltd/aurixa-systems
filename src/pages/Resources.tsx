@@ -168,7 +168,7 @@ const MODULE_CATEGORIES = [
 export default function Resources() {
   useRouteMetadata("/resources");
   return (
-    <div className="w-full relative pt-32 pb-32 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-32 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="resources" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         <div className="max-w-4xl mb-24 flex flex-col items-center text-center mx-auto">
@@ -204,7 +204,7 @@ export default function Resources() {
               className="relative p-[1px] rounded-sm group overflow-hidden bg-gradient-to-b from-[#00A8B5]/30 to-transparent shadow-[0_0_50px_rgba(0,0,0,0.5)]"
             >
               <div className="absolute inset-0 bg-gradient-to-br from-[#00A8B5]/10 via-transparent to-[#C89B3C]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-              <div className="h-full bg-[#040B16] rounded-sm p-8 relative z-10 flex flex-col">
+              <div className="h-full bg-marketing-recessed rounded-sm p-8 relative z-10 flex flex-col">
                 {/* Category Header */}
                 <div className="flex justify-between items-start border-b border-[#00A8B5]/20 pb-6 mb-6">
                   <div>
@@ -231,13 +231,13 @@ export default function Resources() {
                         className={`group/item flex items-start gap-4 p-4 min-h-[112px] h-full rounded-sm border transition-all duration-300 relative overflow-hidden
                           ${item.highlight
                             ? "bg-[#C89B3C]/10 border-[#C89B3C]/50 shadow-[0_0_20px_rgba(200,155,60,0.15)]"
-                            : "bg-[#0B162C]/40 border-[#00A8B5]/10 hover:border-[#00A8B5]/40 hover:bg-[#00A8B5]/5"
+                            : "bg-marketing-panel/40 border-[#00A8B5]/10 hover:border-[#00A8B5]/40 hover:bg-[#00A8B5]/5"
                           }`}
                       >
                         {/* Glow Sweep Effect on Hover */}
                         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C89B3C]/5 to-transparent -translate-x-[150%] group-hover/item:translate-x-[150%] transition-transform duration-700 ease-in-out" />
 
-                        <div className={`p-1.5 rounded-sm flex items-center justify-center border mt-0.5 shrink-0 ${item.highlight ? 'bg-[#C89B3C]/20 border-[#C89B3C]/50' : 'bg-[#040B16] border-[#00A8B5]/20'}`}>
+                        <div className={`p-1.5 rounded-sm flex items-center justify-center border mt-0.5 shrink-0 ${item.highlight ? 'bg-[#C89B3C]/20 border-[#C89B3C]/50' : 'bg-marketing-recessed border-[#00A8B5]/20'}`}>
                           <Icon className={`w-3.5 h-3.5 ${item.highlight ? 'text-[#C89B3C]' : 'text-[#00A8B5]/70 group-hover/item:text-[#00A8B5]'}`} />
                         </div>
                         <div className="min-w-0 flex-1">
@@ -264,10 +264,10 @@ export default function Resources() {
         {/* --- RESTRICTED DEPLOYMENT ARCHIVES (Existing Block but Styled Up) --- */}
         <div className="w-full relative mt-32 mb-12 flex justify-center">
            <div className="absolute w-px h-24 bg-gradient-to-t from-[#C89B3C]/40 to-transparent -top-24 left-1/2 -translate-x-1/2" />
-           <div className="w-3 h-3 border border-[#C89B3C] rotate-45 bg-[#040B16] shadow-[0_0_10px_#C89B3C] z-10" />
+           <div className="w-3 h-3 border border-[#C89B3C] rotate-45 bg-marketing-recessed shadow-[0_0_10px_#C89B3C] z-10" />
         </div>
 
-        <div className="max-w-4xl mx-auto glass-panel p-6 sm:p-16 text-center border-t-2 border-b-2 border-[#C89B3C]/50 shadow-[0_0_50px_rgba(200,155,60,0.05)] relative overflow-hidden bg-gradient-to-b from-[#0B162C]/30 to-[#040B16]/80 backdrop-blur-md">
+        <div className="max-w-4xl mx-auto glass-panel p-6 sm:p-16 text-center border-t-2 border-b-2 border-[#C89B3C]/50 shadow-[0_0_50px_rgba(200,155,60,0.05)] relative overflow-hidden bg-gradient-to-b from-marketing-panel/30 to-marketing-recessed/80 backdrop-blur-md">
            <div className="absolute inset-0 bg-chrome-prismatic opacity-[0.02] pointer-events-none mix-blend-screen" />
            
            {/* Radar sweep background effect for the locked box */}

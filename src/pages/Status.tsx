@@ -598,7 +598,7 @@ function AffectsChips({ affects }: { affects: readonly string[] }) {
 function ComponentRow({ component }: { component: StatusComponent }) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   return (
-    <li className="rounded-2xl border border-white/10 bg-[#0B162C]/40 p-6 backdrop-blur-xl sm:p-8">
+    <li className="rounded-2xl border border-white/10 bg-marketing-panel/40 p-6 backdrop-blur-xl sm:p-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <h3 className="text-base font-semibold text-white">{component.label}</h3>
@@ -684,7 +684,7 @@ function IncidentsJumbotron({ incidents }: { incidents: StatusSummary["incidents
               return (
                 <li
                   key={incident.key}
-                  className={`relative overflow-hidden rounded-2xl border bg-[#0B162C]/40 p-5 backdrop-blur-xl sm:p-6 ${style.banner}`}
+                  className={`relative overflow-hidden rounded-2xl border bg-marketing-panel/40 p-5 backdrop-blur-xl sm:p-6 ${style.banner}`}
                 >
                   <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${style.bar}`} />
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -745,7 +745,7 @@ function IncidentsJumbotron({ incidents }: { incidents: StatusSummary["incidents
           <h2 className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#94A3B8]">
             Recently resolved &middot; last 72h
           </h2>
-          <ul className="mt-3 divide-y divide-white/5 overflow-hidden rounded-2xl border border-white/10 bg-[#0B162C]/40 backdrop-blur-xl">
+          <ul className="mt-3 divide-y divide-white/5 overflow-hidden rounded-2xl border border-white/10 bg-marketing-panel/40 backdrop-blur-xl">
             {resolved.slice(0, 5).map((incident, index) => (
               <li
                 key={`${incident.key}-${incident.ended_at}-${index}`}
@@ -781,7 +781,7 @@ function IncidentsJumbotron({ incidents }: { incidents: StatusSummary["incidents
           <h2 className="font-mono text-[10px] uppercase tracking-[0.35em] text-[#60A5FA]">
             Scheduled maintenance
           </h2>
-          <ul className="mt-3 divide-y divide-white/5 overflow-hidden rounded-2xl border border-[#60A5FA]/20 bg-[#0B162C]/40 backdrop-blur-xl">
+          <ul className="mt-3 divide-y divide-white/5 overflow-hidden rounded-2xl border border-[#60A5FA]/20 bg-marketing-panel/40 backdrop-blur-xl">
             {maintenance.map((window, index) => (
               <li
                 key={`${window.key}-${window.starts_at}-${index}`}
@@ -829,7 +829,7 @@ function SkeletonRows() {
       {STATUS_COMPONENT_ROSTER.map((component) => (
         <li
           key={component.key}
-          className="rounded-2xl border border-white/10 bg-[#0B162C]/40 p-6 backdrop-blur-xl sm:p-8"
+          className="rounded-2xl border border-white/10 bg-marketing-panel/40 p-6 backdrop-blur-xl sm:p-8"
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
@@ -859,7 +859,7 @@ function OverallBanner({ summary }: { summary: StatusSummary }) {
     <section
       role="status"
       aria-live="polite"
-      className={`relative overflow-hidden rounded-2xl border bg-[#0B162C]/40 p-8 backdrop-blur-xl ${style.banner}`}
+      className={`relative overflow-hidden rounded-2xl border bg-marketing-alternate/40 p-8 backdrop-blur-xl ${style.banner}`}
     >
       <span aria-hidden="true" className={`absolute inset-y-0 left-0 w-1 ${style.bar}`} />
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
@@ -897,7 +897,7 @@ function UnavailablePanel() {
     <section
       role="status"
       aria-live="polite"
-      className="rounded-2xl border border-white/10 bg-[#0B162C]/40 p-8 text-center backdrop-blur-xl"
+      className="rounded-2xl border border-white/10 bg-marketing-alternate/40 p-8 text-center backdrop-blur-xl"
     >
       <p className="text-xl font-semibold text-white">Status temporarily unavailable</p>
       <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[#94A3B8]">
@@ -946,7 +946,7 @@ export default function Status() {
   const unavailable = result !== null && !result.ok;
 
   return (
-    <div className="w-full relative pt-32 pb-20 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="about" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         {/* Header */}
@@ -974,7 +974,7 @@ export default function Status() {
                 <section
                   role="status"
                   aria-live="polite"
-                  className="rounded-2xl border border-white/10 bg-[#0B162C]/40 p-8 backdrop-blur-xl"
+                  className="rounded-2xl border border-white/10 bg-marketing-alternate/40 p-8 backdrop-blur-xl"
                 >
                   <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">

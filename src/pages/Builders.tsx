@@ -111,7 +111,7 @@ const STEPS = [
 export default function Builders() {
   useRouteMetadata("/builders");
   return (
-    <div className="w-full relative pt-32 pb-20 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="industries" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         {/* Hero */}
@@ -166,7 +166,7 @@ export default function Builders() {
 
         {/* What it is */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
-          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#00A8B5] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
             <FileStack
               className="w-12 h-12 mb-8"
               style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}
@@ -182,7 +182,7 @@ export default function Builders() {
             <div className="w-full h-px bg-[#00A8B5]/20" />
           </div>
 
-          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-[#C89B3C] hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
             <Network
               className="w-12 h-12 mb-8"
               style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}
@@ -199,7 +199,7 @@ export default function Builders() {
             <div className="w-full h-px bg-[#C89B3C]/20" />
           </div>
 
-          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-[#0B162C]">
+          <div className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left border-t-4 border-white hover:-translate-y-2 transition-transform duration-500 bg-marketing-panel">
             <Building2
               className="w-12 h-12 mb-8"
               style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}
@@ -230,7 +230,7 @@ export default function Builders() {
             {STEPS.map((step) => (
               <div
                 key={step.number}
-                className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left bg-[#0B162C] border-l-2 border-[#00A8B5]/30"
+                className="glass-panel p-6 sm:p-10 flex flex-col items-start text-left bg-marketing-panel border-l-2 border-[#00A8B5]/30"
               >
                 <span className="text-[11px] font-bold tracking-[0.3em] text-[#C89B3C] mb-6">{step.number}</span>
                 <h3 className="text-2xl font-display font-light text-white mb-4">{step.title}</h3>
@@ -241,7 +241,7 @@ export default function Builders() {
         </div>
 
         {/* Compliance */}
-        <div className="glass-panel p-6 sm:p-16 mb-20 bg-[#0B162C] border border-white/10">
+        <div className="glass-panel p-6 sm:p-16 mb-20 bg-marketing-panel border border-white/10">
           <div className="grid grid-cols-1 lg:grid-cols-[auto_minmax(0,1fr)] gap-8 lg:gap-12 items-start">
             <ShieldCheck
               className="w-14 h-14 shrink-0"

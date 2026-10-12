@@ -35,9 +35,9 @@ export default function NotFound() {
   });
 
   return (
-    <div className="w-full pt-[100px]">
+    <div className="marketing-page w-full pt-[100px]">
       <div className="mx-auto max-w-xl px-4 py-16 md:px-6">
-        <div className="rounded-lg border border-white/10 bg-[#0B162C] p-8">
+        <div className="rounded-lg border border-white/10 bg-marketing-panel p-8">
           <div className="flex items-center gap-3">
             <Compass className="h-9 w-9 text-[#94A3B8]" aria-hidden="true" />
             <h1 className="text-2xl font-black text-white">Page not found</h1>
