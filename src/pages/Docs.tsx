@@ -247,7 +247,7 @@ export default function Docs() {
     // overflow-x-clip, not overflow-hidden: `hidden` on one axis forces the
     // other to `auto`, which made this element a scroll container and pinned
     // the sticky contents rail below to a box that never scrolls.
-    <div className="w-full relative pt-32 pb-32 bg-[#040B16] min-h-dvh overflow-x-clip">
+    <div className="marketing-page w-full relative pt-32 pb-32 bg-marketing-page min-h-dvh overflow-x-clip">
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         {/* ── Header ── */}
         <div className="max-w-4xl mb-16 flex flex-col items-center text-center mx-auto">
@@ -301,7 +301,7 @@ export default function Docs() {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search documentation"
               aria-label="Search documentation"
-              className="w-full bg-[#040B16] border border-[#00A8B5]/20 rounded-sm pl-11 pr-4 py-3 text-white font-light placeholder:text-[#94A3B8]/50 focus:outline-none focus:border-[#00A8B5]/50 transition-colors"
+              className="w-full bg-[#040B16] border border-[#00A8B5]/20 rounded-sm pl-11 pr-4 py-3 text-white font-light placeholder:text-marketing-subtle focus:outline-none focus:border-[#00A8B5]/50 transition-colors"
             />
           </div>
         </div>

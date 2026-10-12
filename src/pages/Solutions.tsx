@@ -8,7 +8,7 @@ import { useRouteMetadata } from "../lib/pageMetadata";
 export default function Solutions() {
   useRouteMetadata("/solutions");
   return (
-    <div className="w-full relative pt-32 pb-20 bg-[#040B16] min-h-dvh overflow-hidden">
+    <div className="marketing-page w-full relative pt-32 pb-20 bg-marketing-page min-h-dvh overflow-hidden">
       <HeroBackground variant="solutions" />
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10">
         {/* Header */}
@@ -41,10 +41,10 @@ export default function Solutions() {
         <div className="grid grid-cols-1 gap-16 mb-32 relative">
            
            {/* Section 1: Precision Client Acquisition */}
-           <div className="glass-panel p-0 relative overflow-hidden group border border-[#00A8B5]/30 hover:border-[#00A8B5]/80 transition-all duration-700 bg-[#0B162C]/50 flex flex-col md:flex-row min-h-[400px]">
+           <div className="glass-panel p-0 relative overflow-hidden group border border-[#00A8B5]/30 hover:border-[#00A8B5]/80 transition-all duration-700 bg-marketing-panel/50 flex flex-col md:flex-row min-h-[400px]">
              
              {/* Abstract UI Visual - Left Side */}
-             <div className="w-full md:w-5/12 bg-[#040B16] border-b md:border-b-0 md:border-r border-[#00A8B5]/20 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
+             <div className="w-full md:w-5/12 bg-marketing-recessed border-b md:border-b-0 md:border-r border-[#00A8B5]/20 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#00A8B5]/10 to-transparent pointer-events-none" />
                 <div className="absolute inset-0 opacity-10 grid-hex pointer-events-none" />
                 
@@ -90,10 +90,10 @@ export default function Solutions() {
            </div>
 
            {/* Section 2: Zero-Friction Compliance (Reverse Layout) */}
-           <div className="glass-panel p-0 relative overflow-hidden group border border-[#C89B3C]/30 hover:border-[#C89B3C]/80 transition-all duration-700 bg-[#0B162C]/50 flex flex-col md:flex-row-reverse min-h-[400px]">
+           <div className="glass-panel p-0 relative overflow-hidden group border border-[#C89B3C]/30 hover:border-[#C89B3C]/80 transition-all duration-700 bg-marketing-panel/50 flex flex-col md:flex-row-reverse min-h-[400px]">
              
              {/* Abstract UI Visual - Right Side */}
-             <div className="w-full md:w-5/12 bg-[#040B16] border-b md:border-b-0 md:border-l border-[#C89B3C]/20 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
+             <div className="w-full md:w-5/12 bg-marketing-recessed border-b md:border-b-0 md:border-l border-[#C89B3C]/20 relative overflow-hidden flex items-center justify-center p-6 sm:p-12">
                 <div className="absolute inset-0 opacity-10 grid-hex pointer-events-none" />
                 
                 {/* Protocol Lines */}
@@ -124,15 +124,15 @@ export default function Solutions() {
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-full bg-[#040B16] border border-white/10 p-4 flex items-center justify-between shadow-inner">
+                    <div className="w-full bg-marketing-recessed border border-white/10 p-4 flex items-center justify-between shadow-inner">
                         <span className="text-xs uppercase tracking-widest text-gray-500 font-mono">APRA Buffer Alignment / Operational Bottlenecks Reduced</span>
-                        <div className="h-1 w-24 bg-[#0B162C] rounded-full overflow-hidden">
+                        <div className="h-1 w-24 bg-marketing-panel rounded-full overflow-hidden">
                            <div className="h-full bg-[#C89B3C] w-full" />
                         </div>
                     </div>
-                    <div className="w-full bg-[#040B16] border border-white/10 p-4 flex items-center justify-between shadow-inner">
+                    <div className="w-full bg-marketing-recessed border border-white/10 p-4 flex items-center justify-between shadow-inner">
                         <span className="text-xs uppercase tracking-widest text-gray-500 font-mono">Digital Audit Trail / Structured Reporting Delivery</span>
-                        <div className="h-1 w-24 bg-[#0B162C] rounded-full overflow-hidden">
+                        <div className="h-1 w-24 bg-marketing-panel rounded-full overflow-hidden">
                            <div className="h-full bg-[#C89B3C] w-full" />
                         </div>
                     </div>
@@ -141,10 +141,10 @@ export default function Solutions() {
            </div>
 
            {/* Section 3: Hyper-Scaled Operations */}
-           <div className="glass-panel p-0 relative overflow-hidden group border border-white/20 hover:border-white/60 transition-all duration-700 bg-[#0B162C]/50 flex flex-col md:flex-row min-h-[400px]">
+           <div className="glass-panel p-0 relative overflow-hidden group border border-white/20 hover:border-white/60 transition-all duration-700 bg-marketing-panel/50 flex flex-col md:flex-row min-h-[400px]">
              
              {/* Abstract UI Visual - Left Side */}
-             <div className="w-full md:w-5/12 bg-[#040B16] border-b md:border-b-0 md:border-r border-white/10 relative overflow-hidden flex items-end justify-center p-8">
+             <div className="w-full md:w-5/12 bg-marketing-recessed border-b md:border-b-0 md:border-r border-white/10 relative overflow-hidden flex items-end justify-center p-8">
                 
                 {/* Bar Chart Abstraction */}
                 <div className="w-full h-full flex items-end gap-2 px-8 pb-4 opacity-70 group-hover:opacity-100 transition-opacity">

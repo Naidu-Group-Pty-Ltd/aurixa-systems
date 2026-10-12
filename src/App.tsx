@@ -106,7 +106,7 @@ export function AppShell() {
       </svg>
       {/* `app-shell` carries the flex column, the dynamic-viewport minimum and
           `overflow-x: clip` — see index.css for why it is not `hidden`. */}
-      <div className="app-shell relative bg-[#040B16] text-white selection:bg-[#C89B3C] selection:text-white">
+      <div className="app-shell relative bg-marketing-page text-white selection:bg-[#C89B3C] selection:text-white">
         <a className="skip-link" href="#main-content">Skip to content</a>
         {!hidesSiteChrome && <Navbar />}
         <main id="main-content" tabIndex={-1} className="flex-grow flex flex-col items-center outline-none">

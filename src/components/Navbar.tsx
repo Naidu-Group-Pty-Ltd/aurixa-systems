@@ -46,7 +46,7 @@ export function Navbar() {
   }, [isOpen]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#040B16]/90 backdrop-blur-xl border-b border-[#00A8B5]/20 pad-safe-x pad-safe-top">
+    <header className="site-header fixed top-0 left-0 right-0 z-50 backdrop-blur-xl border-b border-[#00A8B5]/20 pad-safe-x pad-safe-top">
       <div className="max-w-7xl mx-auto px-4 md:px-6 h-[var(--site-header-height)] flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1 py-1 lg:flex-none">
           {/* max-w-full, not a 100vw calc: on desktop 100vw counts the
@@ -98,7 +98,7 @@ export function Navbar() {
       {isOpen && (
         <div
           id="mobile-menu"
-          className="lg:hidden absolute top-full left-0 right-0 max-h-[calc(100dvh-var(--site-header-height)-var(--safe-top))] overflow-y-auto overscroll-contain bg-[#0B162C] border-b border-[#00A8B5]/20 p-6 pb-[max(1.5rem,var(--safe-bottom))] flex flex-col gap-1 shadow-[0_20px_40px_rgba(0,168,181,0.1)]"
+          className="lg:hidden absolute top-full left-0 right-0 max-h-[calc(100dvh-var(--site-header-height)-var(--safe-top))] overflow-y-auto overscroll-contain bg-marketing-panel border-b border-[#00A8B5]/20 p-6 pb-[max(1.5rem,var(--safe-bottom))] flex flex-col gap-1 shadow-[0_20px_40px_rgba(0,168,181,0.1)]"
         >
           <nav aria-label="Mobile" className="flex flex-col gap-1">
             {NAV_ITEMS.map((item) => (

@@ -688,7 +688,7 @@ export default function Questionnaire() {
  */
 function QuestionnaireShell({ children }: { children: ReactNode }) {
   return (
-    <div className="relative w-full min-h-dvh bg-[#040B16] pt-32 pb-20">
+    <div className="relative w-full min-h-dvh bg-marketing-page pt-32 pb-20">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <HeroBackground variant="about" />
       </div>

@@ -513,7 +513,7 @@ export default function Pricing() {
   const isLoading = !catalog && !catalogError;
 
   return (
-    <div className="relative w-full min-h-dvh overflow-hidden bg-[#040B16] text-white">
+    <div className="relative w-full min-h-dvh overflow-hidden bg-marketing-page text-white">
       <BackgroundFX />
 
       {/* Hero */}

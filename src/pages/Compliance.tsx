@@ -135,7 +135,7 @@ function ComplianceConvergenceCTA() {
 
 export default function Compliance() {
   useRouteMetadata("/compliance");
-  return <MotionConfig reducedMotion="user"><main className="compliance-page">
+  return <MotionConfig reducedMotion="user"><main className="marketing-page compliance-page">
     <section aria-labelledby="compliance-heading" className="compliance-hero">
       <HeroBackground variant="platform" /><div className="compliance-hero__wash" aria-hidden="true" />
       <div className="compliance-container compliance-hero__grid"><motion.div {...reveal} className="compliance-hero__copy">

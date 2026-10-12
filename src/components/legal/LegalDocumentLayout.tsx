@@ -35,7 +35,7 @@ export function LegalDocumentLayout(props: Props) {
     return () => { window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); if (frame) window.cancelAnimationFrame(frame); };
   }, [props.kind]);
   const chapters = LEGAL_CHAPTERS[props.kind];
-  return <div className={`legal-page legal-page--${props.kind} w-full bg-[#040B16]`}>
+  return <div className={`marketing-page legal-page legal-page--${props.kind} w-full bg-marketing-page`}>
     <div className="legal-mobile-progress" aria-hidden="true" />
     <header className="legal-hero">
       <HeroBackground variant="platform" />

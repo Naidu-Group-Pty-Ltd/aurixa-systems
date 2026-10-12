@@ -142,7 +142,7 @@ function VoiceConsole() {
       <div className="pointer-events-none absolute -inset-10 bg-[radial-gradient(ellipse_at_center,rgba(0,168,181,0.18),transparent_65%)] blur-[70px]" />
       <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full border border-[#C89B3C]/10 voice-orbit" />
 
-      <div className="glass-panel relative overflow-hidden border border-[#00A8B5]/25 bg-gradient-to-br from-[#0B162C]/95 to-[#040B16] p-6 shadow-[0_40px_90px_-40px_rgba(0,0,0,0.95)] md:p-8">
+      <div className="glass-panel relative overflow-hidden border border-[#00A8B5]/25 bg-gradient-to-br from-marketing-panel/95 to-marketing-recessed p-6 shadow-[0_40px_90px_-40px_rgba(0,0,0,0.95)] md:p-8">
         {/* Corner registration marks */}
         <span className="absolute left-0 top-0 h-6 w-6 border-l border-t border-[#00A8B5]/50" />
         <span className="absolute right-0 top-0 h-6 w-6 border-r border-t border-[#C89B3C]/40" />
@@ -165,14 +165,14 @@ function VoiceConsole() {
               </p>
             </div>
           </div>
-          <span className="hidden shrink-0 items-center gap-2 border border-white/10 bg-[#040B16] px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-white/50 sm:flex">
+          <span className="hidden shrink-0 items-center gap-2 border border-white/10 bg-marketing-recessed px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-white/50 sm:flex">
             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#C89B3C]" />
             CH_01
           </span>
         </div>
 
         {/* Waveform */}
-        <div className="relative mt-8 h-32 overflow-hidden border border-white/5 bg-[#040B16]/70 px-3 pb-7 md:h-40 md:px-5">
+        <div className="relative mt-8 h-32 overflow-hidden border border-white/5 bg-marketing-recessed/70 px-3 pb-7 md:h-40 md:px-5">
           <div className="voice-grid pointer-events-none absolute inset-0 opacity-40" />
           <div className="relative flex h-full items-center gap-[2px] md:gap-[3px]">
             <div className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-[#00A8B5]/30 to-transparent" />
@@ -327,7 +327,7 @@ export function VoiceAgentSection() {
           {CAPABILITIES.map(({ icon: Icon, title, desc, accent }) => (
             <div
               key={title}
-              className="group relative flex flex-col overflow-hidden bg-[#0B162C]/90 p-6 transition-colors duration-500 hover:bg-[#0B162C] sm:p-8"
+              className="group relative flex flex-col overflow-hidden bg-marketing-panel/90 p-6 transition-colors duration-500 hover:bg-marketing-panel sm:p-8"
             >
               <span
                 className="absolute inset-x-0 top-0 h-px scale-x-0 transition-transform duration-500 ease-out group-hover:scale-x-100"
@@ -372,7 +372,7 @@ export function VoiceAgentSection() {
           {MODES.map(({ icon: Icon, tag, title, desc, accent }) => (
             <div
               key={title}
-              className="glass-panel glass-panel-hover group relative flex flex-col overflow-hidden bg-[#0B162C]/80 p-6 sm:p-10"
+              className="glass-panel glass-panel-hover group relative flex flex-col overflow-hidden bg-marketing-panel/80 p-6 sm:p-10"
               style={{ borderTop: `2px solid ${accent}` }}
             >
               <div
@@ -398,7 +398,7 @@ export function VoiceAgentSection() {
         </div>
 
         {/* Configuration axes + inline CTA */}
-        <div className="mt-10 flex flex-col items-center justify-between gap-8 border border-white/10 bg-[#040B16]/60 p-6 sm:p-8 lg:flex-row lg:gap-12">
+        <div className="mt-10 flex flex-col items-center justify-between gap-8 border border-white/10 bg-marketing-recessed/60 p-6 sm:p-8 lg:flex-row lg:gap-12">
           <div className="w-full">
             <p className="mb-5 font-mono text-[10px] uppercase tracking-[0.28em] text-[#00A8B5]">
               Configured around
@@ -407,7 +407,7 @@ export function VoiceAgentSection() {
               {CONFIGURED_AROUND.map((axis) => (
                 <li
                   key={axis}
-                  className="border border-white/10 bg-[#0B162C] px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#9CA3B8]"
+                  className="border border-white/10 bg-marketing-panel px-4 py-2 text-[11px] font-semibold uppercase tracking-widest text-[#9CA3B8]"
                 >
                   {axis}
                 </li>

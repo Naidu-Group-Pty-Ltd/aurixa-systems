@@ -3,12 +3,11 @@ import { ArrowRight, BarChart3, Database, ShieldCheck, Zap } from "lucide-react"
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { useRouteMetadata } from "../lib/pageMetadata";
-import "./Home.css";
 
 export default function Home() {
   useRouteMetadata("/");
   return (
-    <div className="home-page w-full relative pt-20 bg-[#040B16]">
+    <div className="home-page marketing-page w-full relative pt-20 bg-marketing-page">
 
       {/* Hero Section.
           Measured against the *small* viewport so the hero keeps its height
@@ -22,7 +21,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-[#0B162C]/80 backdrop-blur-md mb-8 shadow-[0_0_15px_rgba(200,155,60,0.15)]"
+            className="inline-flex items-center gap-3 px-5 py-2 rounded-full border border-white/10 bg-marketing-panel/80 backdrop-blur-md mb-8 shadow-[0_0_15px_rgba(200,155,60,0.15)]"
           >
             <span className="w-2 h-2 rounded-full bg-[#C89B3C] animate-pulse" />
             <span className="text-[8px] font-bold uppercase tracking-[0.25em] text-white">SYS.CORE.ACTIVE</span>
@@ -65,7 +64,7 @@ export default function Home() {
       </section>
 
       {/* Trust & Precision Bar */}
-      <section className="w-full py-12 border-y border-white/5 bg-[#0B162C]">
+      <section className="w-full py-12 border-y border-white/5 bg-marketing-alternate">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/10 text-center">
           <div className="px-4">
             <p className="text-4xl md:text-5xl font-display font-extrabold text-liquid-chrome mb-2 tracking-tight">Zero</p>
@@ -87,7 +86,7 @@ export default function Home() {
       </section>
 
       {/* Intelligence Vanguard / "Soldiers" Section */}
-      <section className="w-full py-32 bg-[#040B16] relative overflow-hidden">
+      <section className="w-full py-32 bg-marketing-page relative overflow-hidden">
         <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(200,155,60,0.02)_50%,transparent_100%)]" />
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="mb-20 grid grid-cols-1 md:grid-cols-2 gap-12 items-start md:items-center">
@@ -167,7 +166,7 @@ export default function Home() {
                 <div className="aspect-video w-full relative shrink-0 overflow-hidden">
                   <div className="absolute inset-0 bg-[#00A8B5] mix-blend-color z-10 opacity-30 group-hover:opacity-10 transition-opacity" />
                   <div className="absolute inset-0 bg-[#C89B3C] mix-blend-color z-10 opacity-20 group-hover:opacity-50 transition-opacity" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B162C] to-transparent z-20" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-marketing-panel to-transparent z-20" />
                   {/* All five sit below the fold, so they stay deferred even
                       now that they are ~60 KB WebP rather than ~2 MB PNG (the
                       set was 10.7 MB; see scripts/build-share-assets.py's
@@ -204,7 +203,7 @@ export default function Home() {
       </section>
 
       {/* Brand Positioning Section */}
-      <section className="w-full py-20 md:py-32 relative bg-[#0B162C] border-y border-white/5">
+      <section className="w-full py-20 md:py-32 relative bg-marketing-alternate border-y border-white/5">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-20 items-center">
             <div>
@@ -227,7 +226,7 @@ export default function Home() {
               {/* Premium Dashboard Abstract */}
               <div className="min-h-[280px] sm:aspect-[4/3] glass-panel p-4 sm:p-8 relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent z-10" />
-                <div className="w-full h-full border border-white/10 rounded-sm relative z-20 bg-[#040B16] p-4 sm:p-6 shadow-2xl flex flex-col gap-6">
+                <div className="w-full h-full border border-white/10 rounded-sm relative z-20 bg-marketing-recessed p-4 sm:p-6 shadow-2xl flex flex-col gap-6">
                   {/* Typographic Arsenal Block */}
                   <div className="absolute inset-0 bg-chrome-prismatic opacity-10 group-hover:opacity-20 transition-opacity duration-1000" />
                   <div className="h-full w-full relative z-20 flex flex-col items-center justify-center text-center">
@@ -246,14 +245,14 @@ export default function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="w-full py-40 relative overflow-hidden bg-[#040B16]">
+      <section className="w-full py-40 relative overflow-hidden bg-marketing-page">
         {/* `bg-gradient-radial` is not a Tailwind utility — these two layers
             emitted no background at all. Written out, they render the depth
             the section was designed with. */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#111827_0%,#040B16_70%)] z-0" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-marketing-panel)_0%,var(--color-marketing-page)_70%)] z-0" />
         <div className="absolute right-0 bottom-0 w-[800px] h-[800px] bg-[radial-gradient(circle_at_center,rgba(10,25,47,0.1),transparent_70%)] blur-[120px] opacity-40 pointer-events-none" />
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center flex flex-col items-center">
-          <div className="mb-8 mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-md bg-[#040B16] p-2 shadow-[0_0_40px_rgba(200,155,60,0.3)]">
+          <div className="mb-8 mx-auto flex h-24 w-24 items-center justify-center overflow-hidden rounded-md bg-marketing-recessed p-2 shadow-[0_0_40px_rgba(200,155,60,0.3)]">
             {/* 192px WebP, not the old aurixa-symbol.svg — which was 535 KB,
                 being a base64 JPEG in an SVG wrapper, fetched to fill a 96px
                 square. Nothing about it was ever vector. */}
