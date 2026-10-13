@@ -156,17 +156,17 @@ export default function Industries() {
 
         {/* The supply side of the same market. Firms on this page place clients
             into stock; the people building it have their own network. */}
-        <div className="-mt-20 mb-32 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 border-l-2 border-[#C89B3C]/40 pl-6 sm:pl-8 py-4">
-          <p className="text-[#9CA3B8] font-light leading-relaxed text-sm max-w-2xl">
+        <div className="-mt-20 mb-32 glass-panel bg-marketing-panel border-l-2! border-l-[#C89B3C]/40! p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
+          <p className="min-w-0 text-[#9CA3B8] font-light leading-relaxed text-sm max-w-2xl">
             Building or developing the stock itself? Builders and developers publish availability to these firms
             through the Aurixa Builders Network.
           </p>
           <Link
             to="/builders"
-            className="group inline-flex items-center gap-3 text-[11px] font-bold tracking-[0.25em] uppercase text-[#00A8B5] hover:text-[#5EDDE8] transition-colors whitespace-nowrap"
+            className="group inline-flex min-h-11 max-w-full shrink-0 self-start lg:self-center items-center gap-3 text-[11px] font-bold tracking-[0.25em] uppercase text-[#00A8B5] hover:text-[#5EDDE8] transition-colors whitespace-normal lg:whitespace-nowrap"
           >
             For Builders &amp; Developers
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
