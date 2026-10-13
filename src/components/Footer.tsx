@@ -1,7 +1,43 @@
-import { Link } from "react-router-dom";
+import { useEffect, type ReactNode } from "react";
+import { Link, useLocation, useNavigationType } from "react-router-dom";
 import { BrandLogo } from "./BrandLogo";
+import { FOOTER_NAVIGATION_STATE, resolveFooterNavigation } from "../lib/footerNavigation";
+
+/** Marks the navigation as footer-initiated; renders the same `<a>` as before. */
+function FooterLink({ to, children }: { to: string; children: ReactNode }) {
+  return (
+    <Link to={to} state={FOOTER_NAVIGATION_STATE} className="hover:text-white transition-colors">
+      {children}
+    </Link>
+  );
+}
 
 export function Footer() {
+  const location = useLocation();
+  const navigationType = useNavigationType();
+
+  // Keyed on location.key, so it runs once per navigation and never replays on
+  // an unrelated re-render. It acts only on PUSH/REPLACE navigations carrying
+  // the footer's marker; everything else is left to ScrollToTop and the
+  // browser exactly as before. See src/lib/footerNavigation.ts.
+  useEffect(() => {
+    const action = resolveFooterNavigation({ navigationType, state: location.state, hash: location.hash });
+    if (action.kind === "ignore") return;
+
+    // Focus follows the scroll so the next Tab continues from the destination
+    // instead of returning to the footer. preventScroll stops a second jump.
+    const target = action.kind === "section" ? document.getElementById(action.id) : null;
+    if (target) {
+      target.scrollIntoView();
+      target.focus({ preventScroll: true });
+      return;
+    }
+
+    // Page-top links, and the fallback for a fragment with no matching element.
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    document.getElementById("main-content")?.focus({ preventScroll: true });
+  }, [location.key]);
+
   return (
     // The bottom padding clears the home indicator on gesture-navigation
     // phones and collapses to its old value where there is no inset.
@@ -15,7 +51,7 @@ export function Footer() {
             site had. */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-20 w-full mb-16">
           <div className="col-span-1 md:col-span-1 flex flex-col items-center md:items-start text-center md:text-left">
-            <BrandLogo className="mb-8 h-28 w-[430px] max-w-full sm:w-[520px] mx-auto md:mx-0" />
+            <BrandLogo state={FOOTER_NAVIGATION_STATE} className="mb-8 h-28 w-[430px] max-w-full sm:w-[520px] mx-auto md:mx-0" />
             <p className="text-sm text-marketing-muted leading-relaxed max-w-sm mx-auto md:mx-0">
               The indispensable backbone of industrial innovation. Bridging property and financial intelligence for serious advisory firms.
             </p>
@@ -24,39 +60,39 @@ export function Footer() {
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <h2 className="text-sm font-semibold tracking-wider uppercase text-white mb-6">Platform</h2>
             <ul className="flex flex-col items-center md:items-start gap-4 text-sm text-marketing-muted">
-              <li><Link to="/platform" className="hover:text-white transition-colors">Serviceability Engine</Link></li>
-              <li><Link to="/platform" className="hover:text-white transition-colors">Cash Flow Modelling</Link></li>
-              <li><Link to="/platform" className="hover:text-white transition-colors">Strategic Reporting</Link></li>
-              <li><Link to="/platform" className="hover:text-white transition-colors">Property Intelligence</Link></li>
-              <li><Link to="/platform" className="hover:text-white transition-colors">Security & Trust</Link></li>
+              <li><FooterLink to="/platform#serviceability">Serviceability Engine</FooterLink></li>
+              <li><FooterLink to="/platform#cashflow-reporting">Cash Flow Modelling</FooterLink></li>
+              <li><FooterLink to="/platform#custom-reporting">Strategic Reporting</FooterLink></li>
+              <li><FooterLink to="/platform#suburb-snapshots">Property Intelligence</FooterLink></li>
+              <li><FooterLink to="/compliance#security-architecture">Security & Trust</FooterLink></li>
+              <li><FooterLink to="/platform#brief-generation">Client Reporting</FooterLink></li>
+              <li><FooterLink to="/compliance#connected-compliance">Compliance OS</FooterLink></li>
+              <li><FooterLink to="/compliance-passport">Compliance Passport</FooterLink></li>
             </ul>
           </div>
 
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
-            <h2 className="text-sm font-semibold tracking-wider uppercase text-white mb-6">Solutions</h2>
+            <h2 className="text-sm font-semibold tracking-wider uppercase text-white mb-6">Who We Serve</h2>
             <ul className="flex flex-col items-center md:items-start gap-4 text-sm text-marketing-muted">
-              <li><Link to="/industries" className="hover:text-white transition-colors">For Buyers Agents</Link></li>
-              <li><Link to="/industries" className="hover:text-white transition-colors">For Wealth Advisors</Link></li>
-              <li><Link to="/industries" className="hover:text-white transition-colors">For Enterprise Firms</Link></li>
-              <li><Link to="/solutions" className="hover:text-white transition-colors">Client Reporting</Link></li>
-              <li><Link to="/solutions" className="hover:text-white transition-colors">Compliance OS</Link></li>
-              <li><Link to="/compliance-passport" className="hover:text-white transition-colors">Compliance Passport</Link></li>
-              <li><Link to="/builders" className="hover:text-white transition-colors">For Builders &amp; Developers</Link></li>
+              <li><FooterLink to="/industries#buyers-agents">For Buyers Agents</FooterLink></li>
+              <li><FooterLink to="/industries#wealth-advisors">For Wealth Advisors</FooterLink></li>
+              <li><FooterLink to="/industries#enterprise-firms">For Enterprise Firms</FooterLink></li>
+              <li><FooterLink to="/builders">For Builders &amp; Developers</FooterLink></li>
             </ul>
           </div>
 
           <div className="flex flex-col items-center md:items-start text-center md:text-left">
             <h2 className="text-sm font-semibold tracking-wider uppercase text-white mb-6">Company</h2>
             <ul className="flex flex-col items-center md:items-start gap-4 text-sm text-marketing-muted">
-              <li><Link to="/about" className="hover:text-white transition-colors">About Aurixa</Link></li>
-              <li><Link to="/resources" className="hover:text-white transition-colors">Intelligence Hub</Link></li>
-              <li><Link to="/docs" className="hover:text-white transition-colors">Documentation</Link></li>
-              <li><Link to="/compliance" className="hover:text-white transition-colors">Compliance</Link></li>
-              <li><Link to="/status" className="hover:text-white transition-colors">System Status</Link></li>
-              <li><Link to="/support" className="hover:text-white transition-colors">Support</Link></li>
-              <li><Link to="/contact" className="hover:text-white transition-colors">Join Waitlist</Link></li>
-              <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms &amp; Conditions</Link></li>
+              <li><FooterLink to="/about">About Aurixa</FooterLink></li>
+              <li><FooterLink to="/resources">Intelligence Hub</FooterLink></li>
+              <li><FooterLink to="/docs">Documentation</FooterLink></li>
+              <li><FooterLink to="/compliance">Compliance</FooterLink></li>
+              <li><FooterLink to="/status">System Status</FooterLink></li>
+              <li><FooterLink to="/support">Support</FooterLink></li>
+              <li><FooterLink to="/contact">Join Waitlist</FooterLink></li>
+              <li><FooterLink to="/privacy-policy">Privacy Policy</FooterLink></li>
+              <li><FooterLink to="/terms-and-conditions">Terms &amp; Conditions</FooterLink></li>
             </ul>
           </div>
         </div>

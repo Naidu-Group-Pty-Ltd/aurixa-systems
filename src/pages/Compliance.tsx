@@ -146,11 +146,11 @@ export default function Compliance() {
     </section>
 
     <div className="compliance-story-rail" aria-hidden="true" />
-    <section className="compliance-section compliance-section--framework"><SectionTransition number="01" /><div className="compliance-container">
+    <section id="connected-compliance" tabIndex={-1} className="compliance-section compliance-section--framework"><SectionTransition number="01" /><div className="compliance-container">
       <SectionHeader eyebrow="Connected Compliance" title="One Environment. Four Operational Layers." description="Aurixa brings infrastructure protection, client due diligence, information governance and operational responsibility into one connected framework. Each layer supports clearer oversight while remaining part of the same operational environment." />
       <ComplianceFrameworkVisual />
     </div></section>
-    <section className="compliance-section compliance-section--security"><SectionTransition number="02" /><div className="compliance-container">
+    <section id="security-architecture" tabIndex={-1} className="compliance-section compliance-section--security"><SectionTransition number="02" /><div className="compliance-container">
       <SectionHeader eyebrow="Security Architecture" title="Protection Across Every Layer." description="Aurixa combines independently assessed infrastructure, encrypted data handling and application-level controls to support secure and accountable platform delivery." />
       <SecurityArchitectureVisual />
     </div></section>
