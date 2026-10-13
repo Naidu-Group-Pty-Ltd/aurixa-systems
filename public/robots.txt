@@ -5,25 +5,13 @@
 # leakage. The agents below are named explicitly rather than left to the
 # wildcard so the intent is legible to a human reading this file.
 #
-# ── Why the unlisted routes are not listed here ───────────────────────────────
+# Every public page is listed in the sitemap named at the end of this file.
+# Pages that are not meant to appear in search results are deliberately not
+# named here. They are kept out of search indexes by a noindex directive that
+# each of them serves, and a crawler can only see that directive if it is
+# allowed to fetch the page, so nothing below blocks them.
 #
-# Several routes must never be indexed: /pricing-mock drives A$1 fixtures
-# against the LIVE Stripe account, /questionnaire and /schedule-strategic-review
-# are reached only by token, and the /pricing/* receipts carry a handoff token
-# in the URL. They are NOT disallowed below, deliberately, for two reasons:
-#
-#   1. Disallow and noindex defeat each other. A disallowed URL is never
-#      fetched, so the crawler never sees the `X-Robots-Tag: noindex` header
-#      that vercel.json serves for those paths — and a URL discovered through a
-#      link can still be indexed, listed without a description. Guaranteed
-#      de-indexing requires permitting the crawl and serving noindex.
-#
-#   2. This file is world-readable. Naming /pricing-mock here would publish the
-#      address of the page that charges real cards to anyone who types
-#      /robots.txt. Nothing on the site links to it; that is worth keeping.
-#
-# The noindex headers in vercel.json are what actually keeps those pages out of
-# an index. See src/lib/routeMetadata.ts for the single list both are built from.
+# This file is a request to well-behaved crawlers, not access control.
 
 User-agent: *
 Allow: /
@@ -41,15 +29,10 @@ User-agent: Amazonbot
 User-agent: meta-externalagent
 User-agent: CCBot
 Allow: /
-# Every page is prerendered, so the served HTML is already the whole page and
-# an agent that skips the bundles loses nothing. What it stops ingesting is the
-# application's internals — the webhook endpoints and price tables that live in
-# the JavaScript rather than the copy. Search engines are not asked to skip
-# them, because Google reads assets to check a page is not cloaking.
-#
-# Advisory only, and worth being clear about: this asks, it does not enforce.
-# It is not what keeps anything sensitive out of the bundle — VITE_ENABLE_PRICING_MOCK
-# is, by never building it. This is intent stated on top of that.
+# Every page is prerendered, so the HTML already carries the whole page and an
+# agent that skips the script bundles loses nothing. Search engines are not
+# asked to skip them, because they use those files to render each page.
+# Advisory only, like everything in this file.
 Disallow: /assets/
 
 Sitemap: https://www.aurixasystems.com.au/sitemap.xml

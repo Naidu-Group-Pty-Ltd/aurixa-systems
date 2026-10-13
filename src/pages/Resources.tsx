@@ -188,7 +188,7 @@ export default function Resources() {
             animate={{ opacity: 1, y: 0 }}
             className="text-xl text-[#9CA3AF] font-light leading-relaxed max-w-2xl mb-12"
           >
-            A comprehensive, unrestricted index of the underlying infrastructure components mapping our entire architectural capacity. The Aurixa Intelligence Centre is a comprehensively aggregated directory of the sub-systems and governed modules embedded within the Aurixa operational ecosystem.
+            A comprehensive, unrestricted index of the underlying infrastructure components mapping our entire architectural capacity. The Aurixa Intelligence Centre is a comprehensively aggregated directory of the sub-systems and <Link to="/docs" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">governed modules</Link> embedded within the Aurixa operational ecosystem.
           </motion.p>
         </div>
 

@@ -29,8 +29,17 @@ export const DEFAULT_OG_IMAGE = "/brand/og-default.png";
 export type RouteMetadata = {
   /** Must match the `path` on the corresponding `<Route>` in `App.tsx`. */
   path: string;
-  /** Full `<title>`. Convention: "<Page> | Aurixa Systems", except the home page. */
+  /**
+   * Full `<title>`. Convention: "<Page> | Aurixa Systems", except the home page.
+   * For a public page, "<Page>" says what the page covers rather than repeating
+   * its navigation label — "Platform" alone tells a search result nothing.
+   */
   title: string;
+  /**
+   * Served as the meta description and the og:/twitter: description, and
+   * reused verbatim in `llms.txt`. Written from what the page actually says:
+   * a claim the page does not make has no business in a search snippet.
+   */
   description: string;
   /**
    * `false` means: keep out of the sitemap, emit `noindex, nofollow` on the
@@ -39,9 +48,16 @@ export type RouteMetadata = {
    * that would otherwise be forgotten.
    */
   indexable: boolean;
-  /** Sitemap hint. Ignored entirely for non-indexable routes. */
+  /**
+   * Recorded for reference only: the generator does not emit it, because
+   * Google documents `<changefreq>` as ignored.
+   */
   changefreq?: "daily" | "weekly" | "monthly" | "yearly";
-  /** Sitemap hint, 0.0–1.0. Ignored entirely for non-indexable routes. */
+  /**
+   * Sitemap `<priority>`, 0.0–1.0. A relative hint between this site's own
+   * pages, not a ranking signal — Google ignores it. Not emitted for
+   * non-indexable routes, which are never in the sitemap at all.
+   */
   priority?: number;
 };
 
@@ -56,34 +72,34 @@ export const ROUTE_METADATA: RouteMetadata[] = [
   },
   {
     path: "/platform",
-    title: "Platform | Aurixa Systems",
+    title: "Property Intelligence & Financial Modelling Platform | Aurixa Systems",
     description:
-      "The Aurixa platform: client management, borrowing capacity, portfolio analysis, deal pipeline, voice agents and governance oversight, delivered as one operating system rather than a stack of tools.",
+      "For Australian property and finance firms: borrowing capacity and serviceability, 10-year cash flow modelling, white-label client reports, suburb snapshots and AI voice agents.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.9,
   },
   {
     path: "/solutions",
-    title: "Solutions | Aurixa Systems",
+    title: "Solutions for Property Advisory Firms | Aurixa Systems",
     description:
-      "How Aurixa is applied: strategic intelligence, financial modelling, client operations and enterprise governance, configured to the way your firm already works.",
+      "How property advisory and finance firms use Aurixa to win clients with serviceability modelling, keep strategies within APRA buffers and scale client reporting.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.8,
   },
   {
     path: "/industries",
-    title: "Industries | Aurixa Systems",
+    title: "Industries: Buyers Agents, Advisory & Finance Firms | Aurixa Systems",
     description:
-      "Aurixa serves buyer's agents, property advisory, mortgage and finance, development, accounting and SMSF, conveyancing and multi-service groups across Australia.",
+      "Aurixa serves buyers agents, wealth advisors, property advisory firms, real estate agencies, mortgage and finance businesses, investment groups, developers and enterprise networks.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.8,
   },
   {
     path: "/builders",
-    title: "For Builders & Developers | Aurixa Systems",
+    title: "Builders Network: Publish Stock to Advisory Firms | Aurixa Systems",
     description:
       "The Aurixa Builders Network: builders and developers publish stock once and reach the advisory firms placing clients into it, with connections granted one firm at a time.",
     indexable: true,
@@ -101,25 +117,25 @@ export const ROUTE_METADATA: RouteMetadata[] = [
   },
   {
     path: "/about",
-    title: "About | Aurixa Systems",
+    title: "About Us: Built From Inside Property & Finance | Aurixa Systems",
     description:
-      "Who Aurixa Systems is, how the platform is architected, and the governance principles behind an AI operating system built for regulated Australian firms.",
+      "Who built Aurixa Systems and why: property professionals and quantitative engineers, the principles behind the platform, and the data sovereignty framework protecting client data.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.6,
   },
   {
     path: "/resources",
-    title: "Resources | Aurixa Systems",
+    title: "Platform Module Library | Aurixa Systems",
     description:
-      "Guidance, frameworks and reference material on operating governed AI systems inside Australian property and finance businesses.",
+      "Every module in the Aurixa platform: workflow and deal flow, borrowing capacity and cash flow, property and scenario analysis, white-label reports, client portals and governance.",
     indexable: true,
     changefreq: "weekly",
     priority: 0.6,
   },
   {
     path: "/docs",
-    title: "Documentation | Aurixa Systems",
+    title: "Command Center Documentation | Aurixa Systems",
     description:
       "Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.",
     indexable: true,
@@ -130,16 +146,16 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: "/contact",
     title: "Priority Access Application | Aurixa Systems",
     description:
-      "Apply for priority access to Aurixa Systems. Tell us about your organisation and what you most want to improve, and the team will review your application.",
+      "Join the Aurixa Systems waitlist by applying for priority access. Tell us about your organisation and what you most want to improve, and the team will review your application.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.9,
   },
   {
     path: "/compliance",
-    title: "Compliance | Aurixa Systems",
+    title: "Compliance, Security & AML/CTF Governance | Aurixa Systems",
     description:
-      "Aurixa's approach to security, hosting, data residency, privacy obligations and AML/CTF support for Australian regulated firms.",
+      "How Aurixa supports compliance operations: encrypted infrastructure, AML/CTF and customer due diligence workflows, information governance and clearly shared responsibilities.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.7,
@@ -148,7 +164,7 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: "/compliance-passport",
     title: "AML/CTF Compliance Passport | Aurixa Systems",
     description:
-      "The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey, connecting clients, your team and authorised property professionals from onboarding through to transaction completion.",
+      "A guided AML/CTF journey for property transactions: identity verification, documents, screening, ownership, source of funds and review, recorded in one Compliance Passport.",
     indexable: true,
     changefreq: "monthly",
     priority: 0.8,

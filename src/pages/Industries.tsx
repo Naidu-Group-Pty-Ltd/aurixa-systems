@@ -41,7 +41,7 @@ export default function Industries() {
               <UserCheck className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Buyers Agents</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
-                Prove your value instantly. Instead of telling a client a property is a good investment, generate a 10-year cash flow analysis that proves it mathematically before the competition can even run a CMA.
+                Prove your value instantly. Instead of telling a client a property is a good investment, generate a <Link to="/platform" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">10-year cash flow analysis</Link> that proves it mathematically before the competition can even run a CMA.
                 <br />
                 <br />
                 Pain Point: Manual property searches, slow due diligence turnaround, and lack of visual professional reporting.
@@ -56,7 +56,7 @@ export default function Industries() {
               <Landmark className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h2 className="text-2xl font-display font-light text-white mb-4">Wealth Advisors</h2>
               <p className="text-[#9CA3B8] font-light leading-relaxed text-sm mb-6 flex-grow">
-                Integrate property into your wider wealth strategies without the compliance risk. Sync our matrices directly with your CRM and stop guessing on borrowing capacities.
+                Integrate property into your wider wealth strategies without the <Link to="/compliance" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">compliance risk</Link>. Sync our matrices directly with your CRM and stop guessing on borrowing capacities.
                 <br />
                 <br />
                 Pain Point: Difficulty standardising property advice within wider wealth strategies, manual compliance checking, and risk of providing unregulated advice.

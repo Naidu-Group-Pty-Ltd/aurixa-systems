@@ -2,28 +2,49 @@
 
 > Aurixa Systems builds governed AI operating systems for Australian property, finance and advisory firms: client intelligence, financial modelling, voice agents and compliance oversight in one controlled platform.
 
-Aurixa Systems is an Australian company serving property, finance and
-advisory firms. Access is granted through a staged Priority Access process
-rather than self-serve signup, and pricing is not published on the public
-site. The Contact page is the entry point for both.
+Aurixa Systems Pty Ltd (ABN 49 695 868 243) is based in New South Wales, Australia.
+Website: https://www.aurixasystems.com.au/
 
-## Product
-- [Platform](https://www.aurixasystems.com.au/platform): The Aurixa platform: client management, borrowing capacity, portfolio analysis, deal pipeline, voice agents and governance oversight, delivered as one operating system rather than a stack of tools.
-- [Solutions](https://www.aurixasystems.com.au/solutions): How Aurixa is applied: strategic intelligence, financial modelling, client operations and enterprise governance, configured to the way your firm already works.
-- [AML/CTF Compliance Passport](https://www.aurixasystems.com.au/compliance-passport): The Aurixa Systems AML/CTF Compliance Passport brings identity verification, documents, screening, ownership, source of funds and review into one clear, guided journey, connecting clients, your team and authorised property professionals from onboarding through to transaction completion.
-- [Industries](https://www.aurixasystems.com.au/industries): Aurixa serves buyer's agents, property advisory, mortgage and finance, development, accounting and SMSF, conveyancing and multi-service groups across Australia.
-- [For Builders & Developers](https://www.aurixasystems.com.au/builders): The Aurixa Builders Network: builders and developers publish stock once and reach the advisory firms placing clients into it, with connections granted one firm at a time.
-- [Documentation](https://www.aurixasystems.com.au/docs): Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.
+Access is granted through a staged Priority Access application rather than
+self-serve sign-up, and the Priority Access Application page below is the
+entry point. This guide does not cover pricing.
 
-## Company
-- [About](https://www.aurixasystems.com.au/about): Who Aurixa Systems is, how the platform is architected, and the governance principles behind an AI operating system built for regulated Australian firms.
-- [Compliance](https://www.aurixasystems.com.au/compliance): Aurixa's approach to security, hosting, data residency, privacy obligations and AML/CTF support for Australian regulated firms.
-- [Priority Access Application](https://www.aurixasystems.com.au/contact): Apply for priority access to Aurixa Systems. Tell us about your organisation and what you most want to improve, and the team will review your application.
+What the platform covers:
+
+- Property intelligence and financial modelling: borrowing capacity and serviceability against lender policy and APRA buffers, 10-year cash flow and yield analysis, scenario modelling and suburb snapshots.
+- Client reporting: white-label client briefs and reports, client and finance portals, and CRM integration.
+- Operational automation: workflow and deal pipeline management, configurable automations, and AI-assisted voice agents for inbound and outbound calls.
+- Compliance OS: AML/CTF and customer due diligence workflows, information governance and role-based access controls, set out on the Compliance page. Each organisation remains responsible for its own regulatory obligations.
+- AML/CTF Compliance Passport: a guided client journey through identity verification, documents, screening, ownership, source of funds and review, recorded as a Passport that, where authorised, can be shared with the other professionals in a property transaction.
+- Builders Network: builders and developers publish their stock once and connect to the advisory firms placing clients into it, one firm at a time.
+- Security and governance: data encrypted at rest and in transit, isolated data per partner tenant, role-based permissions, and client data that is not repurposed for internal machine-learning models.
+
+Who it serves: buyers agents, wealth advisors, property advisory firms, real estate agencies, mortgage and finance businesses, investment groups, developers and enterprise property networks.
+
+## Platform
+- [Property Intelligence & Financial Modelling Platform](https://www.aurixasystems.com.au/platform): For Australian property and finance firms: borrowing capacity and serviceability, 10-year cash flow modelling, white-label client reports, suburb snapshots and AI voice agents.
+- [Solutions for Property Advisory Firms](https://www.aurixasystems.com.au/solutions): How property advisory and finance firms use Aurixa to win clients with serviceability modelling, keep strategies within APRA buffers and scale client reporting.
+- [Industries: Buyers Agents, Advisory & Finance Firms](https://www.aurixasystems.com.au/industries): Aurixa serves buyers agents, wealth advisors, property advisory firms, real estate agencies, mortgage and finance businesses, investment groups, developers and enterprise networks.
+- [Platform Module Library](https://www.aurixasystems.com.au/resources): Every module in the Aurixa platform: workflow and deal flow, borrowing capacity and cash flow, property and scenario analysis, white-label reports, client portals and governance.
+
+## Compliance
+- [Compliance, Security & AML/CTF Governance](https://www.aurixasystems.com.au/compliance): How Aurixa supports compliance operations: encrypted infrastructure, AML/CTF and customer due diligence workflows, information governance and clearly shared responsibilities.
+- [AML/CTF Compliance Passport](https://www.aurixasystems.com.au/compliance-passport): A guided AML/CTF journey for property transactions: identity verification, documents, screening, ownership, source of funds and review, recorded in one Compliance Passport.
+
+## Builders Network
+- [Builders Network: Publish Stock to Advisory Firms](https://www.aurixasystems.com.au/builders): The Aurixa Builders Network: builders and developers publish stock once and reach the advisory firms placing clients into it, with connections granted one firm at a time.
+- [Apply for Builders Network Access](https://www.aurixasystems.com.au/builders/apply): Builders, developers and sales representatives apply for access to the Aurixa Builders Network. We set up your organisation and email your access link.
+
+## Documentation
+- [Command Center Documentation](https://www.aurixasystems.com.au/docs): Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.
+
+## Company and access
+- [About Us: Built From Inside Property & Finance](https://www.aurixasystems.com.au/about): Who built Aurixa Systems and why: property professionals and quantitative engineers, the principles behind the platform, and the data sovereignty framework protecting client data.
+- [Priority Access Application](https://www.aurixasystems.com.au/contact): Join the Aurixa Systems waitlist by applying for priority access. Tell us about your organisation and what you most want to improve, and the team will review your application.
 
 ## Legal
 - [Privacy Policy](https://www.aurixasystems.com.au/privacy-policy): How Aurixa Systems collects, uses, discloses and retains personal information, and how to exercise your privacy rights under Australian privacy law.
 - [Terms and Conditions](https://www.aurixasystems.com.au/terms-and-conditions): The terms governing access to and use of Aurixa Systems, including service scope, obligations, liability and termination.
 
 ## Optional
-- [Resources](https://www.aurixasystems.com.au/resources): Guidance, frameworks and reference material on operating governed AI systems inside Australian property and finance businesses.
 - [System Status](https://www.aurixasystems.com.au/status): Live health of the upstream services Aurixa Systems is built on, shown by provider role rather than by vendor, with 30 days of history per service. Auto-refreshes every minute.
