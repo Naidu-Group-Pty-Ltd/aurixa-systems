@@ -58,7 +58,7 @@ export default function Platform() {
         {/* Modules */}
         <div className="space-y-32">
           {/* Module 1 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div id="serviceability" tabIndex={-1} className="scroll-mt-[calc(var(--site-header-height)+1.5rem)] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="order-2 lg:order-1 glass-panel p-6 sm:p-12 relative overflow-hidden group">
                <div className="absolute inset-0 bg-gradient-to-br from-[#00A8B5]/10 to-transparent opacity-50" />
                <div className="relative z-10">
@@ -95,7 +95,7 @@ export default function Platform() {
           </div>
 
           {/* Module 2 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div id="cashflow-reporting" tabIndex={-1} className="scroll-mt-[calc(var(--site-header-height)+1.5rem)] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="lg:pr-12">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-px bg-white/30" />
@@ -114,7 +114,7 @@ export default function Platform() {
                 ))}
               </ul>
             </div>
-            <div className="glass-panel p-6 sm:p-12 relative overflow-hidden group">
+            <div id="brief-generation" tabIndex={-1} className="scroll-mt-[calc(var(--site-header-height)+1.5rem)] glass-panel p-6 sm:p-12 relative overflow-hidden group">
                <div className="absolute inset-0 bg-gradient-to-bl from-[#C89B3C]/10 to-transparent opacity-50" />
                <div className="relative z-10">
                  <Terminal className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
@@ -190,7 +190,7 @@ export default function Platform() {
             </div>
 
             {/* Add on 2: Customizable Reporting (Tall Box) */}
-            <div className="md:col-span-12 lg:col-span-4 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
+            <div id="custom-reporting" tabIndex={-1} className="scroll-mt-[calc(var(--site-header-height)+1.5rem)] md:col-span-12 lg:col-span-4 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-white/10 hover:border-white/30 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
                <div className="relative z-10">
                  <FileText className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h3 className="text-white font-display text-3xl mb-4 tracking-wide">Custom Reporting</h3>
@@ -253,7 +253,7 @@ export default function Platform() {
             </div>
 
             {/* Add on 4: Suburb Snapshots (Wide Span) */}
-            <div className="md:col-span-6 lg:col-span-7 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#00A8B5]/20 hover:border-[#00A8B5]/60 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
+            <div id="suburb-snapshots" tabIndex={-1} className="scroll-mt-[calc(var(--site-header-height)+1.5rem)] md:col-span-6 lg:col-span-7 glass-panel p-6 sm:p-10 md:p-12 group overflow-hidden border border-[#00A8B5]/20 hover:border-[#00A8B5]/60 transition-all duration-500 bg-gradient-to-bl from-marketing-panel/90 to-marketing-recessed relative flex flex-col justify-between min-h-[450px]">
                <div className="relative z-10 w-full max-w-sm">
                  <MapPin className="w-12 h-12 mb-8" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
                  <h3 className="text-white font-display text-3xl mb-4 tracking-wide shadow-black drop-shadow-lg">Suburb Snapshots</h3>

@@ -9,12 +9,19 @@ interface BrandLogoProps {
    * footer mark is well below the fold on every page. Callers say which.
    */
   priority?: boolean;
+  /**
+   * Router state for the link. Only the footer passes one, to mark its own
+   * navigations (see src/lib/footerNavigation.ts); the header mark leaves it
+   * unset and behaves exactly as before.
+   */
+  state?: unknown;
 }
 
-export function BrandLogo({ className, imageClassName, compact = false, priority = false }: BrandLogoProps) {
+export function BrandLogo({ className, imageClassName, compact = false, priority = false, state }: BrandLogoProps) {
   return (
     <Link
       to="/"
+      state={state}
       aria-label="Aurixa Systems home"
       className={[
         "block",
