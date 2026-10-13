@@ -8,5 +8,10 @@
     top: calc(var(--site-header-height) + var(--safe-top) + 1.5rem);
     max-height: calc(100dvh - var(--site-header-height) - var(--safe-top) - 3rem);
     overflow-y: auto;
+    scrollbar-width: none;
+  }
+
+  .contact-page .contact-waitlist-intro::-webkit-scrollbar {
+    display: none;
   }
 }
