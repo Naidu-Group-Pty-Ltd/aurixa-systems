@@ -156,17 +156,24 @@ export default function Industries() {
 
         {/* The supply side of the same market. Firms on this page place clients
             into stock; the people building it have their own network. */}
-        <div className="-mt-20 mb-32 glass-panel bg-marketing-panel border-l-2! border-l-[#C89B3C]/40! p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-          <p className="min-w-0 text-[#9CA3B8] font-light leading-relaxed text-sm max-w-2xl">
-            Building or developing the stock itself? Builders and developers publish availability to these firms
-            through the Aurixa Builders Network.
+        <div
+          className="-mt-20 mb-32 glass-panel border-l-2! border-l-[#C89B3C]/80! p-6 sm:p-8 flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10"
+          style={{
+            background: "radial-gradient(ellipse at 0% 50%, rgba(200, 155, 60, 0.1), transparent 58%), linear-gradient(110deg, #17314F 0%, var(--color-marketing-panel) 72%, #102A3E 100%)",
+            borderColor: "rgba(200, 155, 60, 0.32)",
+            boxShadow: "inset 0 1px 0 rgba(245, 209, 122, 0.1), 0 14px 38px -18px rgba(0, 0, 0, 0.5), 0 0 26px -12px rgba(200, 155, 60, 0.16)",
+          }}
+        >
+          <p className="min-w-0 text-[#D1D5DB] font-light leading-relaxed text-sm max-w-2xl">
+            <span className="font-medium text-white">Building or developing the stock itself?</span>{" "}
+            Builders and developers publish availability to these firms through the Aurixa Builders Network.
           </p>
           <Link
             to="/builders"
-            className="group inline-flex min-h-11 max-w-full shrink-0 self-start lg:self-center items-center gap-3 text-[11px] font-bold tracking-[0.25em] uppercase text-[#00A8B5] hover:text-[#5EDDE8] transition-colors whitespace-normal lg:whitespace-nowrap"
+            className="group inline-flex min-h-11 max-w-full shrink-0 self-start lg:self-center items-center gap-3 rounded-sm border border-[#00A8B5]/50 bg-[#00A8B5]/10 px-4 py-3 text-[11px] font-bold tracking-[0.25em] uppercase text-[#5EDDE8] hover:text-white hover:border-[#5EDDE8]/70 hover:bg-[#00A8B5]/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F5D17A] transition-colors motion-reduce:transition-none whitespace-normal lg:whitespace-nowrap"
           >
             For Builders &amp; Developers
-            <ArrowRight className="w-4 h-4 shrink-0 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 shrink-0 motion-safe:group-hover:translate-x-1 transition-transform motion-reduce:transition-none" />
           </Link>
         </div>
 
