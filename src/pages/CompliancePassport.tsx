@@ -230,7 +230,7 @@ function PassportCTA() {
     <Corners /><div className="convergence" aria-hidden="true">{[1, 2, 3, 4].map(n => <i key={n} />)}<span /></div>
     <div className="compliance-cta__content"><Eyebrow>Make AML/CTF Feel Effortless</Eyebrow>
       <h2>Compliance Made Clearer. The Journey Kept Moving.</h2>
-      <p>The regulatory responsibility remains important. The experience does not need to feel difficult. Guide your clients, control the journey, connect your professionals, and bring the verified journey together through the Aurixa Compliance Passport.</p>
+      <p>The <Link to="/compliance" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">regulatory responsibility</Link> remains important. The experience does not need to feel difficult. Guide your clients, control the journey, connect your professionals, and bring the verified journey together through the Aurixa Compliance Passport.</p>
       <div className="passport-actions">
         <Link className="passport-btn" to="/contact">Book Your Free Demo<ArrowRight aria-hidden="true" /></Link>
         <a className="passport-btn passport-btn--ghost" href="#passport">Explore the Compliance Passport<ArrowRight aria-hidden="true" /></a>

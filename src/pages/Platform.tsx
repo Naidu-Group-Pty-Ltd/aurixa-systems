@@ -367,7 +367,7 @@ export default function Platform() {
               <div className="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 bg-gradient-to-b from-[#C89B3C]/5 to-transparent pointer-events-none" />
               <ShieldCheck className="w-8 h-8 mb-6" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
               <h3 className="text-white font-display text-xl mb-4">Absolute Compliance</h3>
-              <p className="text-gray-500 font-light text-sm">Mathematics govern everything. Calculations are permanently anchored to federal compliance and regulatory buffer mandates. Role-based permissions, data governance, and oversight mechanisms protect your brand and enforce compliance.</p>
+              <p className="text-gray-500 font-light text-sm">Mathematics govern everything. Calculations are permanently anchored to federal compliance and regulatory buffer mandates. Role-based permissions, data governance, and oversight mechanisms protect your brand and <Link to="/compliance" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">enforce compliance</Link>.</p>
             </div>
             <div className="p-8 border border-white/5 bg-marketing-panel relative overflow-hidden group">
               <div className="absolute inset-0 transition-opacity opacity-0 group-hover:opacity-100 bg-gradient-to-b from-white/5 to-transparent pointer-events-none" />

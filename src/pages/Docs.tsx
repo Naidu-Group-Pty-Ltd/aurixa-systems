@@ -264,7 +264,8 @@ export default function Docs() {
             <span className="text-chrome-prismatic italic drop-shadow-2xl">Documentation.</span>
           </motion.h1>
           <p className="text-xl text-[#9CA3AF] font-light leading-relaxed max-w-2xl mb-8">
-            The complete reference for the Aurixa Command Center: every module, every workflow, and the
+            The complete reference for the Aurixa Command Center:{" "}
+            <Link to="/resources" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">every module</Link>, every workflow, and the
             reasoning underneath. Written for the people who use it all day.
           </p>
 

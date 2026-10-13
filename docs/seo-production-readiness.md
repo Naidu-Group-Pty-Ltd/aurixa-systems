@@ -71,11 +71,15 @@ fixtures against the **live** Stripe account; `/questionnaire` and
 carry a handoff token in the URL. Publishing any of them is an incident.
 
 `routeMetadata.test.ts` fails if a route in `App.tsx` has no registry entry, so a
-new route cannot ship without someone deciding whether it is indexable.
+new route cannot ship without someone deciding whether it is indexable. Both
+sides of the split are pinned by name, so moving a route either way means
+deleting a line from a test, not just editing a boolean.
 
-| Public (11) | Unlisted (8) |
+Current split (October 2026; the audit above was taken at 11 and 8):
+
+| Public (15) | Unlisted (9) |
 | --- | --- |
-| `/` `/platform` `/solutions` `/industries` `/about` `/resources` `/docs` `/contact` `/compliance` `/privacy-policy` `/terms-and-conditions` | `/pricing` `/pricing/success` `/pricing/cancel` `/pricing/card-saved` `/pricing-mock` `/questionnaire` `/schedule-strategic-review` `/feedback` |
+| `/` `/platform` `/solutions` `/industries` `/builders` `/builders/apply` `/about` `/resources` `/docs` `/contact` `/compliance` `/compliance-passport` `/privacy-policy` `/terms-and-conditions` `/status` | `/pricing` `/pricing/success` `/pricing/cancel` `/pricing/card-saved` `/pricing-mock` `/questionnaire` `/schedule-strategic-review` `/feedback` `/support` |
 
 ## One metadata implementation
 
@@ -404,3 +408,169 @@ Still to check on a preview deployment, because it cannot be tested locally:
 curl -sI $BASE/questionnaire | grep -i x-robots-tag     # expect noindex, nofollow
 curl -sI $BASE/platform      | grep -i x-robots-tag     # expect nothing
 ```
+
+## SEO optimisation pass — October 2026
+
+A follow-up pass on titles, descriptions, the public SEO files and structured
+data. Nothing about routing, prerendering, billing or the noindex machinery
+changed: all nine unlisted routes keep `indexable: false`, their prerendered
+`noindex, nofollow`, their `X-Robots-Tag` header and their absence from
+`sitemap.xml` and `llms.txt`.
+
+### Titles and descriptions
+
+Six public pages had titles that were only their navigation label —
+`Platform | Aurixa Systems`, `Solutions | …`, `Industries | …`, `About | …`,
+`Resources | …`, `Compliance | …` — which tells a search result nothing. Each now
+says what the page covers, and every description was rechecked against the
+page's own copy:
+
+| Route | Title now | Why the description changed |
+| --- | --- | --- |
+| `/platform` | Property Intelligence & Financial Modelling Platform | Leads with the modules the page actually details |
+| `/solutions` | Solutions for Property Advisory Firms | Was generic; now the page's three outcomes |
+| `/industries` | Industries: Buyers Agents, Advisory & Finance Firms | **Was wrong**: claimed "accounting and SMSF, conveyancing" audiences the page never mentions; now the nine the page lists |
+| `/builders` | Builders Network: Publish Stock to Advisory Firms | Unchanged |
+| `/about` | About Us: Built From Inside Property & Finance | Now the page's actual story: who built it, its principles, the data sovereignty framework |
+| `/resources` | Platform Module Library | **Was wrong**: promised "guidance, frameworks and reference material"; the page is a directory of platform modules |
+| `/docs` | Command Center Documentation | Unchanged; matches the page's H1 |
+| `/contact` | Priority Access Application (unchanged) | Names the waitlist, which is the page's H1 |
+| `/compliance` | Compliance, Security & AML/CTF Governance | **Was wrong**: claimed "hosting, data residency" content the page does not have |
+| `/compliance-passport` | AML/CTF Compliance Passport (unchanged) | Was 296 characters; tightened to the six steps the page sets out |
+
+The home page title and the sitewide description were already specific and
+accurate, and are unchanged. Claims that appear on a page but would mislead out
+of context — infrastructure-provider certifications, "patented", performance
+multiples — are deliberately kept out of metadata and `llms.txt`.
+
+### robots.txt
+
+The rules are unchanged: every crawler may fetch everything, and the named AI
+agents are asked to skip `/assets/`. The **comments** changed. They used to name
+`/pricing-mock`, `/questionnaire`, `/schedule-strategic-review` and the
+`/pricing/*` receipts — to explain why those paths were *not* listed — which
+published the very addresses the file was careful not to list. The test that
+should have caught it stripped comments before checking. The comments now
+explain the policy without naming a route, and the same was true of a comment in
+`index.html`, which ships in every prerendered page.
+
+The check now reads the whole file, comments included, and recognises a path
+however it is written (directive, comment, link, absolute URL, or a hyphenated
+slug like `pricing-mock` without its slash) while letting ordinary words like
+"pricing" and "support" through. It lives in `src/lib/seoFiles.ts` as
+`unlistedRoutesNamedIn` and runs twice: in the test suite, and in
+`scripts/generate-seo-files.ts` at prebuild — because this repository has no CI,
+the build is the only gate that runs on every deploy. A violation fails the
+build.
+
+### llms.txt
+
+Still generated, still linking only indexable routes. It now carries the legal
+entity and ABN (from `src/lib/legal.ts`, the record the legal pages print), a
+plain-language summary of each capability area — property intelligence and
+modelling, client reporting, operational automation, Compliance OS, the
+Compliance Passport, the Builders Network, security — and links every public page
+(it previously omitted `/builders/apply`). Every statement restates something a
+public page already says.
+
+The old line "pricing is not published on the public site" was replaced with
+"This guide does not cover pricing." `/pricing` is unlisted and `noindex`, but
+it is reachable by URL and linked from `/docs`, so the old sentence was not
+accurate.
+
+`llms.txt` is an emerging convention (llmstxt.org), not a standard any search
+engine or assistant is obliged to read. It costs nothing and keeps one accurate
+summary at a well-known address; it should not be expected to move rankings.
+
+### sitemap.xml
+
+Unchanged, byte for byte — the public route set did not change. `lastmod` stays
+absent: there is no reliable source for when a page's *content* last changed
+(commit dates move for styling and refactors, and a shallow clone has none), and
+an untrustworthy `lastmod` is worse than none. `priority` is kept as a relative
+hint between this site's pages; Google ignores it and it is not a ranking factor.
+
+### Structured data
+
+The Organization `logo` now points at the square brand mark
+(`/brand/aurixa-symbol-192.webp`, 192×192, transparent, reads correctly on
+white) instead of the 1200×630 social card, which search surfaces would crop or
+shrink in their small square logo slot. Google's guidance is at least 112×112, a
+crawlable URL, and a format Google Images supports.
+
+The legal name, ABN and region match `src/lib/legal.ts` and pass the ATO ABN
+checksum; they are unchanged. They could not be checked against the ABR during
+this pass (the lookup service was not reachable from the build environment), so
+that remains a manual confirmation.
+
+`BreadcrumbList` was considered and not added: the site is one level deep apart
+from `/builders/apply`, and has no visible breadcrumb trail for the markup to
+describe. Still no `Product` or `Offer` markup, and a test now forbids any.
+
+### Internal links
+
+The header and footer already link nearly every public page from every page.
+What was thin was in-copy linking: most pages' body text linked only to
+`/contact`. Eight existing phrases now link to the page that covers them — no
+new copy, sections or calls to action:
+
+| Page | Phrase | Links to |
+| --- | --- | --- |
+| `/industries` | "10-year cash flow analysis" | `/platform` |
+| `/industries` | "compliance risk" | `/compliance` |
+| `/solutions` | "serviceability models" | `/platform` |
+| `/platform` | "enforce compliance" | `/compliance` |
+| `/about` | "enterprise-grade SSL/TLS encryption" | `/compliance` |
+| `/resources` | "governed modules" | `/docs` |
+| `/docs` | "every module" | `/resources` |
+| `/compliance-passport` | "regulatory responsibility" | `/compliance` |
+
+They link to pages, not `#sections`: `ScrollToTop` deliberately leaves fragment
+URLs alone, and only footer links carry the state that scrolls to a section.
+They use the site's existing inline-link colour plus a faint underline, because
+teal against the muted body grey is about 1.15:1 — colour alone does not mark
+them as links (WCAG 1.4.1).
+
+### Tests
+
+`src/lib/seoFiles.test.ts` is new; `routeMetadata.test.ts` was strengthened.
+Between them they now also cover: the public route set pinned by name; unique
+descriptions and the title convention; the committed `sitemap.xml` and
+`llms.txt` equal to the generator's output byte for byte; sitemap well-formedness;
+`llms.txt` shape, coverage, and the absence of prices, payment details and
+credentials; robots.txt parsed and evaluated per RFC 9309 (Googlebot and Bingbot
+can fetch every public page and its assets, every unlisted page stays fetchable
+so its `noindex` is visible, the AI agents keep their rules); the exact
+`noindex, nofollow` header value; JSON-LD validity, identity, logo size and the
+absence of offers and prices; `index.html` defaults agreeing with the registry;
+and, against the build, one of each head tag per page with the right values,
+JSON-LD intact on every page, every internal link resolving (including footer
+`#section` targets), no public page linking a gated route other than `/support`
+(footer) and `/pricing` (documentation), no orphaned public page, and the full
+header and footer on every public page.
+
+Each guard was mutation-tested — the old robots.txt, a broad `Disallow: /pri`,
+a hand edit to `llms.txt`, `/docs` flipped to unlisted, the logo reverted, an
+`Offer` added, a link to `/questionnaire`, a dropped footer link — and each
+fails the suite.
+
+### Still manual: Search Console and Bing Webmaster Tools
+
+Neither was reachable from the environment this pass ran in, so nothing was
+submitted or checked there. For someone with account access:
+
+1. **Google Search Console** (Domain property, DNS-verified as described above):
+   Sitemaps → confirm `sitemap.xml` is submitted and reads 15 URLs. Pages →
+   check for "Duplicate, Google chose different canonical" or "Crawled –
+   currently not indexed" on public pages. URL Inspection on `/platform` should
+   show the new title; on `/pricing` it should report *Excluded by 'noindex'
+   tag*. Search for `site:aurixasystems.com.au pricing` to confirm no unlisted
+   page is in the index.
+2. **Bing Webmaster Tools**: import the site from Search Console (or verify by
+   DNS), submit `sitemap.xml`, and check URL Inspection the same way.
+3. **IndexNow** reaches Bing and the other participating engines:
+   `npm run submit-indexnow -- --dry` to review, then `npm run submit-indexnow`
+   once the deploy is live. Run it once per material change, not per deploy.
+
+None of this makes indexing immediate or guaranteed; search engines recrawl on
+their own schedule.
