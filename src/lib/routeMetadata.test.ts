@@ -11,6 +11,7 @@ import {
   routeMetadata,
   unlistedPaths,
 } from "./routeMetadata";
+import { unlistedRoutesNamedIn } from "./seoFiles";
 
 /** Every `path="…"` on a `<Route>` in App.tsx, catch-all excluded. */
 async function declaredRoutePaths(): Promise<string[]> {
@@ -76,6 +77,31 @@ test("the deliberately unlisted routes stay unlisted", () => {
   ]);
 });
 
+/**
+ * The inverse pin. De-indexing a public page is as silent as indexing a private
+ * one — the page keeps working, it just stops being found — so turning any of
+ * these to `indexable: false` should also require deleting a line here.
+ */
+test("the public routes stay public", () => {
+  assert.deepEqual(indexableRoutes().map((entry) => entry.path).sort(), [
+    "/",
+    "/about",
+    "/builders",
+    "/builders/apply",
+    "/compliance",
+    "/compliance-passport",
+    "/contact",
+    "/docs",
+    "/industries",
+    "/platform",
+    "/privacy-policy",
+    "/resources",
+    "/solutions",
+    "/status",
+    "/terms-and-conditions",
+  ]);
+});
+
 test("no unlisted route can reach the sitemap", () => {
   const listed = new Set(indexableRoutes().map((entry) => entry.path));
   for (const path of unlistedPaths()) {
@@ -96,12 +122,28 @@ test("every route has a usable title and description", () => {
       entry.description.length <= 320,
       `${entry.path} description is ${entry.description.length} chars (max 320)`,
     );
+    if (entry.path !== "/") {
+      assert.ok(
+        entry.title.endsWith(" | Aurixa Systems"),
+        `${entry.path} title breaks the "<Page> | Aurixa Systems" convention: ${entry.title}`,
+      );
+    }
   }
 });
 
 test("titles are unique, so no two pages look alike in a tab strip or a SERP", () => {
   const titles = ROUTE_METADATA.map((entry) => entry.title);
   assert.equal(new Set(titles).size, titles.length, "duplicate <title> detected");
+});
+
+/** A description copied between pages tells a search engine the pages are the same. */
+test("descriptions are unique", () => {
+  const seen = new Map<string, string>();
+  for (const entry of ROUTE_METADATA) {
+    const other = seen.get(entry.description);
+    assert.ok(!other, `${entry.path} reuses the description of ${other}`);
+    seen.set(entry.description, entry.path);
+  }
 });
 
 test("canonical URLs are absolute and single-slashed", () => {
@@ -150,28 +192,57 @@ test("the committed sitemap lists exactly the indexable routes", async () => {
  * robots.txt is included on purpose: `Disallow: /pricing-mock` would *advertise*
  * the page while simultaneously preventing the crawl that would let a bot see
  * the `noindex` header. Both halves of that are wrong, so the file names none
- * of them. See the comment at the top of `public/robots.txt`.
+ * of them. See "robots.txt" in docs/seo-production-readiness.md.
+ *
+ * Comments are checked too. They used to be exempt, on the theory that prose
+ * publishes nothing a crawler will follow — but a person reading
+ * /robots.txt reads the comments, and that person is the one this is about.
+ * `index.html` is included because its comments ship in every prerendered page.
  */
 test("no unlisted route is named in any world-readable file", async () => {
   const files = {
     "sitemap.xml": await publicFile("sitemap.xml"),
     "llms.txt": await publicFile("llms.txt"),
     "robots.txt": await publicFile("robots.txt"),
+    "index.html": await readFile(new URL("../../index.html", import.meta.url), "utf8"),
   };
   for (const [name, contents] of Object.entries(files)) {
-    // Comments explain *why* these paths are absent, which cannot be done
-    // without writing them down. Prose publishes nothing a crawler will follow.
-    const body = contents
-      .split("\n")
-      .filter((line) => !line.trimStart().startsWith("#"))
-      .join("\n")
-      .replace(/<!--[\s\S]*?-->/g, "");
-    for (const path of unlistedPaths()) {
-      assert.ok(
-        !body.includes(path),
-        `${name} names the unlisted route ${path}`,
-      );
-    }
+    assert.deepEqual(unlistedRoutesNamedIn(contents), [], `${name} names an unlisted route`);
+  }
+});
+
+/**
+ * The detector above is only worth trusting if it catches the real shapes of
+ * the mistake and lets ordinary prose through. Synthetic fixtures only — no
+ * real session ids or tokens.
+ */
+test("the unlisted-route detector catches paths and passes prose", () => {
+  const leaks: [string, string][] = [
+    ["Disallow: /pricing-mock", "/pricing-mock"],
+    ["Disallow:/support", "/support"],
+    ["# /questionnaire is reached only by token", "/questionnaire"],
+    ["# the /pricing/* receipts carry a token", "/pricing"],
+    ["- [Receipt](https://www.aurixasystems.com.au/pricing/success?session_id=cs_test_fixture)", "/pricing/success"],
+    ["<loc>https://aurixasystems.com.au/feedback</loc>", "/feedback"],
+    ["see (/schedule-strategic-review)", "/schedule-strategic-review"],
+    ["the pricing-mock page", "/pricing-mock"],
+    ["after card-saved", "/pricing/card-saved"],
+  ];
+  for (const [text, path] of leaks) {
+    assert.ok(unlistedRoutesNamedIn(text).includes(path), `missed ${path} in: ${text}`);
+  }
+
+  const prose = [
+    "This guide does not cover pricing.",
+    "Support is available to customers. Feedback is welcome.",
+    "A short questionnaire follows the application.",
+    "Disallow: /assets/",
+    "Sitemap: https://www.aurixasystems.com.au/sitemap.xml",
+    "https://example.com/pricing",
+    "/brand/support-mark.png",
+  ];
+  for (const text of prose) {
+    assert.deepEqual(unlistedRoutesNamedIn(text), [], `false positive in: ${text}`);
   }
 });
 
@@ -196,12 +267,14 @@ test("every unlisted route is covered by a noindex header in vercel.json", async
     await readFile(new URL("../../vercel.json", import.meta.url), "utf8"),
   ) as { headers?: { source: string; headers: { key: string; value: string }[] }[] };
 
+  // Exactly the directive the page itself carries: `noindex` alone would still
+  // let a crawler follow the token-bearing links out of a receipt page.
   const noindexSources = (config.headers ?? [])
     .filter((rule) =>
       rule.headers.some(
         (header) =>
           header.key.toLowerCase() === "x-robots-tag" &&
-          header.value.includes("noindex"),
+          header.value === "noindex, nofollow",
       ),
     )
     .map((rule) => new RegExp(`^${rule.source}$`));
@@ -209,7 +282,7 @@ test("every unlisted route is covered by a noindex header in vercel.json", async
   for (const path of unlistedPaths()) {
     assert.ok(
       noindexSources.some((pattern) => pattern.test(path)),
-      `${path} has no X-Robots-Tag: noindex rule in vercel.json`,
+      `${path} has no X-Robots-Tag: noindex, nofollow rule in vercel.json`,
     );
   }
 });
