@@ -40,6 +40,7 @@ import {
   validateWaitlistForm,
 } from "../lib/waitlist";
 import { useRouteMetadata } from "../lib/pageMetadata";
+import "./Contact.css";
 
 const MAKE_WAITLIST_WEBHOOK_URL = "https://hook.eu2.make.com/589rb23xwbgovfj3iuemtcuxm75cccut";
 
@@ -209,7 +210,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="marketing-page w-full relative pt-32 pb-20 min-h-dvh bg-marketing-page overflow-hidden">
+    <div className="contact-page marketing-page w-full relative pt-32 pb-20 min-h-dvh bg-marketing-page overflow-x-clip">
       {showHandoff && (
         <StageOneCompleteModal
           onProceed={() => navigate("/questionnaire")}
@@ -222,28 +223,32 @@ export default function Contact() {
 
         {/* Left Side */}
         <div className="pt-10 flex flex-col justify-between">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <span className="w-12 h-px bg-white/50" />
-              <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">Restricted Action</span>
-            </div>
-            <h1 className="text-[clamp(2.4rem,12vw,3rem)] md:text-7xl lg:text-[4.5rem] font-display font-light mb-8 tracking-[-0.02em] leading-[1.05]">
-              <span className="block text-white mb-2">The</span>
-              <span className="italic text-chrome-prismatic drop-shadow-2xl">Waitlist.</span>
-            </h1>
+          {/* This track ends above Operational Freeze, bounding the sticky introduction. */}
+          <div className="flex-1">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="contact-waitlist-intro flow-root"
+            >
+              <div className="flex items-center gap-3 mb-8">
+                <span className="w-12 h-px bg-white/50" />
+                <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">Restricted Action</span>
+              </div>
+              <h1 className="text-[clamp(2.4rem,12vw,3rem)] md:text-7xl lg:text-[4.5rem] font-display font-light mb-8 tracking-[-0.02em] leading-[1.05]">
+                <span className="block text-white mb-2">The</span>
+                <span className="italic text-chrome-prismatic drop-shadow-2xl">Waitlist.</span>
+              </h1>
 
-            <div className="space-y-6 text-gray-400 text-lg font-light leading-relaxed mb-12">
-              <p>
-                We strictly cap our active partner ecosystem to ensure our infrastructure provides an unassailable, asymmetrical advantage in the market. This restricted action protects infrastructure fidelity for active partners while preserving a controlled path for firms seeking enterprise operational intelligence.
-              </p>
-              <p>
-                Application review cycle is now open. Firms will be selected via strict merit-based hierarchy regarding transaction volume, market stance, and alignment with Aurixa's strategic objectives. The application takes 60-90 seconds; we then send a short Business Readiness Questionnaire so our team can identify the most suitable platform configuration for your firm.
-              </p>
-            </div>
-          </motion.div>
+              <div className="space-y-6 text-gray-400 text-lg font-light leading-relaxed mb-12">
+                <p>
+                  We strictly cap our active partner ecosystem to ensure our infrastructure provides an unassailable, asymmetrical advantage in the market. This restricted action protects infrastructure fidelity for active partners while preserving a controlled path for firms seeking enterprise operational intelligence.
+                </p>
+                <p>
+                  Application review cycle is now open. Firms will be selected via strict merit-based hierarchy regarding transaction volume, market stance, and alignment with Aurixa's strategic objectives. The application takes 60-90 seconds; we then send a short Business Readiness Questionnaire so our team can identify the most suitable platform configuration for your firm.
+                </p>
+              </div>
+            </motion.div>
+          </div>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}

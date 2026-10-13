@@ -1,0 +1,9 @@
+/* Leave short viewports and the stacked layout in normal document flow.
+   The narrower two-column layout needs more height for its extra text wrapping. */
+@media screen and (min-width: 64rem) and (min-height: 60rem),
+       screen and (min-width: 80rem) and (min-height: 55rem) {
+  .contact-page .contact-waitlist-intro {
+    position: sticky;
+    top: calc(var(--site-header-height) + var(--safe-top) + 1.5rem);
+  }
+}
