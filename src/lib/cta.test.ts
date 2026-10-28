@@ -32,7 +32,10 @@ test("the trial length is written once, in cta.ts", async () => {
   // The videos are recordings: their transcripts say what was filmed, and no
   // constant can change that. Everything else derives from FREE_TRIAL_DAYS.
   const exempt = new Set(["lib/cta.ts", "lib/videos/catalog.ts"]);
-  const typedOut = /\b(?:14|fourteen)(?:-day|\s+days?)\b/i;
+  // A trial length in the same sentence as "trial", so an unrelated 14-day
+  // period elsewhere (a link expiry, a notice period) is not caught.
+  const length = String.raw`\b(?:14|fourteen)(?:-day|\s+days?)\b`;
+  const typedOut = new RegExp(`${length}(?=[^.\\n]*\\btrial)|\\btrial\\b[^.\\n]*${length}`, "i");
   const offenders = [...(await sources())]
     .filter(([file, text]) => !exempt.has(file.replaceAll("\\", "/")) && typedOut.test(text))
     .map(([file, text]) => `${file}: ${typedOut.exec(text)?.[0]}`);

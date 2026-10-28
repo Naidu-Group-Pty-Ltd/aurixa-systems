@@ -43,7 +43,9 @@ bottleneck field.
 All applicant-facing copy comes from `WAITLIST_COPY` in `src/lib/waitlist.ts`,
 matching Appendix A.1/A.2: heading, supporting text, time estimate, required-field
 note, helper text, pre-submit explanation, consent wording and the button label
-("Submit Priority Access Application").
+("Apply for my free trial"; it was "Submit Priority Access Application" until
+the page became the free trial application, and the trial length in this copy
+comes from `FREE_TRIAL_DAYS` in `src/lib/cta.ts`).
 
 The collection notice is presented inline above the acknowledgement checkbox —
 Aurixa's identity, purposes, typical disclosures, the privacy contact pathway and
