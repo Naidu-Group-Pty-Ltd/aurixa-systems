@@ -288,7 +288,7 @@ export default function Resources() {
                Live deployment demonstrations and proprietary operational blueprints are walled off from general traffic. Access requires an authorized partner protocol link. Explore the ecosystem to access structured operational intelligence, automation systems, reporting infrastructure, and enterprise support.
              </p>
              <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] uppercase tracking-[0.25em] font-bold text-[#040B16] bg-gradient-to-r from-[#C89B3C] to-[#E2C78C] rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)] hover:shadow-[0_0_50px_rgba(200,155,60,0.5)]">
-               <span className="drop-shadow-sm font-black">{TRIAL_CTA.label}</span>
+               <span className="drop-shadow-sm font-black text-balance">{TRIAL_CTA.label}</span>
                <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform stroke-[#040B16] drop-shadow-sm" style={{ strokeWidth: 2 }}/>
              </Link>
            </div>

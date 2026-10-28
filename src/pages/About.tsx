@@ -230,7 +230,7 @@ export default function About() {
             </div>
             
             <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[13px] md:text-sm uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all duration-300 hover:scale-[1.02] shadow-[0_0_40px_rgba(200,155,60,0.3)] hover:shadow-[0_0_60px_rgba(200,155,60,0.5)] border border-[#C89B3C]">
-              <span className="drop-shadow-md">{TRIAL_CTA.label}</span>
+              <span className="drop-shadow-md text-balance">{TRIAL_CTA.label}</span>
               <Target className="w-5 h-5 ml-4 group-hover:rotate-90 transition-transform duration-500 drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
           </div>

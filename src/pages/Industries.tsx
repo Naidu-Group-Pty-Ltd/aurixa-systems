@@ -194,7 +194,7 @@ export default function Industries() {
               Start with a {FREE_TRIAL} in your firm's own workspace. Every application is reviewed by the Aurixa team, and your trial starts the day your workspace goes live.
             </p>
             <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)]">
-              <span className="drop-shadow-md">{TRIAL_CTA.label}</span>
+              <span className="drop-shadow-md text-balance">{TRIAL_CTA.label}</span>
               <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
           </div>
