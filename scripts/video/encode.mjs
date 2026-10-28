@@ -35,7 +35,7 @@
  */
 
 import { spawn } from "node:child_process";
-import { mkdir, readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { mkdir, readdir, readFile, rm, stat, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import {
@@ -117,6 +117,19 @@ async function probe(sourcePath) {
 }
 
 /**
+ * Each rendition starts from an empty directory. ffmpeg overwrites the
+ * segments it writes but never removes the ones it does not, so re-encoding a
+ * shorter cut into the same folder would leave the old tail behind — counted
+ * by `measureRendition` (inflating BANDWIDTH, so players under-select) and
+ * published by upload.sh. Only rendition folders are cleared; captions placed
+ * beside them survive.
+ */
+async function freshDirectory(dir) {
+  await rm(dir, { recursive: true, force: true });
+  await mkdir(dir, { recursive: true });
+}
+
+/**
  * Segments must be a whole number of GOPs, and the GOP must be a whole number
  * of frames, or the rungs drift out of alignment over the runtime.
  */
@@ -126,7 +139,7 @@ function gopFrames(fps) {
 
 async function encodeVideoRendition(sourcePath, outDir, rendition, sourceInfo, options) {
   const dir = path.join(outDir, rendition.id);
-  await mkdir(dir, { recursive: true });
+  await freshDirectory(dir);
 
   const gop = gopFrames(sourceInfo.fps);
   const maxrate = `${rendition.maxrateKbps}k`;
@@ -180,7 +193,7 @@ async function encodeVideoRendition(sourcePath, outDir, rendition, sourceInfo, o
 
 async function encodeAudioRendition(sourcePath, outDir, rendition) {
   const dir = path.join(outDir, rendition.id);
-  await mkdir(dir, { recursive: true });
+  await freshDirectory(dir);
 
   await run("ffmpeg", [
     "-nostdin", "-y",
@@ -458,6 +471,12 @@ async function main() {
     `Segment length: ${SEGMENT_SECONDS}s (GOP ${gopFrames(source.fps)} frames), ` +
       `preset ${options.preset}, tune ${options.tune}${args.draft ? "  — DRAFT, do not publish" : ""}\n`,
   );
+
+  // A silent re-encode must not leave an earlier cut's audio folders behind
+  // for upload.sh to publish.
+  if (!source.hasAudio) {
+    await Promise.all(AUDIO_RENDITIONS.map((rendition) => rm(path.join(outDir, rendition.id), { recursive: true, force: true })));
+  }
 
   const audioJobs = source.hasAudio
     ? AUDIO_RENDITIONS.map((rendition) => ({

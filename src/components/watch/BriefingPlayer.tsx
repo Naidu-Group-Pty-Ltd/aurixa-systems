@@ -95,6 +95,14 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
   /** Where to start once metadata has loaded. */
   const pendingSeekRef = useRef<number | null>(null);
   /**
+   * The viewer pressed pause. A pause rejects a still-pending play() with the
+   * same AbortError a source swap does; this is what tells the two apart, so
+   * a deliberate pause before the first frame is never overridden by the next
+   * `canplay`. Source swaps and `load()` fire no `pause` event, so they never
+   * set it.
+   */
+  const userPausedRef = useRef(false);
+  /**
    * Starts media fetching on the live engine. Until a viewer shows intent —
    * a hover or focus on the poster, or the play itself — only the playlists
    * are fetched, so a visitor browsing the library downloads no video.
@@ -157,6 +165,10 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
           setStarted(false);
           return;
         }
+        if (name === "AbortError" && userPausedRef.current) {
+          wantsPlayRef.current = false;
+          return;
+        }
         // AbortError / NotSupportedError: the source was still attaching.
         // `canplay` will try again.
         wantsPlayRef.current = true;
@@ -171,6 +183,7 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
       setStarted(true);
       setResumeAt(null);
       wantsPlayRef.current = true;
+      userPausedRef.current = false;
 
       if (typeof at === "number") {
         if (video.readyState >= 1) video.currentTime = at;
@@ -219,6 +232,10 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
     };
 
     const saveProgress = () => {
+      // Nothing has played: leave whatever was saved alone. Where metadata
+      // loads ahead of play (native HLS, the MP4), leaving the page would
+      // otherwise write 0:00 over a viewer's resume point.
+      if (video.played.length === 0) return;
       if (!Number.isFinite(video.duration) || video.duration <= 0) return;
       writeProgress(slug, video.currentTime, video.duration);
       lastWritten = video.currentTime;
@@ -246,6 +263,7 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
       store.set({ status: "loading" });
     });
     addMediaListener("pause", () => {
+      userPausedRef.current = true;
       if (!video.ended) store.set({ status: "paused" });
       saveProgress();
     });
@@ -282,6 +300,9 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
       tracker.markLoadStart("progressive");
       video.src = mp4Url;
       video.load();
+      // iOS, and any `preload="none"` session, fires no `canplay` until
+      // play() is called, so a play that is wanted is asked for here.
+      if (wantsPlayRef.current) attemptPlay();
       addMediaListener("error", () => {
         if (!disposed) fail();
       });
@@ -293,6 +314,7 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
       tracker.markLoadStart("native-hls");
       video.src = url;
       video.load();
+      if (wantsPlayRef.current) attemptPlay();
 
       // Safari surfaces a manifest or decode failure as a plain media error, so
       // one retry and then progressive is the only ladder available to us here.
@@ -300,7 +322,10 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
         if (disposed || video.src !== url) return;
         if (!nativeRetried) {
           nativeRetried = true;
+          // load() cancels a pending play; ask again rather than wait for a
+          // `canplay` iOS will not send.
           video.load();
+          if (wantsPlayRef.current) attemptPlay();
           return;
         }
         useProgressiveFallback();
@@ -323,9 +348,13 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
           debug: import.meta.env.DEV,
           onLevel: (height) => tracker.markLevel(height),
           onThroughput: (bps) => tracker.markThroughput(bps),
-          onExhausted: () => {
+          onExhausted: ({ position, playing }) => {
             engine = null;
             if (disposed) return;
+            // Carry the viewer across: same point in the briefing, and still
+            // playing if it was. The next engine starts from a reset element.
+            if (position > 0) pendingSeekRef.current = position;
+            if (playing) wantsPlayRef.current = true;
             // Step down the engine ladder rather than straight to progressive.
             if (!startNativeHls(url)) useProgressiveFallback();
           },

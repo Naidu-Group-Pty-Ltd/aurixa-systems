@@ -202,6 +202,13 @@ them. `share.test.ts` pins the tags.
   seeking and resume persistence worked, and the end card handed over to the
   next briefing and autoplayed under a gesture-required autoplay policy. There
   were no console errors.
+- After an independent review, these were re-run with three adversarial
+  cases on a throttled connection, and all passed:
+  - Pausing before the first frame stays paused.
+  - Leaving without playing keeps a saved resume point, and the library card
+    shows it.
+  - A briefing whose manifest 404s falls back through native HLS to the MP4
+    and plays.
 - The full test suite passed against a build with two briefings published:
   prerendered pages, per-video cards and `og:type`, sitemap and `llms.txt`
   parity, link resolution, and nav and footer on every page.

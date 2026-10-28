@@ -87,6 +87,9 @@ while IFS= read -r -d '' file; do
   relative="${relative//\\//}"
   target="${SUPABASE_URL}/storage/v1/object/${BUCKET}/${PREFIX}/${relative}"
 
+  # Emptied first: curl leaves the file untouched when no response arrives, and
+  # a body left over from an earlier "Duplicate" would read as a skip.
+  : > "$response_body"
   status=$(curl -sS -o "$response_body" -w '%{http_code}' \
     -X POST "$target" \
     -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
@@ -98,7 +101,7 @@ while IFS= read -r -d '' file; do
   if [[ "$status" == "200" || "$status" == "201" ]]; then
     uploaded=$((uploaded + 1))
     printf '  ok   %s\n' "$relative"
-  elif grep -qiE 'duplicate|already exists' "$response_body" 2>/dev/null; then
+  elif [[ "$status" == "400" || "$status" == "409" ]] && grep -qiE 'duplicate|already exists' "$response_body"; then
     skipped=$((skipped + 1))
     printf '  skip %s (already published)\n' "$relative"
   else

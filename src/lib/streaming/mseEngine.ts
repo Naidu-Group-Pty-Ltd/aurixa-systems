@@ -39,8 +39,13 @@ export type MseEngineOptions = {
   onLevel?: (height: number | null) => void;
   /** Called with each new throughput measurement. */
   onThroughput?: (bps: number) => void;
-  /** Called once recovery is exhausted, so the caller can change engine. */
-  onExhausted?: () => void;
+  /**
+   * Called once recovery is exhausted, so the caller can change engine. It is
+   * told where playback was and whether it was running, because tearing the
+   * engine down resets the element — the next engine should pick up there,
+   * not at 0:00, paused.
+   */
+  onExhausted?: (state: { position: number; playing: boolean }) => void;
   /**
    * Parse the manifest but fetch no media until `startLoad()`. The NPC VSL
    * buffered from the moment it attached, which suits a page whose only job
@@ -85,8 +90,11 @@ export function createMseEngine(options: MseEngineOptions): MseEngine | null {
 
   const giveUp = () => {
     if (destroyed) return;
+    // Read before destroy(): detaching removes the source and reloads the
+    // element, which zeroes `currentTime` and pauses it.
+    const state = { position: video.currentTime || 0, playing: !video.paused };
     destroy();
-    onExhausted?.();
+    onExhausted?.(state);
   };
 
   /**
@@ -149,7 +157,18 @@ export function createMseEngine(options: MseEngineOptions): MseEngine | null {
     hls.autoLevelCapping = capIndex;
   };
 
-  hls.on(Events.MEDIA_ATTACHED, () => hls.loadSource(url));
+  // The source is loaded once. A later MEDIA_ATTACHED is `recoverMediaError()`
+  // detaching and re-attaching the same element; reloading the source there
+  // would re-fetch the manifest, rewind to 0 and run the MANIFEST_PARSED setup
+  // again (another network listener, another ResizeObserver). Instead the load
+  // is restarted where it was — `-1` resumes from hls.js' last known position —
+  // which a deferred engine must do itself, since it has no autoStartLoad.
+  hls.once(Events.MEDIA_ATTACHED, () => {
+    hls.loadSource(url);
+    hls.on(Events.MEDIA_ATTACHED, () => {
+      if (!destroyed && loadStarted) hls.startLoad(-1);
+    });
+  });
 
   /**
    * hls.js ignores `startLoad` until the manifest is parsed, so a request that
@@ -197,6 +216,15 @@ export function createMseEngine(options: MseEngineOptions): MseEngine | null {
 
     switch (data.type) {
       case ErrorTypes.NETWORK_ERROR: {
+        // Before the manifest has parsed there is nothing for `startLoad` to
+        // resume — it never re-requests the master playlist — so a fatal load
+        // failure there (a 404, a CORS refusal, a wrong version path) would
+        // wait forever. The manifest policy has already retried with backoff;
+        // change engine instead.
+        if (!manifestParsed) {
+          giveUp();
+          return;
+        }
         // A manifest that cannot be parsed will not become parseable on a
         // retry, so that case skips straight to the next engine.
         if (data.details === ErrorDetails.MANIFEST_PARSING_ERROR) {
