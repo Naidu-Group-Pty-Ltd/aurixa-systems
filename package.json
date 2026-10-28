@@ -11,7 +11,10 @@
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\" \"api/**/*.test.ts\"",
-    "submit-indexnow": "tsx scripts/submit-indexnow.ts"
+    "submit-indexnow": "tsx scripts/submit-indexnow.ts",
+    "video:encode": "node scripts/video/encode.mjs",
+    "video:upload": "bash scripts/video/upload.sh",
+    "video:verify": "node scripts/video/verify.mjs"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",

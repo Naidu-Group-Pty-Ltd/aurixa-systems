@@ -16,3 +16,8 @@ __pycache__/
 
 # The SSR bundle built for scripts/prerender.ts; an artifact, like dist/.
 dist-ssr/
+
+# Encoded Briefing Room ladders from scripts/video/encode.mjs. Published to
+# media storage by scripts/video/upload.sh, never committed or deployed — and
+# kept out of dist/, which every build empties.
+media-build/
