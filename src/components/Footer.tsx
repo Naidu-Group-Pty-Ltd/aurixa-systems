@@ -86,6 +86,7 @@ export function Footer() {
             <ul className="flex flex-col items-center md:items-start gap-4 text-sm text-marketing-muted">
               <li><FooterLink to="/about">About Aurixa</FooterLink></li>
               <li><FooterLink to="/resources">Intelligence Hub</FooterLink></li>
+              <li><FooterLink to="/watch">Video Briefings</FooterLink></li>
               <li><FooterLink to="/docs">Documentation</FooterLink></li>
               <li><FooterLink to="/compliance">Compliance</FooterLink></li>
               <li><FooterLink to="/status">System Status</FooterLink></li>

@@ -34,6 +34,13 @@ interface ImportMetaEnv {
    * eliminated from the build rather than merely hidden behind a route.
    */
   readonly VITE_ENABLE_PRICING_MOCK?: string;
+  /**
+   * Briefing Room media origin. Unset, briefings stream from the public
+   * `marketing-media` bucket in the Aurixa Systems Supabase project; set it
+   * only to point a staging build at other storage. Read by the prerender pass
+   * too, so the served social cards follow it.
+   */
+  readonly VITE_VIDEO_MEDIA_ORIGIN?: string;
 }
 
 interface ImportMeta {

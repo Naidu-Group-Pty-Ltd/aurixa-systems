@@ -4,21 +4,36 @@ import { readFile, readdir } from "node:fs/promises";
 import { test } from "node:test";
 import {
   DEFAULT_DESCRIPTION,
+  PARAMETERISED_ROUTES,
   ROUTE_METADATA,
   SITE_ORIGIN,
   absoluteUrl,
+  briefingRoutes,
   indexableRoutes,
   routeMetadata,
   unlistedPaths,
 } from "./routeMetadata";
 import { unlistedRoutesNamedIn } from "./seoFiles";
 
-/** Every `path="…"` on a `<Route>` in App.tsx, catch-all excluded. */
-async function declaredRoutePaths(): Promise<string[]> {
+/** Every `path="…"` on a `<Route>` in App.tsx, catch-all excluded, as written. */
+async function routePathsAsWritten(): Promise<string[]> {
   const source = await readFile(new URL("../App.tsx", import.meta.url), "utf8");
   return [...source.matchAll(/<Route\s+path="([^"]+)"/g)]
     .map((match) => match[1])
     .filter((path) => path !== "*");
+}
+
+/**
+ * Every concrete path App.tsx can serve. A parameterised `<Route>` is
+ * expanded through `PARAMETERISED_ROUTES` rather than skipped, so the paths it
+ * serves are held to the same registration rule as every literal one. An
+ * unexpanded parameter is kept as written, which no registry entry matches, so
+ * it fails the first test below instead of passing unseen.
+ */
+async function declaredRoutePaths(): Promise<string[]> {
+  return (await routePathsAsWritten()).flatMap((path) =>
+    path.includes(":") && PARAMETERISED_ROUTES[path] ? PARAMETERISED_ROUTES[path]() : [path],
+  );
 }
 
 /**
@@ -43,6 +58,11 @@ test("every route declared in App.tsx has registered metadata", async () => {
     [],
     `routes in App.tsx with no entry in routeMetadata.ts: ${missing.join(", ")}`,
   );
+});
+
+test("every parameterised route in App.tsx has an expansion, and nothing else does", async () => {
+  const parameterised = (await routePathsAsWritten()).filter((path) => path.includes(":"));
+  assert.deepEqual(parameterised.sort(), Object.keys(PARAMETERISED_ROUTES).sort());
 });
 
 test("every registered route still exists in App.tsx", async () => {
@@ -83,23 +103,32 @@ test("the deliberately unlisted routes stay unlisted", () => {
  * these to `indexable: false` should also require deleting a line here.
  */
 test("the public routes stay public", () => {
-  assert.deepEqual(indexableRoutes().map((entry) => entry.path).sort(), [
-    "/",
-    "/about",
-    "/builders",
-    "/builders/apply",
-    "/compliance",
-    "/compliance-passport",
-    "/contact",
-    "/docs",
-    "/industries",
-    "/platform",
-    "/privacy-policy",
-    "/resources",
-    "/solutions",
-    "/status",
-    "/terms-and-conditions",
-  ]);
+  // The fixed pages by name, plus one page per published briefing — those come
+  // and go with the catalogue by design, and catalog.test.ts holds each one to
+  // the publishing rules instead.
+  const briefings = briefingRoutes().map((entry) => entry.path);
+  assert.deepEqual(
+    indexableRoutes().map((entry) => entry.path).sort(),
+    [
+      "/",
+      "/about",
+      "/builders",
+      "/builders/apply",
+      "/compliance",
+      "/compliance-passport",
+      "/contact",
+      "/docs",
+      "/industries",
+      "/platform",
+      "/privacy-policy",
+      "/resources",
+      "/solutions",
+      "/status",
+      "/terms-and-conditions",
+      "/watch",
+      ...briefings,
+    ].sort(),
+  );
 });
 
 test("no unlisted route can reach the sitemap", () => {

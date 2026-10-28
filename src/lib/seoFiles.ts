@@ -18,10 +18,12 @@ import {
   SITE_NAME,
   SITE_ORIGIN,
   absoluteUrl,
+  briefingRoutes,
   indexableRoutes,
   unlistedPaths,
   type RouteMetadata,
 } from "./routeMetadata";
+import { BRIEFING_ROOM_PATH } from "./videos/catalog";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -96,6 +98,12 @@ const LLMS_SECTIONS: { heading: string; paths: string[] }[] = [
   { heading: "Compliance", paths: ["/compliance", "/compliance-passport"] },
   { heading: "Builders Network", paths: ["/builders", "/builders/apply"] },
   { heading: "Documentation", paths: ["/docs"] },
+  // The hub, then each published briefing in library order. A briefing is
+  // only a route once it can be watched, so a premiere never appears here.
+  {
+    heading: "Video briefings",
+    paths: [BRIEFING_ROOM_PATH, ...briefingRoutes().map((route) => route.path)],
+  },
   { heading: "Company and access", paths: ["/about", "/contact"] },
   { heading: "Legal", paths: ["/privacy-policy", "/terms-and-conditions"] },
 ];

@@ -41,6 +41,7 @@ const EXPECTED_COLUMNS = [
     links: [
       ["About Aurixa", "/about"],
       ["Intelligence Hub", "/resources"],
+      ["Video Briefings", "/watch"],
       ["Documentation", "/docs"],
       ["Compliance", "/compliance"],
       ["System Status", "/status"],
@@ -93,11 +94,11 @@ test("footer columns, labels, order and destinations match the agreed structure"
   assert.deepEqual(footerColumns(await read("./Footer.tsx")), EXPECTED_COLUMNS);
 });
 
-test("all 21 text links and the logo are accounted for, each once", async () => {
+test("all 22 text links and the logo are accounted for, each once", async () => {
   const source = await read("./Footer.tsx");
-  assert.equal(EXPECTED_LINKS.length, 21);
-  assert.equal(new Set(EXPECTED_LINKS.map(([label]) => label)).size, 21, "duplicate label");
-  assert.equal(count(source, "<FooterLink to="), 21, "a footer link was added or lost");
+  assert.equal(EXPECTED_LINKS.length, 22);
+  assert.equal(new Set(EXPECTED_LINKS.map(([label]) => label)).size, 22, "duplicate label");
+  assert.equal(count(source, "<FooterLink to="), 22, "a footer link was added or lost");
   assert.equal(count(source, "<BrandLogo "), 1, "the footer logo is missing or duplicated");
   assert.match(await read("./BrandLogo.tsx"), /<Link\s+to="\/"\s/, "the logo no longer links to /");
 });

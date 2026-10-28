@@ -1,8 +1,16 @@
 import { motion } from "motion/react";
-import { ArrowRight, BarChart3, Database, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Database, Play, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { useRouteMetadata } from "../lib/pageMetadata";
+import { briefingPath, featuredBriefing, formatDuration, isPublished } from "../lib/videos/catalog";
+
+// The Briefing Room's lead video, once there is one to watch. Until a briefing
+// is published the hero offers nothing, rather than a link to a premiere.
+const heroBriefing = (() => {
+  const featured = featuredBriefing();
+  return isPublished(featured) ? featured : null;
+})();
 
 export default function Home() {
   useRouteMetadata("/");
@@ -60,6 +68,25 @@ export default function Home() {
               Explore The Ecosystem
             </Link>
           </motion.div>
+
+          {heroBriefing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+              className="mt-8"
+            >
+              <Link
+                to={briefingPath(heroBriefing.slug)}
+                className="group inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] font-semibold text-[#d7b35f] hover:text-white transition-colors"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d7b35f]/50 group-hover:border-[#5edde8] transition-colors">
+                  <Play className="h-3 w-3 translate-x-[1px]" style={{ stroke: "url(#icon-gold-gradient)", fill: "url(#icon-gold-gradient)" }} />
+                </span>
+                Watch the {formatDuration(heroBriefing.durationSeconds)} briefing
+              </Link>
+            </motion.div>
+          )}
         </div>
       </section>
 

@@ -29,9 +29,9 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import {
-  DEFAULT_OG_IMAGE,
   ROUTE_METADATA,
   absoluteUrl,
+  ogImageUrl,
   type RouteMetadata,
 } from "../src/lib/routeMetadata.ts";
 
@@ -69,7 +69,9 @@ function setTag(html: string, match: RegExp, replacement: string): string {
 
 function pageHtml(route: RouteMetadata, body: string): string {
   const url = absoluteUrl(route.path);
-  const image = `${absoluteUrl("/")}${DEFAULT_OG_IMAGE.replace(/^\//, "")}`;
+  // A briefing page carries its own 1200×630 card from media storage, so a
+  // shared video unfurls as that video; everything else keeps the sitewide one.
+  const image = attr(ogImageUrl(route.ogImage));
   const title = attr(route.title);
   const description = attr(route.description);
 
@@ -114,6 +116,16 @@ function pageHtml(route: RouteMetadata, body: string): string {
     html,
     /<meta property="og:image" content="[^"]*"\s*\/>/,
     `<meta property="og:image" content="${image}" />`,
+  );
+  html = setTag(
+    html,
+    /<meta name="twitter:image" content="[^"]*"\s*\/>/,
+    `<meta name="twitter:image" content="${image}" />`,
+  );
+  html = setTag(
+    html,
+    /<meta property="og:type" content="[^"]*"\s*\/>/,
+    `<meta property="og:type" content="${attr(route.ogType ?? "website")}" />`,
   );
 
   // The one signal a crawler that does not execute JavaScript will ever see.

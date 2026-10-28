@@ -3,6 +3,7 @@ import {
   DEFAULT_OG_IMAGE,
   SITE_NAME,
   absoluteUrl,
+  ogImageUrl,
   routeMetadata,
   type RouteMetadata,
 } from "./routeMetadata";
@@ -37,7 +38,10 @@ export type PageMetadata = {
   canonicalPath: string;
   /** e.g. `"noindex, nofollow"`. Omitted entirely on indexable pages. */
   robots?: string;
-  /** Absolute path under `public/`. Defaults to the sitewide card. */
+  /**
+   * Absolute path under `public/`, or an absolute `https:` URL for a card held
+   * in media storage. Defaults to the sitewide card.
+   */
   ogImage?: string;
   ogType?: string;
 };
@@ -132,7 +136,7 @@ export function usePageMetadata({
     document.title = title;
 
     const url = absoluteUrl(canonicalPath);
-    const image = `${absoluteUrl("/")}${ogImage.replace(/^\//, "")}`;
+    const image = ogImageUrl(ogImage);
 
     const managed: ManagedTag[] = [
       meta("description", description),
@@ -180,5 +184,7 @@ export function useRouteMetadata(path: string): void {
     description: entry?.description ?? "",
     canonicalPath: entry?.path ?? path,
     robots: entry && !entry.indexable ? "noindex, nofollow" : undefined,
+    ogImage: entry?.ogImage,
+    ogType: entry?.ogType,
   });
 }

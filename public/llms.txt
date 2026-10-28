@@ -38,6 +38,9 @@ Who it serves: buyers agents, wealth advisors, property advisory firms, real est
 ## Documentation
 - [Command Center Documentation](https://www.aurixasystems.com.au/docs): Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.
 
+## Video briefings
+- [Briefing Room: Aurixa Explainer Videos](https://www.aurixasystems.com.au/watch): The Aurixa Briefing Room: short explainer videos on the platform, from serviceability and cash flow modelling to client reporting, AI voice agents, the Compliance Passport and the Builders Network.
+
 ## Company and access
 - [About Us: Built From Inside Property & Finance](https://www.aurixasystems.com.au/about): Who built Aurixa Systems and why: property professionals and quantitative engineers, the principles behind the platform, and the data sovereignty framework protecting client data.
 - [Priority Access Application](https://www.aurixasystems.com.au/contact): Join the Aurixa Systems waitlist by applying for priority access. Tell us about your organisation and what you most want to improve, and the team will review your application.
