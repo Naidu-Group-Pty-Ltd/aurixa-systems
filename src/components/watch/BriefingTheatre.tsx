@@ -14,6 +14,7 @@ import {
   type PublishedBriefing,
 } from "../../lib/videos/catalog";
 import { usePlayback, type PlaybackSnapshot, type PlaybackStore } from "../../lib/videos/playback";
+import { TRIAL_CTA } from "../../lib/cta";
 
 /**
  * The frame around the player: a prismatic border, corner registration marks
@@ -129,8 +130,8 @@ function Standby({ briefing }: { briefing: Briefing }) {
           <Link to={briefing.explore.to} className="watch-btn watch-btn--primary">
             {briefing.explore.label} <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
-          <Link to="/contact" className="watch-btn watch-btn--ghost">
-            Join the waitlist
+          <Link to={TRIAL_CTA.to} className="watch-btn watch-btn--ghost">
+            {TRIAL_CTA.label}
           </Link>
         </div>
       </div>
@@ -216,10 +217,10 @@ function EndCard({ store, next }: { store: PlaybackStore; next: PublishedBriefin
       ) : (
         <div className="watch-endcard__inner watch-endcard__inner--final">
           <p className="watch-mono watch-endcard__eyebrow">Briefing complete</p>
-          <p className="watch-endcard__title">See it working on your own clients.</p>
+          <p className="watch-endcard__title">Your business. Your experience. Your decision.</p>
           <div className="watch-endcard__actions">
-            <Link to="/contact" className="watch-btn watch-btn--primary">
-              Book your free demo <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <Link to={TRIAL_CTA.to} className="watch-btn watch-btn--primary">
+              {TRIAL_CTA.label} <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <button type="button" className="watch-btn watch-btn--ghost" onClick={replay}>
               <RotateCcw className="h-4 w-4" aria-hidden="true" /> Replay

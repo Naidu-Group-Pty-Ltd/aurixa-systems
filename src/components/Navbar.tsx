@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "./BrandLogo";
+import { TRIAL_CTA } from "../lib/cta";
 
 const NAV_ITEMS = [
   { label: "Home", href: "/" },
@@ -70,11 +71,13 @@ export function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-6">
+          {/* The short label, held to one line. A longer one comes out of the
+              1024px budget noted above; the full label is in the mobile menu. */}
           <Link
-            to="/contact"
-            className="group relative isolate inline-flex items-center justify-center overflow-hidden px-4 xl:px-6 py-2.5 text-[13px] font-black tracking-widest uppercase text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,168,181,0.3)] hover:shadow-[0_0_30px_rgba(200,155,60,0.6)]"
+            to={TRIAL_CTA.to}
+            className="group relative isolate inline-flex items-center justify-center overflow-hidden whitespace-nowrap px-4 xl:px-6 py-2.5 text-[13px] font-black tracking-widest uppercase text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,168,181,0.3)] hover:shadow-[0_0_30px_rgba(200,155,60,0.6)]"
           >
-            <span className="relative z-10 text-white tracking-[0.18em] xl:tracking-[0.25em] font-semibold">JOIN WAITLIST</span>
+            <span className="relative z-10 text-white tracking-[0.18em] xl:tracking-[0.25em] font-semibold">{TRIAL_CTA.shortLabel}</span>
           <div aria-hidden="true" className="pointer-events-none absolute inset-0 rounded-sm bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
           </Link>
         </div>
@@ -115,11 +118,11 @@ export function Navbar() {
           </nav>
           <hr className="border-white/10 my-2" />
           <Link
-            to="/contact"
+            to={TRIAL_CTA.to}
             onClick={() => setIsOpen(false)}
             className="flex min-h-[44px] items-center text-lg font-bold text-[#C89B3C] uppercase tracking-widest hover:text-[#00A8B5]"
           >
-            Join Waitlist
+            {TRIAL_CTA.label}
           </Link>
         </div>
       )}

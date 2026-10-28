@@ -3,6 +3,7 @@ import { ArrowRight, Briefcase, Landmark, UserCheck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { IndustriesHeroVisual } from "../components/AnimatedHeroVisuals";
+import { FREE_TRIAL, TRIAL_CTA } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 export default function Industries() {
@@ -181,7 +182,7 @@ export default function Industries() {
         <div className="mt-20 glass-panel p-6 sm:p-16 text-center shadow-2xl relative overflow-hidden border border-white/10">
           <div className="absolute inset-0 bg-chrome-prismatic opacity-10 pointer-events-none" />
           <div className="relative z-10 flex flex-col items-center">
-            <span className="px-4 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C89B3C] border border-[#C89B3C]/30 mb-8 rounded-sm">Allocation Restricted</span>
+            <span className="px-4 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C89B3C] border border-[#C89B3C]/30 mb-8 rounded-sm">{FREE_TRIAL}</span>
             <h2 className="text-4xl md:text-6xl font-display font-light tracking-tight mb-8 text-white">Ready To Scale With Control.</h2>
             <p className="text-[#9CA3B8] mb-12 max-w-2xl mx-auto text-lg leading-relaxed font-light">
               Aurixa is built for property and finance businesses that have outgrown manual processes, disconnected platforms, and reactive operations.
@@ -190,10 +191,10 @@ export default function Industries() {
               Join the ecosystem that connects client engagement, CRM workflows, reporting, integrations, administration, governance, and operational intelligence into one structured environment.
               <br />
               <br />
-              Book your demo to explore whether your firm qualifies for the next deployment cycle.
+              Start with a {FREE_TRIAL} in your firm's own workspace. Every application is reviewed by the Aurixa team, and your trial starts the day your workspace goes live.
             </p>
-            <Link to="/contact" className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)]">
-              <span className="drop-shadow-md">Book Your Free Demo</span>
+            <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)]">
+              <span className="drop-shadow-md">{TRIAL_CTA.label}</span>
               <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
           </div>

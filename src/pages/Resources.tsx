@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
+import { TRIAL_CTA } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 const MODULE_CATEGORIES = [
@@ -286,8 +287,8 @@ export default function Resources() {
              <p className="text-[#00A8B5]/80 font-mono text-[11px] leading-relaxed mb-10 max-w-xl uppercase tracking-widest text-center">
                Live deployment demonstrations and proprietary operational blueprints are walled off from general traffic. Access requires an authorized partner protocol link. Explore the ecosystem to access structured operational intelligence, automation systems, reporting infrastructure, and enterprise support.
              </p>
-             <Link to="/contact" className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] uppercase tracking-[0.25em] font-bold text-[#040B16] bg-gradient-to-r from-[#C89B3C] to-[#E2C78C] rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)] hover:shadow-[0_0_50px_rgba(200,155,60,0.5)]">
-               <span className="drop-shadow-sm font-black">BOOK ENTERPRISE DEMO</span>
+             <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] uppercase tracking-[0.25em] font-bold text-[#040B16] bg-gradient-to-r from-[#C89B3C] to-[#E2C78C] rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)] hover:shadow-[0_0_50px_rgba(200,155,60,0.5)]">
+               <span className="drop-shadow-sm font-black">{TRIAL_CTA.label}</span>
                <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform stroke-[#040B16] drop-shadow-sm" style={{ strokeWidth: 2 }}/>
              </Link>
            </div>

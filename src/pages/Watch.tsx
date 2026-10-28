@@ -9,6 +9,7 @@ import { BriefingChapters } from "../components/watch/BriefingChapters";
 import { ShareBar } from "../components/watch/ShareBar";
 import NotFound from "./NotFound";
 import { captureAttribution } from "../lib/attribution";
+import { FREE_TRIAL_DAYS, TRIAL_CTA, TRIAL_NOTE } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 import {
   BRIEFINGS,
@@ -216,12 +217,12 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
             transition={{ duration: 0.8, delay: 0.35, ease: "easeOut" }}
             className="watch-cta-rail"
           >
-            <Link to="/contact" className="watch-btn watch-btn--hero btn-chrome-prismatic">
-              <span>Book your free demo</span>
+            <Link to={TRIAL_CTA.to} className="watch-btn watch-btn--hero btn-chrome-prismatic">
+              <span>{TRIAL_CTA.label}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.75 }} />
             </Link>
             <p className="watch-mono watch-cta-rail__note">
-              Step 1 · Apply for priority access · Every application is reviewed by the Aurixa team
+              {TRIAL_NOTE}
             </p>
           </motion.div>
         </div>
@@ -300,8 +301,8 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
             )}
             <div className="watch-panel__cta">
               <p>Want this working on your own clients?</p>
-              <Link to="/contact" className="watch-btn watch-btn--primary">
-                Apply for priority access <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <Link to={TRIAL_CTA.to} className="watch-btn watch-btn--primary">
+                {TRIAL_CTA.label} <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
           </aside>
@@ -383,14 +384,14 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
             <span aria-hidden="true" /> After the briefing
           </p>
           <h2 id="watch-closing-heading" className="watch-closing__title">
-            Seen it in motion? <em className="text-chrome-prismatic">Now see it on your numbers.</em>
+            Seen it in motion? <em className="text-chrome-prismatic">Now try it on your own clients.</em>
           </h2>
           <p className="watch-closing__copy">
-            Bring a real client scenario to a demo and watch the platform model it, report it and keep it compliant, live.
+            Put your own client scenarios through Aurixa for {FREE_TRIAL_DAYS} days, in your own workspace, and watch the platform model them, report them and keep them compliant. Every application is reviewed by the Aurixa team, and your trial starts the day your workspace goes live.
           </p>
           <div className="watch-closing__actions">
-            <Link to="/contact" className="watch-btn watch-btn--hero btn-chrome-prismatic">
-              <span>Book your free demo</span>
+            <Link to={TRIAL_CTA.to} className="watch-btn watch-btn--hero btn-chrome-prismatic">
+              <span>{TRIAL_CTA.label}</span>
               <ArrowRight className="h-4 w-4" aria-hidden="true" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.75 }} />
             </Link>
             <Link to="/platform" className="watch-btn watch-btn--ghost">

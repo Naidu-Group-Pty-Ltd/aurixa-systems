@@ -3,6 +3,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { PassportCover } from "../components/PassportCover";
+import { TRIAL_CTA } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 /**
@@ -232,7 +233,7 @@ function PassportCTA() {
       <h2>Compliance Made Clearer. The Journey Kept Moving.</h2>
       <p>The <Link to="/compliance" className="text-[#00A8B5] underline decoration-[#00A8B5]/40 underline-offset-4 hover:text-[#5EDDE8] hover:decoration-[#5EDDE8] transition-colors">regulatory responsibility</Link> remains important. The experience does not need to feel difficult. Guide your clients, control the journey, connect your professionals, and bring the verified journey together through the Aurixa Compliance Passport.</p>
       <div className="passport-actions">
-        <Link className="passport-btn" to="/contact">Book Your Free Demo<ArrowRight aria-hidden="true" /></Link>
+        <Link className="passport-btn" to={TRIAL_CTA.to}>{TRIAL_CTA.label}<ArrowRight aria-hidden="true" /></Link>
         <a className="passport-btn passport-btn--ghost" href="#passport">Explore the Compliance Passport<ArrowRight aria-hidden="true" /></a>
       </div>
     </div>
@@ -249,7 +250,7 @@ export default function CompliancePassport() {
         <h1 id="passport-heading"><span className="text-liquid-chrome">The Trust Layer</span><em className="text-chrome-prismatic">For the Modern Property Transaction.</em></h1>
         <p>One client. One clear journey. Every professional connected. Aurixa brings the entire compliance journey into one clear, guided experience, helping property professionals move clients from onboarding through to transaction completion with confidence, visibility and far less friction.</p>
         <div className="passport-actions passport-actions--hero">
-          <Link className="passport-btn" to="/contact">Book Your Free Demo<ArrowRight aria-hidden="true" /></Link>
+          <Link className="passport-btn" to={TRIAL_CTA.to}>{TRIAL_CTA.label}<ArrowRight aria-hidden="true" /></Link>
           <a className="passport-btn passport-btn--ghost" href="#passport">Explore the Compliance Passport<ArrowRight aria-hidden="true" /></a>
         </div>
       </motion.div><motion.div {...reveal} className="compliance-hero__visual passport-hero-visual"><PassportArtefact /></motion.div></div>

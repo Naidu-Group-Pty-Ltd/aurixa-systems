@@ -15,6 +15,7 @@ import {
   Workflow,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TRIAL_CTA } from "../lib/cta";
 
 const goldStroke = { stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 } as const;
 
@@ -415,10 +416,10 @@ export function VoiceAgentSection() {
             </ul>
           </div>
           <Link
-            to="/contact"
+            to={TRIAL_CTA.to}
             className="group inline-flex w-full shrink-0 items-center justify-center rounded-sm border border-[#C89B3C]/40 px-4 py-4 text-center text-[10px] font-bold uppercase tracking-[0.16em] text-white transition-all hover:border-[#C89B3C] hover:bg-[#C89B3C]/10 sm:whitespace-nowrap sm:px-10 sm:text-[11px] sm:tracking-[0.25em] lg:w-auto"
           >
-            Configure Aurixa Voice
+            Try Aurixa Voice free
             <ArrowRight
               className="ml-4 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1"
               style={goldStroke}

@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from "react";
 import { Link, useLocation, useNavigationType } from "react-router-dom";
 import { BrandLogo } from "./BrandLogo";
 import { FOOTER_NAVIGATION_STATE, resolveFooterNavigation } from "../lib/footerNavigation";
+import { TRIAL_CTA } from "../lib/cta";
 
 /** Marks the navigation as footer-initiated; renders the same `<a>` as before. */
 function FooterLink({ to, children }: { to: string; children: ReactNode }) {
@@ -91,7 +92,7 @@ export function Footer() {
               <li><FooterLink to="/compliance">Compliance</FooterLink></li>
               <li><FooterLink to="/status">System Status</FooterLink></li>
               <li><FooterLink to="/support">Support</FooterLink></li>
-              <li><FooterLink to="/contact">Join Waitlist</FooterLink></li>
+              <li><FooterLink to="/contact">{TRIAL_CTA.label}</FooterLink></li>
               <li><FooterLink to="/privacy-policy">Privacy Policy</FooterLink></li>
               <li><FooterLink to="/terms-and-conditions">Terms &amp; Conditions</FooterLink></li>
             </ul>
