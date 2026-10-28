@@ -31,7 +31,7 @@ function strings(value: unknown): string[] {
 test("the trial length is written once, in cta.ts", async () => {
   // The videos are recordings: their transcripts say what was filmed, and no
   // constant can change that. Everything else derives from FREE_TRIAL_DAYS.
-  const exempt = new Set(["lib/cta.ts", "lib/videos/catalog.ts"]);
+  const exempt = new Set(["lib/cta.ts", "lib/videos/briefings.data.ts"]);
   // A trial length in the same sentence as "trial", so an unrelated 14-day
   // period elsewhere (a link expiry, a notice period) is not caught.
   const length = String.raw`\b(?:14|fourteen)(?:-day|\s+days?)\b`;

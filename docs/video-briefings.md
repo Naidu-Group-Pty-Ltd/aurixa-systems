@@ -20,8 +20,11 @@ it can actually be watched.
 
 ## Publishing a video
 
-You need `ffmpeg` and `ffprobe` (built with libx264), the master export of the
-video, and the Aurixa Systems project's service-role key.
+Listings are written and published in **Mission Control**, at Growth → Website
+videos (its `docs/WEBSITE_VIDEOS.md`). Nothing in this repository is edited to
+publish one. You need `ffmpeg` and `ffprobe` (built with libx264) and the
+master export of the video, and admin access to Mission Control. No storage
+key is involved.
 
 ### 1. Encode
 
@@ -43,8 +46,9 @@ npm run video:encode -- path/to/master.mov --slug compliance-passport --tune ani
 The output goes to `media-build/<slug>/` (gitignored). It contains a six-rung
 adaptive ladder from 240p/300 kbps to 1080p, shared audio groups, a 720p
 progressive fallback, `poster.jpg` and `card.jpg` (1200×630, the link preview).
-When it finishes, the script prints the measured ladder and the exact catalogue
-fields to paste. Budget about 7–8 seconds of CPU for every second of video on
+When it finishes, the script prints the measured ladder and the listing's media
+fields. Mission Control measures the same values from the stream itself when the
+folder is uploaded, so nothing needs pasting. Budget about 7–8 seconds of CPU for every second of video on
 a 4-core machine.
 
 **Vertical reels (9:16)** are detected automatically:
@@ -65,60 +69,94 @@ words are on screen rather than spoken, put that text, in order, in
 If you have captions, save them as `media-build/<slug>/captions.en.vtt` (WebVTT)
 before uploading.
 
-### 2. Upload
+### 2. Upload and verify, in Mission Control
+
+On the video's listing in Mission Control, **Choose folder** → `media-build/<slug>`
+→ **Upload and verify**. What happens:
+
+- Mission Control mints a single-use **upload grant** for the listing's next
+  version folder (`videos/<slug>/v<n>/`) and exactly the files picked.
+- The browser trades it at this project's `briefing-upload-sign` edge function
+  (`supabase/functions/briefing-upload-sign`). The function asks Mission Control
+  whether the grant is live and covers those paths, then signs **create-only**
+  upload URLs. No secret is shared between the two systems; possession of the
+  grant is the authority.
+- Files go up straight from the browser: media and images first, rendition
+  playlists next, the master playlist last. Segments and images get `immutable`
+  caching, and playlists a short revalidating TTL. A file already there from an
+  interrupted attempt is skipped.
+- Mission Control then reads the package back from the public bucket, the way a
+  player will, before the listing points at it. It reads the running time and
+  orientation from the stream.
+
+A new upload is always a new version folder, and nothing published is ever
+uploaded over. To replace only a poster or card, upload the whole package again:
+it lands as the next version. (The `card-2.jpg` on Borrowing Capacity predates
+this and stays as published.)
+
+### 3. Publish, in Mission Control
+
+Fill in the listing:
+- the kicker;
+- the summary (70–320 characters; it is the page's search and link-preview
+  description);
+- 2–4 takeaways;
+- the page it sends viewers on to;
+- any on-screen disclaimer;
+- chapters;
+- the transcript, verbatim.
+
+Mission Control lists what stands between the draft and **Publish**: these are
+this website's own publishing rules (`src/lib/videos/validate.ts`), restated
+there.
+
+Publishing asks Vercel for a production build through a deploy hook, and the
+page is live a couple of minutes later. **Show as premiere** puts a card in the
+library marked *Premiering*, with no page and no video. **Return to draft** and
+**Archive** take a listing down on the next build.
+
+### How the website gets its listings
+
+`npm run build` runs `scripts/sync-briefings.ts` at `prebuild`, before the SEO
+files are generated and before any page is rendered:
+
+- **On Vercel** (`VERCEL=1`) it reads `GET {Mission Control}/api/public/storefront/briefings`.
+  This returns premiere and published listings only, and a premiere carries no
+  media. It checks each listing against `validate.ts`, leaves out any that break
+  a rule and names them in the build log, and writes the rest to
+  `src/lib/videos/briefings.data.ts`. The flagship always leads the library.
+- **If Mission Control cannot be read**, or answers anything but a well-formed
+  list, the build keeps the committed snapshot and says so. The site then shows
+  the last committed videos, rather than failing the build or showing none.
+- **Locally and in CI** it does nothing, so the tests run against the committed
+  snapshot. Set `BRIEFINGS_SYNC=1` to pull anyway, or `BRIEFINGS_SYNC=required`
+  to fail when the pull fails.
+
+`npm run briefings:pull` refreshes the committed snapshot from Mission Control.
+Commit it together with the regenerated `public/sitemap.xml` and
+`public/llms.txt`, because `seoFiles.test.ts` compares those byte for byte with
+the snapshot.
+
+### Publishing without Mission Control
+
+The command-line path still works, for a staging bucket or for an emergency. It
+needs the project's service-role key:
 
 ```bash
 SUPABASE_SERVICE_ROLE_KEY=… npm run video:upload -- compliance-passport v1
 ```
 
-This publishes to `marketing-media/videos/<slug>/<version>/` with
-`immutable` caching on segments and images and a short revalidating TTL on
-playlists and captions. It **never overwrites**. A re-run after an interrupted
-upload skips anything already published, and a re-encode of a live video goes up
-as `v2` and the catalogue moves to it, so no viewer is ever served a mix of two
-ladders. To replace only a poster or card, upload the new image beside the old
-one under a new name (`card-2.jpg`) and point the entry at it. The old one is
-cached as immutable, by browsers and by every site that has unfurled the link.
-
-### 3. Verify
-
 ```bash
 npm run video:verify -- https://moeyytuduycrvvncdtme.supabase.co/storage/v1/object/public/marketing-media/videos/compliance-passport/v1/master.m3u8
 ```
 
-This audits the ladder the way a strict player would: RFC 3986 URI resolution,
-the cheapest rung, segment uniformity and cache headers. It exits non-zero on any
-failure.
-
-It probes with one-byte GETs, not HEADs. Supabase Storage answers a HEAD with
-`cache-control: private, no-cache` whatever the object carries, while every GET,
-which is all a player sends, gets the stored value. Check a header by hand with
-`curl -sS -D - -o /dev/null <url>`, not `curl -I`.
-
-### 4. Publish the entry
-
-Paste the printed fields into the entry in `src/lib/videos/catalog.ts`, add
-chapters if the video has natural sections, then:
-
-```bash
-npm test
-```
-
-```bash
-npm run build
-```
-
-`catalog.test.ts` refuses a half-published entry (a stream without a running
-time or date, chapters past the end, non-https media). The build regenerates
-`public/sitemap.xml` and `public/llms.txt`, and those must be committed with the
-catalogue change, because `seoFiles.test.ts` compares them byte for byte.
-
-### Adding a new video to the slate
-
-Add an entry to `BRIEFINGS` with no `media`, and it appears in the library as a
-premiere. Its summary and takeaways must restate what a public page on the site
-already says, and `explore` must point at that page. These are the same copy
-rules `llms.txt` follows, and the tests check the link.
+`video:upload` never overwrites. `video:verify` audits the ladder the way a
+strict player would: RFC 3986 URI resolution, the cheapest rung, segment
+uniformity and cache headers. It probes with one-byte GETs, not HEADs: Supabase
+Storage answers a HEAD with `cache-control: private, no-cache` whatever the
+object carries. Check a header by hand with `curl -sS -D - -o /dev/null <url>`,
+not `curl -I`. A listing published this way still has to exist in Mission
+Control, or the next production build drops it.
 
 ---
 
@@ -126,7 +164,12 @@ rules `llms.txt` follows, and the tests check the link.
 
 | Piece | Where |
 |---|---|
-| Catalogue, the single source of truth | `src/lib/videos/catalog.ts` |
+| Listings | Mission Control, Growth → Website videos |
+| Catalogue types and queries | `src/lib/videos/catalog.ts` |
+| Committed snapshot of the listings | `src/lib/videos/briefings.data.ts` (generated) |
+| Publishing rules | `src/lib/videos/validate.ts` |
+| Build-time sync from Mission Control | `scripts/sync-briefings.ts`, `src/lib/videos/missionControlListings.ts` |
+| Upload signing | `supabase/functions/briefing-upload-sign` |
 | Page (hub and per-video) | `src/pages/Watch.tsx` |
 | Theatre, HUD, standby and end card | `src/components/watch/BriefingTheatre.tsx` |
 | Player | `src/components/watch/BriefingPlayer.tsx` |

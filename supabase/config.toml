@@ -59,3 +59,12 @@ verify_jwt = false
 # refresh action is gated by x-support-admin-key inside the function.
 [functions.status-summary]
 verify_jwt = false
+
+# Signed upload URLs for a Briefing Room video, on Mission Control's say-so.
+# Mission Control holds no key to this project; an upload is a single-use grant
+# token it mints for one listing's next version folder, which this function
+# verifies with Mission Control before signing create-only URLs. The caller is
+# an operator's browser on Mission Control's origin, which sends no Supabase
+# JWT, so authorisation is the grant, not `verify_jwt`.
+[functions.briefing-upload-sign]
+verify_jwt = false
