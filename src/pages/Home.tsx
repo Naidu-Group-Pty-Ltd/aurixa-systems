@@ -1,8 +1,17 @@
 import { motion } from "motion/react";
-import { ArrowRight, BarChart3, Database, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, BarChart3, Database, Play, ShieldCheck, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
+import { TRIAL_CTA, TRIAL_NOTE } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
+import { briefingPath, featuredBriefing, formatDuration, isPublished } from "../lib/videos/catalog";
+
+// The Briefing Room's lead video, once there is one to watch. Until a briefing
+// is published the hero offers nothing, rather than a link to a premiere.
+const heroBriefing = (() => {
+  const featured = featuredBriefing();
+  return isPublished(featured) ? featured : null;
+})();
 
 export default function Home() {
   useRouteMetadata("/");
@@ -52,14 +61,42 @@ export default function Home() {
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="flex flex-col sm:flex-row items-center gap-6 w-full justify-center"
           >
-            <Link to="/contact" className="w-full sm:w-auto group relative inline-flex items-center justify-center px-10 py-5 text-[9.6px] uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-none transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.2)] hover:shadow-[0_0_40px_rgba(0,168,181,0.4)]">
-              <span className="drop-shadow-md">Book Your Free Demo</span>
+            <Link to={TRIAL_CTA.to} className="w-full sm:w-auto group relative inline-flex items-center justify-center px-10 py-5 text-[9.6px] uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-none transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.2)] hover:shadow-[0_0_40px_rgba(0,168,181,0.4)]">
+              <span className="drop-shadow-md">{TRIAL_CTA.label}</span>
               <ArrowRight className="w-[13px] h-[13px] ml-3 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
             <Link to="/platform" className="w-full sm:w-auto inline-flex items-center justify-center px-10 py-5 text-[9.6px] uppercase tracking-[0.25em] font-medium text-white border border-white/40 hover:bg-white/5 rounded-none transition-colors">
               Explore The Ecosystem
             </Link>
           </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="mt-6 max-w-2xl text-balance text-[10px] uppercase leading-relaxed tracking-[0.2em] text-[#9CA3AF]"
+          >
+            {TRIAL_NOTE}
+          </motion.p>
+
+          {heroBriefing && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}
+              className="mt-8"
+            >
+              <Link
+                to={briefingPath(heroBriefing.slug)}
+                className="group inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.25em] font-semibold text-[#d7b35f] hover:text-white transition-colors"
+              >
+                <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d7b35f]/50 group-hover:border-[#5edde8] transition-colors">
+                  <Play className="h-3 w-3 translate-x-[1px]" style={{ stroke: "url(#icon-gold-gradient)", fill: "url(#icon-gold-gradient)" }} />
+                </span>
+                Watch the {formatDuration(heroBriefing.durationSeconds)} briefing
+              </Link>
+            </motion.div>
+          )}
         </div>
       </section>
 
@@ -272,8 +309,8 @@ export default function Home() {
           <p className="text-xl text-[#9CA3AF] mb-12 max-w-2xl font-light leading-relaxed">
             Aurixa helps property businesses scale smarter through unified operational intelligence. Experience governed automation infrastructure designed to modernise how you analyse, advise, and scale.
           </p>
-          <Link to="/contact" className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_40px_rgba(0,168,181,0.2)] hover:shadow-[0_0_50px_rgba(200,155,60,0.4)]">
-            <span className="drop-shadow-md">Book Your Free Demo</span>
+          <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_40px_rgba(0,168,181,0.2)] hover:shadow-[0_0_50px_rgba(200,155,60,0.4)]">
+            <span className="drop-shadow-md">{TRIAL_CTA.label}</span>
             <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
           </Link>
         </div>

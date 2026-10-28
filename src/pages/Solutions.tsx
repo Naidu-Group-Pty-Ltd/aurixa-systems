@@ -3,6 +3,7 @@ import { ArrowRight, Target, Crosshair, TrendingUp } from "lucide-react";
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { SolutionsHeroVisual } from "../components/AnimatedHeroVisuals";
+import { TRIAL_CTA, TRIAL_PANEL } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 export default function Solutions() {
@@ -188,15 +189,15 @@ export default function Solutions() {
         <div className="mt-20 glass-panel p-6 sm:p-16 text-center shadow-2xl relative overflow-hidden border border-white/10">
           <div className="absolute inset-0 bg-chrome-prismatic opacity-10 pointer-events-none" />
           <div className="relative z-10 flex flex-col items-center">
-            <span className="px-4 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C89B3C] border border-[#C89B3C]/30 mb-8 rounded-sm">Allocation Restricted</span>
-            <h2 className="text-4xl md:text-6xl font-display font-light tracking-tight mb-8 text-white">Secure Priority Integration</h2>
+            <span className="px-4 py-1 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C89B3C] border border-[#C89B3C]/30 mb-8 rounded-sm">{TRIAL_PANEL.badge}</span>
+            <h2 className="text-4xl md:text-6xl font-display font-light tracking-tight mb-8 text-white">Try It On Your Own Clients</h2>
             <div className="text-[#9CA3B8] mb-12 max-w-3xl mx-auto text-lg leading-relaxed font-light space-y-6">
-              <p>Access to Aurixa’s deployment cycle is limited to preserve delivery quality, architectural focus, and partner success.</p>
-              <p>Businesses accepted into the next integration cycle will gain early access to unified operational intelligence built for property, finance, and wealth creation.</p>
-              <p>Delayed action may mean delayed access, and in a market where operational intelligence, speed, and client engagement are becoming competitive advantages, waiting could come at a cost.</p>
+              {TRIAL_PANEL.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
-            <Link to="/contact" className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)]">
-              <span className="drop-shadow-md">SECURE PRIORITY REVIEW</span>
+            <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[12px] uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all hover:scale-105 shadow-[0_0_30px_rgba(200,155,60,0.3)]">
+              <span className="drop-shadow-md text-balance">{TRIAL_CTA.label}</span>
               <ArrowRight className="w-5 h-5 ml-4 group-hover:translate-x-1 transition-transform drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
           </div>

@@ -11,6 +11,7 @@ import {
   SITE_ORIGIN,
   absoluteUrl,
   indexableRoutes,
+  ogImageUrl,
   routeMetadata,
   unlistedPaths,
 } from "./routeMetadata";
@@ -414,6 +415,7 @@ test("every prerendered page carries exactly one of each tag, with its own value
       '<meta property="og:description"',
       '<meta property="og:url"',
       '<meta property="og:image"',
+      '<meta property="og:type"',
       '<meta name="twitter:title"',
       '<meta name="twitter:description"',
       '<meta name="twitter:image"',
@@ -431,7 +433,9 @@ test("every prerendered page carries exactly one of each tag, with its own value
       `<meta property="og:url" content="${absoluteUrl(entry.path)}" />`,
       `<meta name="twitter:title" content="${title}" />`,
       `<meta name="twitter:description" content="${description}" />`,
-      `<meta property="og:image" content="${SITE_ORIGIN}${DEFAULT_OG_IMAGE}" />`,
+      `<meta property="og:image" content="${escapeHtml(ogImageUrl(entry.ogImage))}" />`,
+      `<meta name="twitter:image" content="${escapeHtml(ogImageUrl(entry.ogImage))}" />`,
+      `<meta property="og:type" content="${escapeHtml(entry.ogType ?? "website")}" />`,
     ]) {
       assert.ok(html.includes(expected), `${entry.path} is missing ${expected}`);
     }

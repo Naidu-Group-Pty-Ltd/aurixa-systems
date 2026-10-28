@@ -3,6 +3,7 @@ import { ArrowRight, Hexagon, ShieldAlert, Network, Lock, Crosshair, Fingerprint
 import { Link } from "react-router-dom";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import { AboutHeroVisual } from "../components/AnimatedHeroVisuals";
+import { TRIAL_CTA, TRIAL_TERMS } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 export default function About() {
@@ -196,7 +197,7 @@ export default function About() {
            </div>
         </div>
 
-        {/* RESTRICTED ALLOCATION - The Syndicate Waitlist Block */}
+        {/* VETTED ONBOARDING - every workspace reviewed, then a free trial */}
         <div className="relative mb-20 glass-panel p-6 sm:p-16 md:p-24 text-center shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden border border-[#C89B3C]/30 bg-gradient-to-t from-marketing-panel to-marketing-recessed">
           <div className="absolute inset-0 bg-chrome-prismatic opacity-[0.03] pointer-events-none" />
           
@@ -216,20 +217,20 @@ export default function About() {
             </div>
             
             <h3 className="text-[clamp(2.4rem,12vw,3rem)] md:text-6xl lg:text-7xl font-display tracking-tight mb-8 text-white relative">
-              Restricted Vetting <br/> <span className="italic text-chrome-prismatic drop-shadow-[0_0_15px_rgba(200,155,60,0.3)]">The Collective</span>
+              Vetted Onboarding <br/> <span className="italic text-chrome-prismatic drop-shadow-[0_0_15px_rgba(200,155,60,0.3)]">The Collective</span>
             </h3>
             
             <div className="max-w-3xl mx-auto space-y-6 mb-16">
                <p className="text-[#9CA3B8] text-xl leading-relaxed font-light">
-                 Aurixa is a weapon of massive asymmetric advantage. We strictly control its distribution pipeline. Mass software adoption leads to heavily diluted competitive edges; therefore, Aurixa is definitively not available to the general market. Align with the new standard of property operations and scale your brand through intelligent operational infrastructure today.
+                 Aurixa is a weapon of massive asymmetric advantage, and we treat every deployment that way. Each workspace is provisioned by the Aurixa team for a single firm rather than handed out as a self-serve login. Align with the new standard of property operations and scale your brand through intelligent operational infrastructure today.
                </p>
                <p className="text-[#9CA3B8] text-xl leading-relaxed font-light">
-                 We operate on a restricted allocation model, conducting rigorous operational audits on prospective partner firms before granting master access keys. Only advisory syndicates demonstrating the capacity and capital scale to wield this computational framework at its full potential will clear the waitlist. Deploy Aurixa Systems to streamline workflows, unify operations, and scale smarter with modular infrastructure.
+                 Every application is reviewed by the Aurixa team before a workspace is provisioned. {TRIAL_TERMS} Deploy Aurixa Systems to streamline workflows, unify operations, and scale smarter with modular infrastructure.
                </p>
             </div>
             
-            <Link to="/contact" className="group relative inline-flex items-center justify-center px-12 py-5 text-[13px] md:text-sm uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all duration-300 hover:scale-[1.02] shadow-[0_0_40px_rgba(200,155,60,0.3)] hover:shadow-[0_0_60px_rgba(200,155,60,0.5)] border border-[#C89B3C]">
-              <span className="drop-shadow-md">Book Enterprise Demo</span>
+            <Link to={TRIAL_CTA.to} className="group relative inline-flex items-center justify-center px-12 py-5 text-[13px] md:text-sm uppercase tracking-[0.25em] font-bold text-white btn-chrome-prismatic rounded-sm transition-all duration-300 hover:scale-[1.02] shadow-[0_0_40px_rgba(200,155,60,0.3)] hover:shadow-[0_0_60px_rgba(200,155,60,0.5)] border border-[#C89B3C]">
+              <span className="drop-shadow-md text-balance">{TRIAL_CTA.label}</span>
               <Target className="w-5 h-5 ml-4 group-hover:rotate-90 transition-transform duration-500 drop-shadow-md" style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
             </Link>
           </div>

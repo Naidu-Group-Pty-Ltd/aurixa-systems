@@ -1,7 +1,7 @@
 /* Keep the Waitlist introduction sticky at every desktop viewport height.
    In a short viewport it scrolls within the available space instead of
    disabling sticky or hiding the end of the copy behind the browser edge.
-   The existing flex track stops it before Operational Freeze. */
+   The existing flex track stops it before "How the trial works". */
 @media screen and (min-width: 64rem) {
   .contact-page .contact-waitlist-intro {
     position: sticky;

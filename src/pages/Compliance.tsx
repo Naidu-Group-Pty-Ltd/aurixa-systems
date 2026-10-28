@@ -3,6 +3,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AnimatedGovernanceSystem } from "../components/AnimatedGovernanceSystem";
 import { HeroBackground } from "../components/HeroBackgrounds";
+import { TRIAL_CTA } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 const frameworkLayers = [
@@ -128,7 +129,7 @@ function ComplianceConvergenceCTA() {
     <div className="compliance-cta__content"><Eyebrow>Operational Confidence</Eyebrow>
       <h2>Bring Greater Structure to Compliance Operations.</h2>
       <p>Connect security, due diligence, information governance and operational responsibility within one structured Aurixa environment.</p>
-      <Link to="/contact">Join Waitlist<ArrowRight aria-hidden="true" /></Link>
+      <Link to={TRIAL_CTA.to}>{TRIAL_CTA.label}<ArrowRight aria-hidden="true" /></Link>
     </div>
   </motion.div>;
 }

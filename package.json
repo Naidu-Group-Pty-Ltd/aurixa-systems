@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
-    "prebuild": "tsx scripts/generate-seo-files.ts",
+    "prebuild": "tsx scripts/sync-briefings.ts && tsx scripts/generate-seo-files.ts",
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && tsx scripts/prerender.ts",
     "preview": "vite preview",
     "clean": "rm -rf dist",
     "lint": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\" \"api/**/*.test.ts\"",
-    "submit-indexnow": "tsx scripts/submit-indexnow.ts"
+    "submit-indexnow": "tsx scripts/submit-indexnow.ts",
+    "video:encode": "node scripts/video/encode.mjs",
+    "video:upload": "bash scripts/video/upload.sh",
+    "video:verify": "node scripts/video/verify.mjs",
+    "briefings:pull": "BRIEFINGS_SYNC=1 tsx scripts/sync-briefings.ts"
   },
   "dependencies": {
     "@google/genai": "^1.29.0",
@@ -20,6 +24,7 @@
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
+    "hls.js": "^1.5.18",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
     "react": "^19.0.0",

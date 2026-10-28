@@ -434,7 +434,7 @@ page's own copy:
 | `/about` | About Us: Built From Inside Property & Finance | Now the page's actual story: who built it, its principles, the data sovereignty framework |
 | `/resources` | Platform Module Library | **Was wrong**: promised "guidance, frameworks and reference material"; the page is a directory of platform modules |
 | `/docs` | Command Center Documentation | Unchanged; matches the page's H1 |
-| `/contact` | Priority Access Application (unchanged) | Names the waitlist, which is the page's H1 |
+| `/contact` | Start Your 14-Day Free Trial (was Priority Access Application) | Names the free trial, which is the page's H1; the length comes from `FREE_TRIAL_DAYS` in `src/lib/cta.ts` |
 | `/compliance` | Compliance, Security & AML/CTF Governance | **Was wrong**: claimed "hosting, data residency" content the page does not have |
 | `/compliance-passport` | AML/CTF Compliance Passport (unchanged) | Was 296 characters; tightened to the six steps the page sets out |
 

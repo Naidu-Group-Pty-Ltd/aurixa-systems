@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { existsSync } from "node:fs";
 import { readFile, readdir } from "node:fs/promises";
 import { test } from "node:test";
+import { TRIAL_CTA } from "../lib/cta";
 
 /**
  * The footer is checked as source text, the same way routeMetadata.test.ts
@@ -41,11 +42,12 @@ const EXPECTED_COLUMNS = [
     links: [
       ["About Aurixa", "/about"],
       ["Intelligence Hub", "/resources"],
+      ["Video Briefings", "/watch"],
       ["Documentation", "/docs"],
       ["Compliance", "/compliance"],
       ["System Status", "/status"],
       ["Support", "/support"],
-      ["Join Waitlist", "/contact"],
+      [TRIAL_CTA.label, "/contact"],
       ["Privacy Policy", "/privacy-policy"],
       ["Terms & Conditions", "/terms-and-conditions"],
     ],
@@ -70,7 +72,15 @@ const HEADER_OFFSET_CLASS = "scroll-mt-[calc(var(--site-header-height)+1.5rem)]"
 
 const unescape = (text: string) => text.replace(/&amp;/g, "&");
 
-function footerColumns(source: string) {
+/**
+ * The trial link's label comes from src/lib/cta.ts rather than a literal;
+ * substitute it so the link is read like every other. Its destination stays a
+ * literal, because seoFiles.test.ts reads every footer `to` from this source.
+ */
+const resolveTrialCta = (source: string) => source.replaceAll(">{TRIAL_CTA.label}</FooterLink>", `>${TRIAL_CTA.label}</FooterLink>`);
+
+function footerColumns(rawSource: string) {
+  const source = resolveTrialCta(rawSource);
   const headings = [...source.matchAll(/<h2[^>]*>([^<]+)<\/h2>/g)];
   return headings.map((heading, index) => {
     const end = headings[index + 1]?.index ?? source.length;
@@ -93,11 +103,11 @@ test("footer columns, labels, order and destinations match the agreed structure"
   assert.deepEqual(footerColumns(await read("./Footer.tsx")), EXPECTED_COLUMNS);
 });
 
-test("all 21 text links and the logo are accounted for, each once", async () => {
+test("all 22 text links and the logo are accounted for, each once", async () => {
   const source = await read("./Footer.tsx");
-  assert.equal(EXPECTED_LINKS.length, 21);
-  assert.equal(new Set(EXPECTED_LINKS.map(([label]) => label)).size, 21, "duplicate label");
-  assert.equal(count(source, "<FooterLink to="), 21, "a footer link was added or lost");
+  assert.equal(EXPECTED_LINKS.length, 22);
+  assert.equal(new Set(EXPECTED_LINKS.map(([label]) => label)).size, 22, "duplicate label");
+  assert.equal(count(source, "<FooterLink to="), 22, "a footer link was added or lost");
   assert.equal(count(source, "<BrandLogo "), 1, "the footer logo is missing or duplicated");
   assert.match(await read("./BrandLogo.tsx"), /<Link\s+to="\/"\s/, "the logo no longer links to /");
 });
@@ -178,4 +188,8 @@ test("the prerendered pages carry each footer target exactly once and no duplica
   const footer = home.match(/<footer[\s\S]*?<\/footer>/)?.[0] ?? "";
   const hrefs = [...footer.matchAll(/href="([^"]+)"/g)].map(([, href]) => href);
   assert.deepEqual(hrefs, ["/", ...EXPECTED_LINKS.map(([, to]) => to)], "prerendered footer links differ from the source");
+});
+
+test("the footer's trial link goes where every other trial call to action goes", async () => {
+  assert.match(await read("./Footer.tsx"), new RegExp(`<FooterLink to="${TRIAL_CTA.to}">\\{TRIAL_CTA\\.label\\}</FooterLink>`));
 });

@@ -16,6 +16,17 @@
  * than quietly defaulting to indexable.
  */
 
+import {
+  BRIEFINGS,
+  BRIEFING_ROOM_PATH,
+  BRIEFING_ROUTE_PATTERN,
+  briefingPath,
+  mediaUrl,
+  publishedBriefings,
+  type Briefing,
+} from "./videos/catalog";
+import { FREE_TRIAL_DAYS } from "./cta";
+
 /** Canonical origin. The apex 307s to `www`, so `www` is the real home. */
 export const SITE_ORIGIN = "https://www.aurixasystems.com.au";
 
@@ -59,7 +70,39 @@ export type RouteMetadata = {
    * non-indexable routes, which are never in the sitemap at all.
    */
   priority?: number;
+  /**
+   * Social card for this page: a path under `public/`, or an absolute `https:`
+   * URL for media held in storage. Must be 1200×630, the size `index.html`
+   * declares. Defaults to the sitewide card.
+   */
+  ogImage?: string;
+  /** `og:type`. Defaults to `"website"`. */
+  ogType?: string;
 };
+
+/**
+ * One route per watchable briefing, generated from the catalogue so a video
+ * becomes a page — prerendered, in the sitemap, with its own card — the moment
+ * its entry is published, and stops being one if it is withdrawn. A premiering
+ * entry has no page at all, so there is nothing thin for a crawler to index.
+ *
+ * The title carries "Video Briefing" so it can never collide with the page the
+ * video explains ("AML/CTF Compliance Passport | Aurixa Systems"). It follows
+ * an en dash rather than a colon, because briefing titles have colons of their
+ * own ("Aurixa Voice: AI Voice Agents").
+ */
+export function briefingRoutes(list: Briefing[] = BRIEFINGS): RouteMetadata[] {
+  return publishedBriefings(list).map((briefing) => ({
+    path: briefingPath(briefing.slug),
+    title: `${briefing.title} – Video Briefing | Aurixa Systems`,
+    description: briefing.summary,
+    indexable: true,
+    changefreq: "monthly",
+    priority: 0.6,
+    ogImage: mediaUrl(briefing.media.card),
+    ogType: "video.other",
+  }));
+}
 
 export const ROUTE_METADATA: RouteMetadata[] = [
   {
@@ -144,9 +187,9 @@ export const ROUTE_METADATA: RouteMetadata[] = [
   },
   {
     path: "/contact",
-    title: "Priority Access Application | Aurixa Systems",
+    title: `Start Your ${FREE_TRIAL_DAYS}-Day Free Trial | Aurixa Systems`,
     description:
-      "Join the Aurixa Systems waitlist by applying for priority access. Tell us about your organisation and what you most want to improve, and the team will review your application.",
+      `Apply for a ${FREE_TRIAL_DAYS}-day free trial of Aurixa Systems. Tell us about your organisation and what you most want to improve. The team reviews every application and provisions your own workspace, and the trial starts the day it goes live.`,
     indexable: true,
     changefreq: "monthly",
     priority: 0.9,
@@ -196,6 +239,16 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     changefreq: "daily",
     priority: 0.5,
   },
+  {
+    path: BRIEFING_ROOM_PATH,
+    title: "Briefing Room: Aurixa Explainer Videos | Aurixa Systems",
+    description:
+      "The Aurixa Briefing Room: short videos on the platform, streamed from Aurixa itself. An introduction to Aurixa Systems, the AML/CTF Compliance Passport, and borrowing capacity in moments.",
+    indexable: true,
+    changefreq: "weekly",
+    priority: 0.7,
+  },
+  ...briefingRoutes(),
 
   // ── Unlisted from here down. Reachable by direct URL or by token only. ─────
 
@@ -240,7 +293,7 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: "/questionnaire",
     title: "Business Readiness Questionnaire | Aurixa Systems",
     description:
-      "Secure Stage 2 readiness questionnaire for Aurixa Systems Priority Access applicants. Accessible by invitation only.",
+      "Secure Stage 2 readiness questionnaire for Aurixa Systems free trial applicants. Accessible by invitation only.",
     indexable: false,
   },
   {
@@ -270,6 +323,18 @@ export const ROUTE_METADATA: RouteMetadata[] = [
   },
 ];
 
+/**
+ * Routes declared in `App.tsx` with a parameter, and the concrete paths each
+ * one serves. The registry, the prerender pass and the sitemap all work on
+ * concrete paths; this is what lets `routeMetadata.test.ts` hold a
+ * parameterised `<Route>` to the same rule as every other — each path it can
+ * serve must be registered — instead of exempting it. A parameterised route
+ * missing from this table fails that test.
+ */
+export const PARAMETERISED_ROUTES: Record<string, () => string[]> = {
+  [BRIEFING_ROUTE_PATTERN]: () => briefingRoutes().map((entry) => entry.path),
+};
+
 const BY_PATH = new Map(ROUTE_METADATA.map((entry) => [entry.path, entry]));
 
 /** Lookup by exact route path. Returns `undefined` for unknown paths (e.g. 404). */
@@ -290,4 +355,14 @@ export function unlistedPaths(): string[] {
 /** Absolute URL for a route path, for canonical tags and the sitemap. */
 export function absoluteUrl(path: string): string {
   return path === "/" ? `${SITE_ORIGIN}/` : `${SITE_ORIGIN}${path}`;
+}
+
+/**
+ * The absolute `og:image` / `twitter:image` URL for a page. Shared by the
+ * prerender pass and `usePageMetadata`, so the served bytes and the live page
+ * cannot name different cards.
+ */
+export function ogImageUrl(ogImage: string = DEFAULT_OG_IMAGE): string {
+  if (/^https?:\/\//i.test(ogImage)) return ogImage;
+  return `${absoluteUrl("/")}${ogImage.replace(/^\//, "")}`;
 }

@@ -68,7 +68,7 @@ export type AccessDecision = {
  */
 export const ACCESS_COPY: Record<AccessFailure, string> = {
   missing_reference:
-    "This page is the final stage of an Aurixa priority access application. Open it from the link in your Aurixa email, or continue with the application reference issued with your application.",
+    "This page is the final stage of an Aurixa free trial application. Open it from the link in your Aurixa email, or continue with the application reference issued with your application.",
   unverified:
     "We could not open the scheduler for that application reference. Either it is not one we recognise, or the Business Readiness Questionnaire is not complete yet. The strategic review opens once it is. Check the reference against your Aurixa email, or contact the team and quote it.",
   unavailable:

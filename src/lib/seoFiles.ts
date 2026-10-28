@@ -12,16 +12,19 @@
  * what writes them, at prebuild.
  */
 
+import { FREE_TRIAL_DAYS } from "./cta";
 import { LEGAL_ENTITY } from "./legal";
 import {
   DEFAULT_DESCRIPTION,
   SITE_NAME,
   SITE_ORIGIN,
   absoluteUrl,
+  briefingRoutes,
   indexableRoutes,
   unlistedPaths,
   type RouteMetadata,
 } from "./routeMetadata";
+import { BRIEFING_ROOM_PATH } from "./videos/catalog";
 
 const escapeRegExp = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
@@ -96,6 +99,12 @@ const LLMS_SECTIONS: { heading: string; paths: string[] }[] = [
   { heading: "Compliance", paths: ["/compliance", "/compliance-passport"] },
   { heading: "Builders Network", paths: ["/builders", "/builders/apply"] },
   { heading: "Documentation", paths: ["/docs"] },
+  // The hub, then each published briefing in library order. A briefing is
+  // only a route once it can be watched, so a premiere never appears here.
+  {
+    heading: "Video briefings",
+    paths: [BRIEFING_ROOM_PATH, ...briefingRoutes().map((route) => route.path)],
+  },
   { heading: "Company and access", paths: ["/about", "/contact"] },
   { heading: "Legal", paths: ["/privacy-policy", "/terms-and-conditions"] },
 ];
@@ -161,9 +170,11 @@ export function llmsTxt(): string {
     `${LEGAL_ENTITY.name} (ABN ${LEGAL_ENTITY.abn}) is based in ${LEGAL_ENTITY.location}.`,
     `Website: ${SITE_ORIGIN}/`,
     ``,
-    `Access is granted through a staged Priority Access application rather than`,
-    `self-serve sign-up, and the Priority Access Application page below is the`,
-    `entry point. This guide does not cover pricing.`,
+    `New customers start with a ${FREE_TRIAL_DAYS}-day free trial. The way in is an application`,
+    `rather than self-serve sign-up, and the free trial page below is the entry`,
+    `point. The Aurixa team reviews each application and provisions the customer's`,
+    `own workspace; the trial runs for ${FREE_TRIAL_DAYS} days from the day that workspace goes`,
+    `live. This guide does not cover pricing.`,
     ``,
     ...LLMS_OVERVIEW,
     ``,

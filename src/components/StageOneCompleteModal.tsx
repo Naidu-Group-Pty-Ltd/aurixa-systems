@@ -15,9 +15,9 @@ import { ArrowRight, CheckCircle2 } from "lucide-react";
 
 export const STAGE_ONE_MODAL_COPY = {
   eyebrow: "STAGE 01 COMPLETE",
-  heading: "Priority Access Application Received",
+  heading: "Free Trial Application Received",
   message:
-    "Your Priority Access Application has been successfully recorded. You may now proceed to the Business Readiness Questionnaire, where we will gather the operational, technical and implementation context required to identify the most relevant Aurixa pathway for your organisation.",
+    "Your free trial application has been successfully recorded. You may now proceed to the Business Readiness Questionnaire, where we will gather the operational, technical and implementation context required to identify the most relevant Aurixa pathway for your organisation.",
   supporting: "The next stage takes approximately 6–8 minutes to complete.",
   action: "PROCEED",
   referenceLabel: "YOUR APPLICATION REFERENCE",

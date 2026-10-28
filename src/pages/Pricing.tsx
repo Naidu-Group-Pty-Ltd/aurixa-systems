@@ -46,6 +46,7 @@ import {
   type ResolvedHandoff,
   type ResolvedIdentity,
 } from "../lib/billing";
+import { FREE_TRIAL, FREE_TRIAL_DAYS, TRIAL_CTA } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 
 /**
@@ -233,7 +234,8 @@ const FAQ_GROUPS: FaqGroup[] = [
       {
         q: "Is there a free trial?",
         a: [
-          "Reach out through the contact page and we will set up a sandbox environment so your team can road-test the platform with sample data before committing.",
+          `Yes. Every new workspace starts with a ${FREE_TRIAL}. Apply on the free trial page, and the Aurixa team reviews your application and provisions your workspace.`,
+          `The trial runs for ${FREE_TRIAL_DAYS} days from the day your workspace goes live, and you can activate your plan at any time during it.`,
         ],
       },
       {
@@ -984,10 +986,10 @@ export default function Pricing() {
                       />
                     ) : (
                       <Link
-                        to="/contact"
+                        to={TRIAL_CTA.to}
                         className="block rounded-sm border border-[#00A8B5]/40 py-2 text-center font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-white transition-colors hover:border-[#00A8B5]"
                       >
-                        Enquire
+                        {TRIAL_CTA.shortLabel}
                       </Link>
                     )}
                   </div>
@@ -1109,14 +1111,16 @@ export default function Pricing() {
           <p className="mx-auto mt-5 max-w-xl text-balance text-[#94A3B8] md:text-lg">
             {canBuy
               ? "Pick a plan above, or book a walkthrough with our team to see it on your data."
-              : "Already a client? Start any purchase from inside your command center. It carries your workspace and account straight into checkout. New here? Talk to us."}
+              : `Already a client? Start any purchase from inside your command center. It carries your workspace and account straight into checkout. New here? Every new workspace starts with a ${FREE_TRIAL}.`}
           </p>
           <div className="mt-10 flex flex-wrap justify-center gap-3">
+            {/* Credentialed visitors already have a workspace; the trial is for
+                everyone else. */}
             <Link
-              to="/contact"
+              to={canBuy ? "/contact" : TRIAL_CTA.to}
               className="inline-flex items-center rounded-sm bg-[#00A8B5] px-8 py-3 font-mono text-[11px] font-black uppercase tracking-[0.25em] text-white shadow-[0_0_50px_-10px] shadow-[#00A8B5]/70 transition-transform hover:scale-105"
             >
-              Talk to us <ArrowRight className="ml-2 h-4 w-4" />
+              {canBuy ? "Talk to us" : TRIAL_CTA.label} <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -1425,8 +1429,11 @@ function PlanCard({
             )}
           </button>
         ) : (
-          <Link to="/contact" className={ctaClasses}>
-            {cta}
+          // No purchase credential: a visitor without a workspace, so the way
+          // in is the trial rather than "Get started" on a page that cannot
+          // sell to them.
+          <Link to={TRIAL_CTA.to} className={ctaClasses}>
+            {TRIAL_CTA.shortLabel}
             <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         )}
@@ -1810,16 +1817,16 @@ function RestrictedGate({ loading }: { loading: boolean }) {
               Evaluating us
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-[#94A3B8]">
-              Ask and we will send you an access link.
+              Apply for the {FREE_TRIAL}, and ask in your application for an access link.
             </p>
           </div>
         </div>
 
         <Link
-          to="/contact"
+          to={TRIAL_CTA.to}
           className="group mt-9 inline-flex items-center justify-center rounded-sm bg-gradient-to-r from-[#00A8B5] to-[#5EDDE8] px-8 py-3.5 font-mono text-[11px] font-black uppercase tracking-[0.25em] text-[#040B16] shadow-[0_0_40px_-8px] shadow-[#00A8B5]/70 transition-all hover:scale-[1.02]"
         >
-          Request access
+          {TRIAL_CTA.label}
           <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Link>
 
