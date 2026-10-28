@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
-import { ArrowRight, ShieldAlert, CheckCircle2, Mail } from "lucide-react";
+import { ArrowRight, ShieldCheck, CheckCircle2, Mail } from "lucide-react";
 import { HeroBackground } from "../components/HeroBackgrounds";
 import {
   Dropdown,
@@ -39,6 +39,7 @@ import {
   resolveIntakeBadge,
   validateWaitlistForm,
 } from "../lib/waitlist";
+import { FREE_TRIAL, TRIAL_TERMS } from "../lib/cta";
 import { useRouteMetadata } from "../lib/pageMetadata";
 import "./Contact.css";
 
@@ -223,7 +224,7 @@ export default function Contact() {
 
         {/* Left Side */}
         <div className="pt-10 flex flex-col justify-between">
-          {/* This track ends above Operational Freeze, bounding the sticky introduction. */}
+          {/* This track ends above "How the trial works", bounding the sticky introduction. */}
           <div className="flex-1">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -232,19 +233,19 @@ export default function Contact() {
             >
               <div className="flex items-center gap-3 mb-8">
                 <span className="w-12 h-px bg-white/50" />
-                <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">Restricted Action</span>
+                <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">{FREE_TRIAL}</span>
               </div>
               <h1 className="text-[clamp(2.4rem,12vw,3rem)] md:text-7xl lg:text-[4.5rem] font-display font-light mb-8 tracking-[-0.02em] leading-[1.05]">
-                <span className="block text-white mb-2">The</span>
-                <span className="italic text-chrome-prismatic drop-shadow-2xl">Waitlist.</span>
+                <span className="block text-white mb-2">Start your</span>
+                <span className="italic text-chrome-prismatic drop-shadow-2xl">free trial.</span>
               </h1>
 
               <div className="space-y-6 text-gray-400 text-lg font-light leading-relaxed mb-12">
                 <p>
-                  We strictly cap our active partner ecosystem to ensure our infrastructure provides an unassailable, asymmetrical advantage in the market. This restricted action protects infrastructure fidelity for active partners while preserving a controlled path for firms seeking enterprise operational intelligence.
+                  Every new Aurixa workspace starts with a {FREE_TRIAL}. Rather than judging the platform from a presentation, you put it to work on your own workflows and your own clients, in a workspace set up for your firm.
                 </p>
                 <p>
-                  Application review cycle is now open. Firms will be selected via strict merit-based hierarchy regarding transaction volume, market stance, and alignment with Aurixa's strategic objectives. The application takes 60-90 seconds; we then send a short Business Readiness Questionnaire so our team can identify the most suitable platform configuration for your firm.
+                  The application takes 60-90 seconds; we then send a short Business Readiness Questionnaire so our team can identify the most suitable platform configuration for your firm. The Aurixa team reviews every application before your workspace is provisioned.
                 </p>
               </div>
             </motion.div>
@@ -257,14 +258,14 @@ export default function Contact() {
             className="mt-8 border-l-[3px] border-[#C89B3C]/40 pl-6 py-2"
           >
             <div className="flex items-center gap-2 mb-4 text-white">
-              <ShieldAlert className="w-5 h-5 " style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
-              <h2 className="font-display font-semibold text-xl tracking-wide uppercase">Operational Freeze</h2>
+              <ShieldCheck className="w-5 h-5 " style={{ stroke: "url(#icon-gold-gradient)", strokeWidth: 1.5 }}/>
+              <h2 className="font-display font-semibold text-xl tracking-wide uppercase">How the trial works</h2>
             </div>
             <p className="text-gray-400 font-light text-sm leading-relaxed mb-4">
-              "To maintain extreme architectural fidelity for our Tier-1 partners, we limit new integrations. We do not accept capital for queue priority. Allocation is earned by proving your firm has the systemic capability to dominate your sector once armed with our software. Submit your credentials meticulously. Each review cycle is calibrated around transaction volume, market stance, and alignment with Aurixa Systems' strategic objectives."
+              Apply here, then complete the Business Readiness Questionnaire and your strategic review. The Aurixa team reviews every application and provisions your firm's own workspace. {TRIAL_TERMS}
             </p>
             <div className="text-[10px] uppercase tracking-widest text-[#94A3B8] font-mono">
-              Founding Partner, Aurixa Systems
+              Stage 01 · Application
             </div>
           </motion.div>
         </div>
@@ -706,7 +707,7 @@ function ApplicationReceipt({
       </div>
 
       <p className="text-[14px] text-[#B6C0D4] font-light leading-relaxed">
-        Thank you, {receipt.firstName}. Your priority access application for{" "}
+        Thank you, {receipt.firstName}. Your free trial application for{" "}
         <span className="text-white">{receipt.organisationName}</span> has been successfully received.
       </p>
 
@@ -757,9 +758,8 @@ function ApplicationReceipt({
       )}
 
       <p className="text-[13px] text-[#9CA3B8] font-light leading-relaxed">
-        Once the questionnaire is completed, our team will assess your application and advise whether the
-        appropriate next step is a platform discovery session, guided demonstration or enterprise requirements
-        consultation.
+        Once the questionnaire is completed, our team will review your application and contact you about the
+        next step. {TRIAL_TERMS}
       </p>
 
       <button

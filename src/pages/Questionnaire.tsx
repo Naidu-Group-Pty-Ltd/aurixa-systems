@@ -1109,7 +1109,7 @@ function SectionOrganisation({ ctx }: { ctx: Ctx }) {
           error={errors[Q.role]}
           helper={
             ctx.authorised
-              ? "Prefilled from your Priority Access Application. Correct it here if it has changed."
+              ? "Prefilled from your free trial application. Correct it here if it has changed."
               : undefined
           }
           onSelect={(value) => set(Q.role, value)}

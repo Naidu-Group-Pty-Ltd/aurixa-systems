@@ -425,7 +425,7 @@ export const READINESS_COPY = {
   requiredNote: "Required questions are marked *",
 
   applicationSummaryHeading: "Application details",
-  applicationSummaryIntro: "These details were provided in your Priority Access Application.",
+  applicationSummaryIntro: "These details were provided in your free trial application.",
   applicationSummaryCorrection:
     "Need to correct your application details? Contact Aurixa or use the verified correction process supplied with your application.",
 
@@ -454,7 +454,7 @@ export const READINESS_COPY = {
 
     requiredHeading: "Secure questionnaire access required",
     requiredBody:
-      "This questionnaire is available through the secure link issued with an Aurixa Priority Access Application. Please use the link provided in your confirmation email or contact Aurixa if a new link is required.",
+      "This questionnaire is available through the secure link issued with an Aurixa free trial application. Please use the link provided in your confirmation email or contact Aurixa if a new link is required.",
 
     expiredHeading: "This secure questionnaire link has expired",
     expiredBody:

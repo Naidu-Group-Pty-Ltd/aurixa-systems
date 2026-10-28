@@ -10,6 +10,8 @@
  * testing, but slugs must not change or historical reporting breaks.
  */
 
+import { FREE_TRIAL, FREE_TRIAL_DAYS } from "./cta";
+
 /** Bumped whenever fields, options or required-ness change. Stored on every lead. */
 export const WAITLIST_FORM_VERSION = "stage-1-priority-access-v3";
 
@@ -91,7 +93,7 @@ const labelFor = (options: Option[], value: string) =>
 
 /** Appendix A.1 / A.2 — production copy deck. */
 export const WAITLIST_COPY = {
-  heading: "Apply for Priority Access",
+  heading: `Apply for your ${FREE_TRIAL}`,
   supporting:
     "Tell us a little about your organisation. Once submitted, we will send you a short Business Readiness Questionnaire to help identify the most suitable Aurixa platform configuration.",
   timeEstimate: "Applications generally take 60-90 seconds to complete.",
@@ -99,8 +101,8 @@ export const WAITLIST_COPY = {
   confidentiality:
     "Please do not include client identification documents, financial records or confidential client information.",
   preSubmit:
-    "After you submit, we will email a secure questionnaire. It takes approximately 6-8 minutes and helps us assess your workflows, technology environment and preferred Aurixa capabilities. Joining the waitlist does not guarantee immediate platform access.",
-  submitButton: "Submit Priority Access Application",
+    `After you submit, we will email a secure questionnaire. It takes approximately 6-8 minutes and helps us assess your workflows, technology environment and preferred Aurixa capabilities. The Aurixa team reviews every application before your workspace is provisioned, and your ${FREE_TRIAL_DAYS}-day trial begins the day that workspace goes live.`,
+  submitButton: "Apply for my free trial",
   submittingButton: "Transmitting Credentials...",
   queueStatus: "Queue Active",
   reviewStatus: "Application Review Pending",
