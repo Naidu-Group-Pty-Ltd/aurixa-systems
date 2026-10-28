@@ -12,6 +12,7 @@
  * what writes them, at prebuild.
  */
 
+import { FREE_TRIAL_DAYS } from "./cta";
 import { LEGAL_ENTITY } from "./legal";
 import {
   DEFAULT_DESCRIPTION,
@@ -169,9 +170,11 @@ export function llmsTxt(): string {
     `${LEGAL_ENTITY.name} (ABN ${LEGAL_ENTITY.abn}) is based in ${LEGAL_ENTITY.location}.`,
     `Website: ${SITE_ORIGIN}/`,
     ``,
-    `Access is granted through a staged Priority Access application rather than`,
-    `self-serve sign-up, and the Priority Access Application page below is the`,
-    `entry point. This guide does not cover pricing.`,
+    `New customers start with a ${FREE_TRIAL_DAYS}-day free trial. The way in is an application`,
+    `rather than self-serve sign-up, and the free trial page below is the entry`,
+    `point. The Aurixa team reviews each application and provisions the customer's`,
+    `own workspace; the trial runs for ${FREE_TRIAL_DAYS} days from the day that workspace goes`,
+    `live. This guide does not cover pricing.`,
     ``,
     ...LLMS_OVERVIEW,
     ``,

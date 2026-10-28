@@ -25,6 +25,7 @@ import {
   publishedBriefings,
   type Briefing,
 } from "./videos/catalog";
+import { FREE_TRIAL_DAYS } from "./cta";
 
 /** Canonical origin. The apex 307s to `www`, so `www` is the real home. */
 export const SITE_ORIGIN = "https://www.aurixasystems.com.au";
@@ -186,9 +187,9 @@ export const ROUTE_METADATA: RouteMetadata[] = [
   },
   {
     path: "/contact",
-    title: "Priority Access Application | Aurixa Systems",
+    title: `Start Your ${FREE_TRIAL_DAYS}-Day Free Trial | Aurixa Systems`,
     description:
-      "Join the Aurixa Systems waitlist by applying for priority access. Tell us about your organisation and what you most want to improve, and the team will review your application.",
+      `Apply for a ${FREE_TRIAL_DAYS}-day free trial of Aurixa Systems. Tell us about your organisation and what you most want to improve. The team reviews every application and provisions your own workspace, and the trial starts the day it goes live.`,
     indexable: true,
     changefreq: "monthly",
     priority: 0.9,
@@ -292,7 +293,7 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: "/questionnaire",
     title: "Business Readiness Questionnaire | Aurixa Systems",
     description:
-      "Secure Stage 2 readiness questionnaire for Aurixa Systems Priority Access applicants. Accessible by invitation only.",
+      "Secure Stage 2 readiness questionnaire for Aurixa Systems free trial applicants. Accessible by invitation only.",
     indexable: false,
   },
   {
