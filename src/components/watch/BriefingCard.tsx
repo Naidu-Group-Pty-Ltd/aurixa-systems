@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Play } from "lucide-react";
+import { Artwork } from "./Artwork";
 import {
   SERIES_LABELS,
   briefingPath,
   formatDuration,
+  isPortrait,
   isPublished,
   mediaUrl,
   spokenDuration,
@@ -31,13 +33,11 @@ export function BriefingCard({ briefing, code, current = false, watched = 0 }: B
 
   const thumbnail = (
     <div className="watch-card__thumb">
-      <img
+      <Artwork
         src={poster ?? briefing.artwork}
-        alt=""
-        loading="lazy"
-        decoding="async"
+        portrait={Boolean(poster) && isPortrait(briefing)}
         className={`watch-card__image${poster ? "" : " watch-card__image--artwork"}`}
-        style={{ objectPosition: poster ? "center" : briefing.artworkPosition ?? "center" }}
+        objectPosition={poster ? "center" : briefing.artworkPosition ?? "center"}
       />
       <div className="watch-card__tint" aria-hidden="true" />
       <div className="watch-card__wash" aria-hidden="true" />

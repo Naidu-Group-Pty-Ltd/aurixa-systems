@@ -19,6 +19,7 @@ import {
   featuredBriefing,
   formatDuration,
   formatPublished,
+  isPortrait,
   isPublished,
   mediaOriginFor,
   publishedBriefings,
@@ -105,6 +106,7 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
   // One store per briefing: a new slug is a new programme, with nothing carried over.
   const store = useMemo(() => createPlaybackStore(), [briefing.slug]);
   const published = isPublished(briefing);
+  const portrait = isPortrait(briefing);
   const code = codeFor(briefing);
   const next = upNextAfter(briefing.slug);
   const live = publishedBriefings();
@@ -146,7 +148,10 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
       {/* ── The theatre ──────────────────────────────────────────────────── */}
       <section className="watch-hero" aria-labelledby="watch-heading">
         <Backdrop />
-        <div className="watch-container">
+        {/* A vertical reel gets a two-column stage on desktop — the words on
+            one side, the reel at full height on the other — instead of a
+            9:16 frame stranded in the middle of a landscape hero. */}
+        <div className={`watch-container watch-stage-grid${portrait ? " watch-stage-grid--portrait" : ""}`}>
           <motion.header
             {...fadeUp}
             transition={{ duration: 0.8, ease: "easeOut" }}
@@ -191,7 +196,11 @@ function BriefingRoom({ briefing, isHub }: { briefing: Briefing; isHub: boolean 
             </p>
           </motion.header>
 
-          <motion.div {...fadeUp} transition={{ duration: 1, delay: 0.15, ease: "easeOut" }}>
+          <motion.div
+            {...fadeUp}
+            transition={{ duration: 1, delay: 0.15, ease: "easeOut" }}
+            className="watch-stage-grid__theatre"
+          >
             <BriefingTheatre
               key={briefing.slug}
               briefing={briefing}

@@ -97,12 +97,18 @@ async function fetchText(url) {
   return { text: await response.text(), headers: response.headers };
 }
 
-async function head(url) {
-  const response = await fetch(url, { method: "HEAD" });
+// A one-byte GET rather than a HEAD. Supabase Storage answers HEAD with
+// `cache-control: private, no-cache` whatever the object carries, while every
+// GET (which is all a player ever sends) gets the stored value, so a HEAD
+// probe fails a correctly published ladder.
+async function probe(url) {
+  const response = await fetch(url, { headers: { range: "bytes=0-0" } });
+  await response.body?.cancel();
+  const total = response.headers.get("content-range")?.split("/")[1];
   return {
     status: response.status,
     ok: response.ok,
-    length: Number(response.headers.get("content-length") || 0),
+    length: Number(total || response.headers.get("content-length") || 0),
     cacheControl: response.headers.get("cache-control"),
     contentType: response.headers.get("content-type"),
   };
@@ -167,7 +173,7 @@ async function main() {
     // segmentation and caching findings underneath it.
     const lenientUrl = base.replace(/\\/g, "/");
 
-    const result = await head(strictUrl);
+    const result = await probe(strictUrl);
     resolved.push({ ...reference, url: strictUrl, lenientUrl, ...result });
     if (!result.ok) fail(`${reference.label}: ${result.status} for ${strictUrl}`);
     else pass(`${reference.label}: resolves`);
@@ -275,7 +281,7 @@ async function main() {
   ];
 
   if (firstSegmentUrl) {
-    const segment = await head(firstSegmentUrl);
+    const segment = await probe(firstSegmentUrl);
     cacheTargets.push({ label: "media segment", cacheControl: segment.cacheControl });
   }
 

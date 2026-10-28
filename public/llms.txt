@@ -39,7 +39,10 @@ Who it serves: buyers agents, wealth advisors, property advisory firms, real est
 - [Command Center Documentation](https://www.aurixasystems.com.au/docs): Command Center documentation: client management, borrowing capacity, portfolio analysis, deal pipeline, agreements, voice and reporting. Full articles unlock with your entitlement.
 
 ## Video briefings
-- [Briefing Room: Aurixa Explainer Videos](https://www.aurixasystems.com.au/watch): The Aurixa Briefing Room: short explainer videos on the platform, from serviceability and cash flow modelling to client reporting, AI voice agents, the Compliance Passport and the Builders Network.
+- [Briefing Room: Aurixa Explainer Videos](https://www.aurixasystems.com.au/watch): The Aurixa Briefing Room: short videos on the platform, streamed from Aurixa itself. An introduction to Aurixa Systems, the AML/CTF Compliance Passport, and borrowing capacity in moments.
+- [The Aurixa Operating System – Video Briefing](https://www.aurixasystems.com.au/watch/aurixa-operating-system): A two-minute introduction to Aurixa Systems: one connected operating environment where property research, financial analysis, client reporting and partner relationships come together, built by property professionals for property professionals.
+- [Inside the Compliance Passport – Video Briefing](https://www.aurixasystems.com.au/watch/compliance-passport): One property, six professionals and the same documents requested again and again. The AML/CTF Compliance Passport keeps identity verification, screening and due diligence in one organised client record, shared with authorised partners through controlled access.
+- [Borrowing Capacity, in Moments – Video Briefing](https://www.aurixasystems.com.au/watch/borrowing-capacity): Your client has found the property; can they afford it? From one client questionnaire, Aurixa produces an indicative borrowing capacity assessment, models deposits and purchasing scenarios, generates a professional report and hands over to the finance broker.
 
 ## Company and access
 - [About Us: Built From Inside Property & Finance](https://www.aurixasystems.com.au/about): Who built Aurixa Systems and why: property professionals and quantitative engineers, the principles behind the platform, and the data sovereignty framework protecting client data.

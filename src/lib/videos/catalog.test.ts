@@ -156,6 +156,37 @@ test("chapters start at zero, run forward and end inside the video", () => {
   }
 });
 
+test("orientation, disclaimers and transcripts are well formed", () => {
+  for (const briefing of BRIEFINGS) {
+    if (briefing.orientation !== undefined) {
+      assert.ok(["landscape", "portrait"].includes(briefing.orientation), `${briefing.slug} orientation`);
+    }
+    if (briefing.disclaimer !== undefined) {
+      const text = briefing.disclaimer.trim();
+      assert.ok(text.length > 0 && text.length <= 240, `${briefing.slug} disclaimer is empty or a paragraph`);
+      assert.match(text, /[.!?]$/, `${briefing.slug} disclaimer should be a complete sentence`);
+    }
+    for (const [index, paragraph] of (briefing.transcript ?? []).entries()) {
+      assert.ok(paragraph.trim().length > 0, `${briefing.slug} transcript paragraph ${index + 1} is blank`);
+    }
+  }
+});
+
+/**
+ * A published briefing streams from the bucket the upload script writes, at
+ * the layout it writes: videos/<slug>/<version>/. A path pointing at another
+ * briefing's folder would play the wrong video under this one's title.
+ */
+test("published media lives in the briefing's own folder", () => {
+  for (const briefing of publishedBriefings()) {
+    for (const field of MEDIA_FIELDS) {
+      const value = briefing.media[field];
+      if (!value || /^https:/.test(value)) continue;
+      assert.match(value, new RegExp(`^videos/${briefing.slug}/v\\d+/`), `${briefing.slug} media.${field} is outside its folder`);
+    }
+  }
+});
+
 // ── The helpers, against fixtures, so they are proven before any video ships ─
 
 const fixture = (overrides: Partial<Briefing> & Pick<Briefing, "slug">): Briefing => ({

@@ -18,7 +18,7 @@ export type PlaybackQualityReport = {
   rebufferRatio: number;
   /** Last throughput measurement in bits per second, when available. */
   throughputBps: number | null;
-  /** Height in pixels of the rendition being played, when known. */
+  /** Line count (short side, as in "720p") of the rendition being played, when known. */
   currentHeight: number | null;
   /** How many times the adaptive ladder changed rendition. */
   levelSwitches: number;

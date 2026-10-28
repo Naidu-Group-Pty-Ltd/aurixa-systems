@@ -25,11 +25,14 @@
  * card, but no page, no route and no sitemap entry until it can be watched.
  *
  * ── What the copy may say ───────────────────────────────────────────────────
- * The same rule `llms.txt` lives by: every summary and takeaway restates
- * something a public page on this site already says, and the entry's
- * `explore` link points at that page. No figures, certifications or customer
- * claims a page does not make. The summary is served as the page's meta and
- * social description, so it is held to the registry's 320-character limit.
+ * The summary, kicker and takeaways describe what the video shows, and claim
+ * nothing about the platform that the page `explore` links to does not also
+ * say: the same rule `llms.txt` lives by. No figures, certifications or
+ * customer claims a page does not make. The summary is served as the page's
+ * meta and social description, so it is held to the registry's 320-character
+ * limit. The transcript is the exception, deliberately: it is the video's own
+ * words, verbatim, including what the video offers, because a transcript that
+ * edits the video is not a transcript.
  *
  * No imports from the route registry: `routeMetadata.ts` imports this file to
  * register each published briefing as a route, and the dependency runs one way.
@@ -89,8 +92,23 @@ export type Briefing = {
   /** `YYYY-MM-DD`, the day the video was first published here. Required to publish. */
   publishedOn?: string;
   chapters?: BriefingChapter[];
-  /** Transcript paragraphs. Rendered on the page, so crawlers can read the video. */
+  /**
+   * Transcript paragraphs. Rendered on the page, so crawlers and screen
+   * readers get what the video says. For a video whose words are on screen
+   * rather than spoken, this is the on-screen text, in order and verbatim.
+   */
   transcript?: string[];
+  /**
+   * The video's frame. `"portrait"` is a vertical 9:16 reel, which gets a
+   * vertical theatre, a portrait ladder and framed thumbnails; omitted means
+   * landscape 16:9. `npm run video:encode` prints the right value.
+   */
+  orientation?: "landscape" | "portrait";
+  /**
+   * A compliance line the video itself carries, shown beside it verbatim so
+   * it is never lost when the video is paused, skipped or not played at all.
+   */
+  disclaimer?: string;
 };
 
 /** A briefing with everything a viewer and a crawler need. */
@@ -117,94 +135,144 @@ export const BRIEFINGS: Briefing[] = [
   {
     slug: "aurixa-operating-system",
     title: "The Aurixa Operating System",
-    kicker: "One governed platform, from the first enquiry to compliance sign-off.",
+    kicker: "Built by property professionals, around how property professionals actually work.",
     summary:
-      "A short tour of Aurixa Systems: operational workflows, strategic reporting, financial modelling, client engagement and enterprise governance, brought together as one governed platform for Australian property and finance firms.",
+      "A two-minute introduction to Aurixa Systems: one connected operating environment where property research, financial analysis, client reporting and partner relationships come together, built by property professionals for property professionals.",
     series: "flagship",
     artwork: "/brand/layer-01-operational-intelligence.webp",
     takeaways: [
-      "Operational workflows, strategic reporting and financial modelling run on one infrastructure rather than a stack of disconnected subscriptions.",
-      "CRM workflows, communication and reporting delivery are brought into one client ecosystem.",
-      "Permissions, oversight and governance keep operational control in place as the business scales.",
+      "Research, financial analysis and client reporting run in one connected operating environment instead of across separate platforms.",
+      "A property moves from financial analysis into a professional report the client can understand.",
+      "Communication, client relationships and property partners stay connected to the same client journey.",
     ],
     explore: { label: "Explore the platform", to: "/platform" },
-  },
-  {
-    slug: "serviceability-and-cash-flow",
-    title: "Serviceability & 10-Year Cash Flow",
-    kicker: "Borrowing capacity against lender policy, then a decade of cash flow.",
-    summary:
-      "How Aurixa calculates borrowing capacity against lender policy rules and APRA buffers, then models 10-year pre and post-tax cash flow and yield for each client scenario.",
-    series: "platform",
-    artwork: "/brand/layer-03-financial-modelling.webp",
-    artworkPosition: "30% 25%",
-    takeaways: [
-      "Multi-lender policy matching with APRA buffers applied to every scenario.",
-      "Real-time borrowing capacity snapshots, ready before the client speaks to a broker.",
-      "10-year pre and post-tax yield analysis that flows straight into the client report.",
+    orientation: "portrait",
+    media: {
+      hls: "videos/aurixa-operating-system/v1/master.m3u8",
+      mp4: "videos/aurixa-operating-system/v1/fallback-720p.mp4",
+      poster: "videos/aurixa-operating-system/v1/poster.jpg",
+      card: "videos/aurixa-operating-system/v1/card.jpg",
+    },
+    durationSeconds: 131,
+    publishedOn: "2026-10-28",
+    chapters: [
+      { at: 0, label: "A property opportunity" },
+      { at: 10, label: "Scattered across platforms" },
+      { at: 31, label: "Built for property professionals" },
+      { at: 46, label: "From analysis to report" },
+      { at: 55, label: "Connected relationships" },
+      { at: 69, label: "Room to lead" },
+      { at: 80, label: "Beyond disconnected systems" },
+      { at: 88, label: "The invitation" },
     ],
-    explore: { label: "See the serviceability engine", to: "/platform#serviceability" },
-  },
-  {
-    slug: "white-label-client-reporting",
-    title: "White-Label Client Reporting",
-    kicker: "Client briefs in your brand, generated from the same governed data.",
-    summary:
-      "How Aurixa turns client data and modelling into fully white-labelled briefs and reports, custom-branded to your firm, generated in the background and synced with your CRM.",
-    series: "platform",
-    artwork: "/brand/layer-02-strategic-intelligence.webp",
-    takeaways: [
-      "White-label briefs and reports carrying your firm's own branding.",
-      "Client presentations generated in the background, fully formatted and ready to deliver.",
-      "Direct CRM integration and data syncing, so reporting starts from the client record.",
+    // The reel's words are on screen, not spoken: this is that text, in order.
+    transcript: [
+      "Somewhere in Australia, a property opportunity has just appeared. A client wants to know if it's right for them, while there's still time to act.",
+      "But before you can answer, the research is in one platform, the numbers in another, the client details somewhere else, and the report hasn't even begun.",
+      "What happens then? The market keeps moving. Your attention is pulled in every direction. And the client is waiting.",
+      "Aurixa Systems was built by property professionals, for property professionals. We're here, with a connected operating environment designed around how property professionals actually work.",
+      "Picture a property moving into financial analysis, then into a professional report your client can understand. Picture communication, client relationships and property partners connected to that journey, with Aurixa Agent supporting the work behind it. Not to replace your judgement, but to give it room to lead.",
+      "Because clients don't pay you to manage software. They trust you to identify opportunities, make sense of complexity and guide the next decision.",
+      "You can keep asking your team to bridge the gaps between disconnected systems. But why should they have to?",
+      "Aurixa Systems isn't on the horizon. We've arrived, and the invitation is open. Experience what we've built with a 14-day free trial. Explore the platform, put it alongside the way you work today, and discover what a more connected business could feel like.",
+      "Don't just take our word for it. Let your own experience make the case. Fourteen days. Your business. Your experience. Your decision.",
+      "Aurixa Systems: the operating system for modern property professionals.",
     ],
-    explore: { label: "See custom reporting", to: "/platform#custom-reporting" },
-  },
-  {
-    slug: "aurixa-voice",
-    title: "Aurixa Voice: AI Voice Agents",
-    kicker: "Voice agents that keep your team responsive when the phones are busy.",
-    summary:
-      "AI-assisted voice agents designed around your workflows, systems and service requirements, helping your team stay responsive during busy periods and outside normal operating hours.",
-    series: "growth",
-    artwork: "/brand/layer-04-client-growth-ecosystem.webp",
-    takeaways: [
-      "AI-assisted voice agents for inbound and outbound calls.",
-      "Configured against your own systems and service requirements, never a generic script.",
-      "Support for busy periods, after-hours enquiries and follow-ups that would otherwise slip.",
-    ],
-    explore: { label: "Meet Aurixa Voice", to: "/platform#voice" },
   },
   {
     slug: "compliance-passport",
     title: "Inside the Compliance Passport",
-    kicker: "One guided AML/CTF journey, recorded once and shared where authorised.",
+    kicker: "One property, six professionals, and a client who no longer has to be the messenger.",
     summary:
-      "A walkthrough of the AML/CTF Compliance Passport: identity verification, documents, screening, ownership, source of funds and review, recorded as one Passport that can be shared where authorised.",
+      "One property, six professionals and the same documents requested again and again. The AML/CTF Compliance Passport keeps identity verification, screening and due diligence in one organised client record, shared with authorised partners through controlled access.",
     series: "compliance",
     artwork: "/brand/layer-05-enterprise-governance.webp",
     takeaways: [
-      "A guided client journey through identity verification, documents, screening, ownership and source of funds.",
-      "Each verified stage recorded in one Compliance Passport, which can be refreshed as milestones are added.",
-      "Where authorised, Passport information can support the next professional in the transaction.",
+      "Buyer's agent, finance broker, solicitor, accountant, builder and developer stop asking the client for the same evidence one by one.",
+      "Identity verification, screening and due diligence sit together in one organised client record: the Compliance Passport.",
+      "With appropriate consent, authorised property partners reach it through controlled access instead of a fresh round of requests.",
     ],
     explore: { label: "Open the Compliance Passport", to: "/compliance-passport" },
+    orientation: "portrait",
+    disclaimer: "Your business remains responsible for its AML/CTF obligations.",
+    media: {
+      hls: "videos/compliance-passport/v1/master.m3u8",
+      mp4: "videos/compliance-passport/v1/fallback-720p.mp4",
+      poster: "videos/compliance-passport/v1/poster.jpg",
+      card: "videos/compliance-passport/v1/card.jpg",
+    },
+    durationSeconds: 118,
+    publishedOn: "2026-10-28",
+    chapters: [
+      { at: 0, label: "One client, six professionals" },
+      { at: 9, label: "The requests keep coming" },
+      { at: 23, label: "Built for property professionals" },
+      { at: 41, label: "Introducing the Passport" },
+      { at: 60, label: "Consent and controlled access" },
+      { at: 76, label: "The result" },
+      { at: 89, label: "Experience it yourself" },
+    ],
+    transcript: [
+      "One property, six property professionals, and somehow the client becomes the messenger. Sound familiar?",
+      "The perfect property is found, but the requests keep coming. Another identity check, another document, another explanation. Suddenly, progress feels like paperwork.",
+      "That's where Aurixa changes the experience. Built by property professionals for property professionals, Aurixa brings property intelligence, financial analysis, reporting, client management, communication and more into one connected operating environment.",
+      "And here's where it gets exciting. Introducing the Aurixa AML/CTF Compliance Passport. One digital passport, one organised client record, identity verification, screening and due diligence, all in one place.",
+      "With appropriate consent and controlled access, authorised property partners can securely access the client's Compliance Passport in just a few clicks, supporting legislative compliance while eliminating unnecessary duplication.",
+      "The result? Less paperwork, less repetition, better-connected professionals and a smoother property journey, without clients constantly providing the same information.",
+      "And that's just one part of Aurixa Systems. Experience it yourself with a 14-day free trial, and discover what a truly connected business can achieve. Fourteen days. Your business. Your experience. Your decision.",
+      "Aurixa Systems: the operating system for modern property professionals.",
+    ],
   },
   {
-    slug: "builders-network",
-    title: "The Builders Network",
-    kicker: "Publish stock once and reach the advisory firms placing clients into it.",
+    slug: "borrowing-capacity",
+    title: "Borrowing Capacity, in Moments",
+    kicker: "From one client questionnaire to an indicative assessment, scenarios and a report.",
     summary:
-      "How builders and developers publish their stock once on the Aurixa Builders Network and reach the advisory firms placing clients into it, with connections granted one firm at a time.",
-    series: "growth",
-    artwork: "/brand/layer-01-operational-intelligence.webp",
-    artworkPosition: "70% 40%",
+      "Your client has found the property; can they afford it? From one client questionnaire, Aurixa produces an indicative borrowing capacity assessment, models deposits and purchasing scenarios, generates a professional report and hands over to the finance broker.",
+    series: "platform",
+    artwork: "/brand/layer-03-financial-modelling.webp",
+    artworkPosition: "30% 25%",
     takeaways: [
-      "Publish once, and connected firms see the same list you do: lots, prices, photographs and status, the moment it changes.",
-      "Stock reaches advisers inside the workspace they already run their day from.",
-      "Every connection is granted one firm at a time, by you and by them, with no open directory of your pricing.",
+      "One client questionnaire captures and organises the client's information and populates their client card.",
+      "An indicative borrowing capacity assessment shows estimated purchasing power, deposit requirements and financial commitments.",
+      "Deposits, financial structures and purchasing scenarios are modelled and turned into a professional report.",
+      "Assessments and scenarios go to the client's finance broker through the partner portal, without repeating the process.",
     ],
-    explore: { label: "Visit the Builders Network", to: "/builders" },
+    explore: { label: "See the serviceability engine", to: "/platform#serviceability" },
+    orientation: "portrait",
+    disclaimer: "Illustrative example only: hypothetical client, figures and assumptions. Not a credit assessment or financial advice.",
+    media: {
+      hls: "videos/borrowing-capacity/v1/master.m3u8",
+      mp4: "videos/borrowing-capacity/v1/fallback-720p.mp4",
+      poster: "videos/borrowing-capacity/v1/poster.jpg",
+      // The first card's fill smeared a white panel beside the reel. Published
+      // images are immutable, so its replacement went up under a new name.
+      card: "videos/borrowing-capacity/v1/card-2.jpg",
+    },
+    durationSeconds: 147,
+    publishedOn: "2026-10-28",
+    chapters: [
+      { at: 0, label: "Can they afford it?" },
+      { at: 6, label: "Chasing documents" },
+      { at: 15, label: "One simple questionnaire" },
+      { at: 26, label: "Borrowing capacity in moments" },
+      { at: 53, label: "Scenarios and reports" },
+      { at: 68, label: "Handover to the broker" },
+      { at: 93, label: "Just the beginning" },
+      { at: 110, label: "What this means" },
+    ],
+    transcript: [
+      "Your client has found the property. The big question? Can they afford it?",
+      "Traditionally, answering that means chasing documents, juggling spreadsheets, and waiting on internal teams and external partners.",
+      "With Aurixa Systems, everything changes. One simple client questionnaire captures and organises their information, seamlessly populating their client card.",
+      "Now, here's where speed meets opportunity. With just one click, Aurixa turns client information into magic, where one aspect allows you to obtain an indicative borrowing capacity assessment, revealing estimated purchasing power, deposit requirements, financial commitments, and key considerations tailored to their specific circumstances. From information to financial insight in moments.",
+      "And why stop there? Bring their chosen property into focus. Adjust deposits, explore financial structures, model purchasing scenarios, and generate professional reports that turn numbers into meaningful decisions.",
+      "Ready for the next step? One click, one connected handover. Share assessments and scenarios directly with yours or their allocated finance broker through Aurixa's partner portal, enabling professional review without repeating the entire process.",
+      "Your client gains clarity and transparency, and the broker gains context. Your business gains momentum.",
+      "And that's just the beginning. Property intelligence, financial analysis, professional reporting, client and partner collaboration are all connected, with the Aurixa Agent in your arsenal supporting you wherever your business takes you.",
+      "This means less administration, faster answers, smarter collaboration, and more opportunities to deliver results.",
+      "Aurixa Systems. Built by property professionals for property professionals. Experience the difference with a 14-day free trial.",
+    ],
   },
 ];
 
@@ -273,6 +341,10 @@ export function mediaUrl(value: string | undefined): string | undefined {
   if (!value) return undefined;
   if (/^https:\/\//i.test(value)) return value;
   return `${videoMediaOrigin()}/${value.replace(/^\/+/, "")}`;
+}
+
+export function isPortrait(briefing: Briefing): boolean {
+  return briefing.orientation === "portrait";
 }
 
 /** The origin the player fetches from, for `preconnect`. */

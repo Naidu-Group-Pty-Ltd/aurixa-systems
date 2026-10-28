@@ -242,7 +242,7 @@ export const ROUTE_METADATA: RouteMetadata[] = [
     path: BRIEFING_ROOM_PATH,
     title: "Briefing Room: Aurixa Explainer Videos | Aurixa Systems",
     description:
-      "The Aurixa Briefing Room: short explainer videos on the platform, from serviceability and cash flow modelling to client reporting, AI voice agents, the Compliance Passport and the Builders Network.",
+      "The Aurixa Briefing Room: short videos on the platform, streamed from Aurixa itself. An introduction to Aurixa Systems, the AML/CTF Compliance Passport, and borrowing capacity in moments.",
     indexable: true,
     changefreq: "weekly",
     priority: 0.7,

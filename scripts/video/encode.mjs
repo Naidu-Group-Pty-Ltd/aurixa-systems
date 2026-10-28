@@ -6,7 +6,8 @@
  *
  * Usage:
  *   npm run video:encode -- <source-video> --slug <slug> [--tune animation]
- *                            [--version v1] [--jobs 2] [--draft]
+ *                            [--version v1] [--jobs 2] [--preset slow]
+ *                            [--poster-at 43.5] [--draft]
  *
  *   --slug     The catalogue slug (src/lib/videos/catalog.ts). Output lands in
  *              media-build/<slug>/, which `npm run video:upload` reads.
@@ -16,8 +17,19 @@
  *              Bump it to re-publish a video; never overwrite a live ladder.
  *   --jobs     Renditions encoded concurrently. `veryslow` is CPU-bound, so
  *              match this to cores rather than raising it blindly.
- *   --draft    `-preset veryfast` instead of `veryslow`: a quick look at the
- *              cut, never a publishable encode.
+ *   --preset   x264 preset, `veryslow` by default. `slow` costs a few percent
+ *              more bitrate at the same quality and encodes about three times
+ *              faster; anything quicker than `medium` is for drafts.
+ *   --poster-at
+ *              Seconds into the video to take the poster and social card
+ *              from. Defaults to a few seconds in; pick a frame that reads on
+ *              its own, with no caption caught half-animated.
+ *   --draft    `-preset veryfast`: a quick look at the cut, never a
+ *              publishable encode.
+ *
+ * Vertical sources (9:16 reels) get a portrait ladder, a portrait poster and
+ * a 1200×630 card that frames the reel over a blurred fill of itself, and the
+ * catalogue snippet says `orientation: "portrait"`.
  *
  * Requires ffmpeg and ffprobe on PATH, built with libx264. Carried across from
  * the NPC Services VSL pipeline (see docs/video-briefings.md) with three
@@ -40,15 +52,26 @@ import path from "node:path";
 import process from "node:process";
 import {
   AUDIO_RENDITIONS,
+  PRESETS,
   PROGRESSIVE_FALLBACK,
   SEGMENT_SECONDS,
   TUNES,
-  VIDEO_RENDITIONS,
+  renditionsFor,
   x264Params,
 } from "./ladder.mjs";
 
 function parseArgs(argv) {
-  const args = { source: null, slug: null, out: null, version: "v1", tune: "film", jobs: 2, draft: false };
+  const args = {
+    source: null,
+    slug: null,
+    out: null,
+    version: "v1",
+    tune: "film",
+    preset: "veryslow",
+    posterAt: null,
+    jobs: 2,
+    draft: false,
+  };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--slug") args.slug = argv[++i];
@@ -56,6 +79,8 @@ function parseArgs(argv) {
     else if (arg === "--version") args.version = argv[++i];
     else if (arg === "--tune") args.tune = argv[++i];
     else if (arg === "--jobs") args.jobs = Math.max(1, Number(argv[++i]) || 1);
+    else if (arg === "--preset") args.preset = argv[++i];
+    else if (arg === "--poster-at") args.posterAt = Number(argv[++i]);
     else if (arg === "--draft") args.draft = true;
     else if (!arg.startsWith("--")) args.source = arg;
   }
@@ -219,16 +244,23 @@ async function encodeAudioRendition(sourcePath, outDir, rendition) {
   ]);
 }
 
+/** The fallback's frame, in the source's orientation (720p either way). */
+function fallbackFrame(sourceInfo) {
+  const { width, height } = PROGRESSIVE_FALLBACK;
+  return isPortrait(sourceInfo) ? [height, width] : [width, height];
+}
+
 async function encodeProgressiveFallback(sourcePath, outDir, sourceInfo, options) {
   const target = path.join(outDir, `${PROGRESSIVE_FALLBACK.id}.mp4`);
   const gop = gopFrames(sourceInfo.fps);
+  const [w, h] = fallbackFrame(sourceInfo);
 
   await run("ffmpeg", [
     "-nostdin", "-y",
     "-i", sourcePath,
     "-vf",
-    `scale=${PROGRESSIVE_FALLBACK.width}:${PROGRESSIVE_FALLBACK.height}:flags=lanczos+accurate_rnd:` +
-      `force_original_aspect_ratio=decrease,pad=${PROGRESSIVE_FALLBACK.width}:${PROGRESSIVE_FALLBACK.height}:-1:-1:color=black,setsar=1`,
+    `scale=${w}:${h}:flags=lanczos+accurate_rnd:` +
+      `force_original_aspect_ratio=decrease,pad=${w}:${h}:-1:-1:color=black,setsar=1`,
     "-c:v", "libx264",
     "-preset", options.preset,
     "-tune", options.tune,
@@ -250,21 +282,28 @@ async function encodeProgressiveFallback(sourcePath, outDir, sourceInfo, options
   return target;
 }
 
-/** A few seconds in, so neither image is a fade-from-black. */
-function stillAt(sourceInfo) {
+/** The chosen frame, else a few seconds in, so neither image is a fade-from-black. */
+function stillAt(sourceInfo, chosen) {
+  if (Number.isFinite(chosen) && chosen >= 0) return Math.min(chosen, Math.max(0, sourceInfo.duration - 0.1));
   return Math.min(6, Math.max(1, sourceInfo.duration * 0.02));
 }
 
-async function extractPoster(sourcePath, outDir, sourceInfo) {
+function isPortrait(sourceInfo) {
+  return sourceInfo.height > sourceInfo.width;
+}
+
+async function extractPoster(sourcePath, outDir, sourceInfo, at) {
   const target = path.join(outDir, "poster.jpg");
+  // Full size in the video's own orientation: the theatre is ~1200 CSS px wide
+  // on desktop (a vertical reel's frame, ~760 px tall), so anything smaller is
+  // upscaled on every 2× display.
+  const [w, h] = isPortrait(sourceInfo) ? [1080, 1920] : [1920, 1080];
   await run("ffmpeg", [
     "-nostdin", "-y",
-    "-ss", String(stillAt(sourceInfo)),
+    "-ss", String(at),
     "-i", sourcePath,
     "-frames:v", "1",
-    // Full width: the theatre is ~1200 CSS px on desktop, so a 1280 poster
-    // would be upscaled on every 2× display.
-    "-vf", "scale=1920:1080:flags=lanczos:force_original_aspect_ratio=decrease,pad=1920:1080:-1:-1:color=black",
+    "-vf", `scale=${w}:${h}:flags=lanczos:force_original_aspect_ratio=decrease,pad=${w}:${h}:-1:-1:color=black`,
     "-q:v", "3",
     target,
   ]);
@@ -273,17 +312,32 @@ async function extractPoster(sourcePath, outDir, sourceInfo) {
 
 /**
  * The link-preview image: exactly the 1200×630 that `index.html` declares in
- * `og:image:width`/`height`, cropped from the centre rather than letterboxed,
- * because a preview card with black bars reads as broken.
+ * `og:image:width`/`height`. A landscape frame is cropped from the centre
+ * rather than letterboxed, because a preview card with black bars reads as
+ * broken. A vertical reel cannot be cropped to 1200×630 without losing nearly
+ * all of it, so the whole frame stands in the middle of a fill drawn from its
+ * own colours. The fill averages each of eight horizontal bands across the
+ * frame's full width: a blurred close-up of the frame, which is the obvious
+ * fill, turns any bright panel near its edge into a smear beside the reel.
  */
-async function extractCard(sourcePath, outDir, sourceInfo) {
+async function extractCard(sourcePath, outDir, sourceInfo, at) {
   const target = path.join(outDir, "card.jpg");
+  const filter = isPortrait(sourceInfo)
+    ? [
+        "-filter_complex",
+        "[0:v]split=2[fill][frame];" +
+          "[fill]scale=1:8:flags=area,scale=1200:630:flags=bicubic," +
+          "eq=brightness=-0.08:saturation=1.2,vignette=angle=PI/3.2[bg];" +
+          "[frame]scale=-2:630:flags=lanczos[fg];" +
+          "[bg][fg]overlay=(W-w)/2:0",
+      ]
+    : ["-vf", "scale=1200:630:flags=lanczos:force_original_aspect_ratio=increase,crop=1200:630"];
   await run("ffmpeg", [
     "-nostdin", "-y",
-    "-ss", String(stillAt(sourceInfo)),
+    "-ss", String(at),
     "-i", sourcePath,
     "-frames:v", "1",
-    "-vf", "scale=1200:630:flags=lanczos:force_original_aspect_ratio=increase,crop=1200:630",
+    ...filter,
     "-q:v", "3",
     target,
   ]);
@@ -335,7 +389,7 @@ async function measureRendition(outDir, renditionId) {
 
 const SILENT = { averageBps: 0, peakBps: 0 };
 
-function buildMaster(measurements, fps, hasAudio) {
+function buildMaster(measurements, fps, hasAudio, ladder) {
   const lines = [
     "#EXTM3U",
     "#EXT-X-VERSION:7",
@@ -346,7 +400,7 @@ function buildMaster(measurements, fps, hasAudio) {
   ];
 
   if (hasAudio) {
-    const usedGroups = new Set(VIDEO_RENDITIONS.map((r) => r.audioGroup));
+    const usedGroups = new Set(ladder.map((r) => r.audioGroup));
     for (const audio of AUDIO_RENDITIONS) {
       if (!usedGroups.has(audio.groupId)) continue;
       lines.push(
@@ -366,7 +420,7 @@ function buildMaster(measurements, fps, hasAudio) {
     lines.push("");
   }
 
-  for (const rendition of VIDEO_RENDITIONS) {
+  for (const rendition of ladder) {
     const video = measurements.get(rendition.id);
     const audio = AUDIO_RENDITIONS.find((a) => a.groupId === rendition.audioGroup);
     const audioMeasurement = hasAudio ? measurements.get(audio.id) : SILENT;
@@ -422,6 +476,7 @@ function catalogueSnippet(slug, version, source, captions) {
   const prefix = `videos/${slug}/${version}`;
   const today = new Date().toISOString().slice(0, 10);
   return [
+    ...(isPortrait(source) ? [`    orientation: "portrait",`] : []),
     `    media: {`,
     `      hls: "${prefix}/master.m3u8",`,
     `      mp4: "${prefix}/fallback-720p.mp4",`,
@@ -441,7 +496,7 @@ async function main() {
   const args = parseArgs(process.argv.slice(2));
   if (!args.source || !args.slug) {
     console.error(
-      "Usage: npm run video:encode -- <source-video> --slug <slug> [--tune film|animation] [--version v1] [--jobs n] [--draft]",
+      "Usage: npm run video:encode -- <source-video> --slug <slug> [--tune film|animation] [--version v1] [--jobs n] [--preset slow] [--poster-at seconds] [--draft]",
     );
     process.exit(1);
   }
@@ -458,7 +513,16 @@ async function main() {
     process.exit(1);
   }
 
-  const options = { preset: args.draft ? "veryfast" : "veryslow", tune: args.tune };
+  if (!PRESETS.includes(args.preset)) {
+    console.error(`--preset must be one of ${PRESETS.join(", ")}`);
+    process.exit(1);
+  }
+  if (args.posterAt !== null && !(Number.isFinite(args.posterAt) && args.posterAt >= 0)) {
+    console.error("--poster-at must be a number of seconds");
+    process.exit(1);
+  }
+
+  const options = { preset: args.draft ? "veryfast" : args.preset, tune: args.tune };
   const outDir = path.resolve(args.out ?? path.join("media-build", args.slug));
   await mkdir(outDir, { recursive: true });
 
@@ -485,7 +549,8 @@ async function main() {
         run: () => encodeAudioRendition(args.source, outDir, rendition),
       }))
     : [];
-  const videoJobs = VIDEO_RENDITIONS.map((rendition) => ({
+  const ladder = renditionsFor(source);
+  const videoJobs = ladder.map((rendition) => ({
     id: rendition.id,
     label: `${rendition.id} (${rendition.width}x${rendition.height}, CRF ${rendition.crf}, cap ${rendition.maxrateKbps} kbps)`,
     run: () => encodeVideoRendition(args.source, outDir, rendition, source, options),
@@ -504,16 +569,17 @@ async function main() {
     measurements.set(job.id, await measureRendition(outDir, job.id));
   }
 
-  const master = buildMaster(measurements, source.fps, source.hasAudio);
+  const master = buildMaster(measurements, source.fps, source.hasAudio, ladder);
   await writeFile(path.join(outDir, "master.m3u8"), master, "utf8");
 
   console.log("\n  encoding progressive fallback ...");
   const fallback = await encodeProgressiveFallback(args.source, outDir, source, options);
-  await extractPoster(args.source, outDir, source);
-  await extractCard(args.source, outDir, source);
+  const still = stillAt(source, args.posterAt ?? undefined);
+  await extractPoster(args.source, outDir, source, still);
+  await extractCard(args.source, outDir, source, still);
 
-  console.log("\nLadder:");
-  for (const rendition of VIDEO_RENDITIONS) {
+  console.log(`\nLadder (${isPortrait(source) ? "portrait" : "landscape"}):`);
+  for (const rendition of ladder) {
     const video = measurements.get(rendition.id);
     const audio = AUDIO_RENDITIONS.find((a) => a.groupId === rendition.audioGroup);
     const audioMeasurement = source.hasAudio ? measurements.get(audio.id) : SILENT;
@@ -526,7 +592,9 @@ async function main() {
   }
 
   const fallbackSize = (await stat(fallback)).size;
-  console.log(`  fallback 1280x720   ${formatMb(fallbackSize).padStart(30)}`);
+  const [fw, fh] = fallbackFrame(source);
+  console.log(`  fallback ${`${fw}x${fh}`.padEnd(10)} ${formatMb(fallbackSize).padStart(30)}`);
+  console.log(`  poster and card from ${still.toFixed(1)}s`);
   console.log(`\nWrote ${outDir}`);
 
   const captions = await stat(path.join(outDir, "captions.en.vtt")).then(() => true, () => false);

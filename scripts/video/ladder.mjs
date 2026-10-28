@@ -127,6 +127,23 @@ export const VIDEO_RENDITIONS = [
 ];
 
 /**
+ * The ladder in the source's own orientation.
+ *
+ * A vertical reel (9:16) gets the same rungs with width and height exchanged:
+ * the same pixel count per rung, so the bitrate caps and AVC levels above hold
+ * unchanged. Encoding it into the landscape boxes instead would pillarbox it,
+ * spending most of every rung on black — the 240p rung would carry a picture
+ * 135 px wide.
+ */
+export function renditionsFor({ width, height }) {
+  if (!(height > width)) return VIDEO_RENDITIONS;
+  return VIDEO_RENDITIONS.map((rendition) => ({ ...rendition, width: rendition.height, height: rendition.width }));
+}
+
+/** x264 presets the encoder accepts, slowest (smallest at a given quality) first. */
+export const PRESETS = ["veryslow", "slower", "slow", "medium", "fast", "faster", "veryfast"];
+
+/**
  * Single-file progressive fallback for the handful of clients that can play
  * neither MSE nor native HLS. Sized so that falling back is survivable.
  */

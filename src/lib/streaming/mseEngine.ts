@@ -18,6 +18,16 @@ const MAX_NETWORK_RECOVERIES = 4;
 /** Attempts before we stop trying to recover a decode failure. */
 const MAX_MEDIA_RECOVERIES = 2;
 
+/**
+ * A rendition's line count in the sense of "720p": its short side. That is the
+ * height of a landscape rung and the width of a vertical one, so a 720×1280
+ * reel rung is 720p, not 1280p.
+ */
+function linesOf(level: { width?: number; height?: number } | undefined): number | null {
+  const sides = [level?.width, level?.height].filter((side): side is number => Boolean(side));
+  return sides.length > 0 ? Math.min(...sides) : null;
+}
+
 export type MseEngine = {
   destroy: () => void;
   /** Latest throughput measurement in bits per second, if one has been made. */
@@ -35,8 +45,8 @@ export type MseEngineOptions = {
   url: string;
   profile: NetworkProfile;
   debug?: boolean;
-  /** Called with the height of the rendition now playing. */
-  onLevel?: (height: number | null) => void;
+  /** Called with the line count (short side) of the rendition now playing. */
+  onLevel?: (lines: number | null) => void;
   /** Called with each new throughput measurement. */
   onThroughput?: (bps: number) => void;
   /**
@@ -146,7 +156,8 @@ export function createMseEngine(options: MseEngineOptions): MseEngine | null {
       const ceiling = current.saveData ? 480 : 720;
       let byBitrate = -1;
       hls.levels.forEach((level, index) => {
-        if (level.height && level.height <= ceiling) byBitrate = index;
+        const lines = linesOf(level);
+        if (lines && lines <= ceiling) byBitrate = index;
       });
       // If no rung sits at or below the ceiling, pin to the cheapest one rather
       // than leaving the stream uncapped, which is what -1 would mean.
@@ -200,7 +211,7 @@ export function createMseEngine(options: MseEngineOptions): MseEngine | null {
   });
 
   hls.on(Events.LEVEL_SWITCHED, (_event, data) => {
-    onLevel?.(hls.levels[data.level]?.height ?? null);
+    onLevel?.(linesOf(hls.levels[data.level]));
   });
 
   hls.on(Events.FRAG_BUFFERED, () => {

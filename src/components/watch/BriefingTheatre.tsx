@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, Play, RotateCcw, X } from "lucide-react";
+import { Artwork } from "./Artwork";
 import { BriefingPlayer } from "./BriefingPlayer";
 import {
   SERIES_LABELS,
   briefingPath,
   formatDuration,
+  isPortrait,
   isPublished,
   mediaUrl,
   type Briefing,
@@ -178,7 +180,9 @@ function EndCard({ store, next }: { store: PlaybackStore; next: PublishedBriefin
             className="watch-endcard__next"
           >
             <span className="watch-endcard__thumb">
-              <img src={nextPoster} alt="" decoding="async" />
+              {nextPoster && (
+                <Artwork src={nextPoster} portrait={Boolean(next.media.poster) && isPortrait(next)} loading="eager" />
+              )}
               {!cancelled && (
                 <svg className="watch-endcard__countdown" viewBox="0 0 48 48" aria-hidden="true">
                   <circle cx="24" cy="24" r="21" />
@@ -232,7 +236,10 @@ export function BriefingTheatre({ briefing, code, store, autoStart, next }: Thea
   const published = isPublished(briefing);
 
   return (
-    <figure className="watch-theatre" data-status={published ? status : "premiere"}>
+    <figure
+      className={`watch-theatre${isPortrait(briefing) ? " watch-theatre--portrait" : ""}`}
+      data-status={published ? status : "premiere"}
+    >
       <div className="watch-theatre__halo" aria-hidden="true" />
       <TopHud briefing={briefing} code={code} store={store} />
       <div className="watch-stage">
@@ -252,6 +259,7 @@ export function BriefingTheatre({ briefing, code, store, autoStart, next }: Thea
         </div>
       </div>
       <BottomHud briefing={briefing} store={store} />
+      {briefing.disclaimer && <p className="watch-disclaimer">{briefing.disclaimer}</p>}
       <figcaption className="sr-only">
         {published ? `${briefing.title}. ${briefing.kicker}` : `${briefing.title}, premiering soon.`}
       </figcaption>

@@ -74,7 +74,9 @@ function announceMediaSession(briefing: PublishedBriefing, poster: string | unde
       title: briefing.title,
       artist: "Aurixa Systems",
       album: "Briefing Room",
-      artwork: poster ? [{ src: poster, sizes: "1920x1080", type: "image/jpeg" }] : [],
+      artwork: poster
+        ? [{ src: poster, sizes: briefing.orientation === "portrait" ? "1080x1920" : "1920x1080", type: "image/jpeg" }]
+        : [],
     });
   } catch {
     // Older implementations throw on artwork they cannot parse. Cosmetic only.
