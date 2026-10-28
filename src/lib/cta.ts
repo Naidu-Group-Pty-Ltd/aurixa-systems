@@ -23,8 +23,17 @@
 
 export const FREE_TRIAL_DAYS = 14;
 
+/**
+ * "30-day free trial". A trial offer (`?trial=CODE`, see trialOfferCode.ts)
+ * can give a length other than the default, and the copy that names a length
+ * is built by these so an offer reads exactly like the standard trial.
+ */
+export const freeTrialOf = (days: number) => `${days}-day free trial`;
+export const trialTermsOf = (days: number) =>
+  `Your ${days}-day trial starts the day your workspace goes live, and you can activate your plan at any time during it.`;
+
 /** "14-day free trial", for running text. */
-export const FREE_TRIAL = `${FREE_TRIAL_DAYS}-day free trial`;
+export const FREE_TRIAL = freeTrialOf(FREE_TRIAL_DAYS);
 
 /** Every trial call to action: where it goes and what it says. */
 export const TRIAL_CTA = {
@@ -38,7 +47,7 @@ export const TRIAL_CTA = {
 export const TRIAL_NOTE = `${FREE_TRIAL} · Every application is reviewed by the Aurixa team`;
 
 /** When the clock starts, and what the customer can do before it stops. */
-export const TRIAL_TERMS = `Your ${FREE_TRIAL_DAYS}-day trial starts the day your workspace goes live, and you can activate your plan at any time during it.`;
+export const TRIAL_TERMS = trialTermsOf(FREE_TRIAL_DAYS);
 
 /**
  * The closing panel on Platform and Solutions, which used to sell scarcity.

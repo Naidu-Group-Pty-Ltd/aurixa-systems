@@ -37,9 +37,13 @@ import {
   maskEmail,
   normaliseMobileNumber,
   resolveIntakeBadge,
+  trialFormHeading,
+  trialPreSubmit,
   validateWaitlistForm,
 } from "../lib/waitlist";
-import { FREE_TRIAL, TRIAL_TERMS } from "../lib/cta";
+import { FREE_TRIAL, FREE_TRIAL_DAYS, freeTrialOf, trialTermsOf } from "../lib/cta";
+import { trialCodeFromSearch, trialOfferNotice, type TrialOffer } from "../lib/trialOfferCode";
+import { lookupTrialOffer } from "../lib/trialOfferClient";
 import { useRouteMetadata } from "../lib/pageMetadata";
 import "./Contact.css";
 
@@ -87,6 +91,25 @@ export default function Contact() {
   useEffect(() => {
     getAttribution("AURIXA Contact Waitlist Page", "/contact");
   }, []);
+
+  // A link carrying ?trial=CODE: the offer's length is shown once Mission
+  // Control confirms it (trialOfferCode.ts). Until then, and if it never does,
+  // the page offers the standard trial, which is always true. The prerendered
+  // HTML runs no effects, so it is always the standard trial too.
+  const [trialOffer, setTrialOffer] = useState<TrialOffer | null>(null);
+  const [offerNotice, setOfferNotice] = useState<string | null>(null);
+  useEffect(() => {
+    const code = trialCodeFromSearch(window.location.search);
+    if (!code) return;
+    const controller = new AbortController();
+    void lookupTrialOffer(code, controller.signal).then((lookup) => {
+      if (controller.signal.aborted) return;
+      if (lookup.status === "accepted") setTrialOffer(lookup.offer);
+      else setOfferNotice(trialOfferNotice(lookup, FREE_TRIAL));
+    });
+    return () => controller.abort();
+  }, []);
+  const trialDays = trialOffer?.trialDays ?? FREE_TRIAL_DAYS;
 
   const setValue = <K extends keyof WaitlistFormValues>(key: K, value: WaitlistFormValues[K]) => {
     setValues((current) => ({ ...current, [key]: value }));
@@ -143,6 +166,7 @@ export default function Contact() {
       values,
       applicationId,
       getAttribution("AURIXA Contact Waitlist Page", "/contact"),
+      trialOffer?.code ?? null,
     );
 
     const receipt = {
@@ -233,7 +257,7 @@ export default function Contact() {
             >
               <div className="flex items-center gap-3 mb-8">
                 <span className="w-12 h-px bg-white/50" />
-                <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">{FREE_TRIAL}</span>
+                <span className="text-[11px] font-bold tracking-widest uppercase text-white/50">{freeTrialOf(trialDays)}</span>
               </div>
               <h1 className="text-[clamp(2.4rem,12vw,3rem)] md:text-7xl lg:text-[4.5rem] font-display font-light mb-8 tracking-[-0.02em] leading-[1.05]">
                 <span className="block text-white mb-2">Start your</span>
@@ -242,7 +266,12 @@ export default function Contact() {
 
               <div className="space-y-6 text-gray-400 text-lg font-light leading-relaxed mb-12">
                 <p>
-                  Every new Aurixa workspace starts with a {FREE_TRIAL}. Rather than judging the platform from a presentation, you put it to work on your own workflows and your own clients, in a workspace set up for your firm.
+                  {trialOffer ? (
+                    <>Your {trialOffer.label} offer gives your firm a {freeTrialOf(trialOffer.trialDays)}.</>
+                  ) : (
+                    <>Every new Aurixa workspace starts with a {FREE_TRIAL}.</>
+                  )}{" "}
+                  Rather than judging the platform from a presentation, you put it to work on your own workflows and your own clients, in a workspace set up for your firm.
                 </p>
                 <p>
                   The application takes 60-90 seconds; we then send a short Business Readiness Questionnaire so our team can identify the most suitable platform configuration for your firm. The Aurixa team reviews every application before your workspace is provisioned.
@@ -262,7 +291,7 @@ export default function Contact() {
               <h2 className="font-display font-semibold text-xl tracking-wide uppercase">How the trial works</h2>
             </div>
             <p className="text-gray-400 font-light text-sm leading-relaxed mb-4">
-              Apply here, then complete the Business Readiness Questionnaire and your strategic review. The Aurixa team reviews every application and provisions your firm's own workspace. {TRIAL_TERMS}
+              Apply here, then complete the Business Readiness Questionnaire and your strategic review. The Aurixa team reviews every application and provisions your firm's own workspace. {trialTermsOf(trialDays)}
             </p>
             <div className="text-[10px] uppercase tracking-widest text-[#94A3B8] font-mono">
               Stage 01 · Application
@@ -280,12 +309,24 @@ export default function Contact() {
           <div className="absolute inset-0 bg-chrome-prismatic opacity-20 group-hover:opacity-40 transition-opacity duration-1000 pointer-events-none" />
           <div className="bg-marketing-panel/95 backdrop-blur-2xl p-6 sm:p-8 md:p-10 relative z-10 border border-t-white/10 border-l-white/10">
             {receipt ? (
-              <ApplicationReceipt receipt={receipt} onCorrectEmail={handleCorrectEmail} />
+              <ApplicationReceipt receipt={receipt} trialDays={trialDays} onCorrectEmail={handleCorrectEmail} />
             ) : (
               <>
                 <div className="mb-7 pb-5 border-b border-white/10 flex flex-wrap items-start justify-between gap-4">
                   <div className="max-w-sm">
-                    <h2 className="text-2xl font-display font-light text-white mb-2">{WAITLIST_COPY.heading}</h2>
+                    <h2 className="text-2xl font-display font-light text-white mb-2">
+                      {trialOffer ? trialFormHeading(trialOffer.trialDays) : WAITLIST_COPY.heading}
+                    </h2>
+                    {trialOffer && (
+                      <p className="mb-2 inline-block border border-[#00A8B5]/40 bg-[#00A8B5]/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-[#7FE3EA]">
+                        Trial offer {trialOffer.code} applied
+                      </p>
+                    )}
+                    {offerNotice && (
+                      <p className="mb-2 text-[12px] font-light leading-relaxed text-[#C89B3C]" role="status">
+                        {offerNotice}
+                      </p>
+                    )}
                     <p className="text-[#B6C0D4] text-[14px] font-light leading-relaxed">{WAITLIST_COPY.supporting}</p>
                     <p className="text-[#9CA3B8] text-[12px] font-light leading-relaxed mt-2">
                       {WAITLIST_COPY.timeEstimate} {WAITLIST_COPY.requiredNote}
@@ -631,7 +672,7 @@ export default function Contact() {
 
                   {/* Row 10 — pre-submit explanation */}
                   <p className="text-[13px] text-[#9CA3B8] font-light leading-relaxed border-l-2 border-[#00A8B5]/40 pl-4">
-                    {WAITLIST_COPY.preSubmit}
+                    {trialOffer ? trialPreSubmit(trialOffer.trialDays) : WAITLIST_COPY.preSubmit}
                   </p>
 
                   {submissionError && (
@@ -678,9 +719,12 @@ export default function Contact() {
 /** Section 5.6 / Appendix A.3 — confirmation screen. */
 function ApplicationReceipt({
   receipt,
+  trialDays,
   onCorrectEmail,
 }: {
   receipt: { applicationId: string; firstName: string; organisationName: string; workEmail: string };
+  /** The trial the application was made for: the default, or a confirmed offer's. */
+  trialDays: number;
   onCorrectEmail: () => void;
 }) {
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -759,7 +803,7 @@ function ApplicationReceipt({
 
       <p className="text-[13px] text-[#9CA3B8] font-light leading-relaxed">
         Once the questionnaire is completed, our team will review your application and contact you about the
-        next step. {TRIAL_TERMS}
+        next step. {trialTermsOf(trialDays)}
       </p>
 
       <button
