@@ -32,3 +32,16 @@ test("nothing the funnel submits goes to the deprecated EU Make account", async 
     assert.doesNotMatch(await read(path), /hook\.[a-z0-9]+\.make\.com/, path);
   }
 });
+
+test("a correction Mission Control refused is said plainly, not answered with \"try again\"", async () => {
+  const leads = await read("./leads.ts");
+  const submit = leads.slice(leads.indexOf("export async function submitApplication"));
+  assert.ok(
+    submit.indexOf('=== "correction_refused"') < submit.indexOf("if (!response.ok) return false;"),
+    "the refusal is read before the generic failure",
+  );
+  assert.match(submit, /throw new CorrectionRefusedError\(\);/);
+
+  const page = await read("../pages/Contact.tsx");
+  assert.match(page, /error instanceof CorrectionRefusedError\s*\?\s*`This application's email address can no longer be changed here\./);
+});

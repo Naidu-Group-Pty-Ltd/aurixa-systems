@@ -14,7 +14,7 @@ import {
   pairedRowClass,
 } from "../components/FormControls";
 import { StageOneCompleteModal } from "../components/StageOneCompleteModal";
-import { submitApplication } from "../lib/leads";
+import { CorrectionRefusedError, submitApplication } from "../lib/leads";
 import { grantReadinessHandoff } from "../lib/readinessHandoff";
 import { getAttribution } from "../lib/attribution";
 import {
@@ -46,6 +46,9 @@ import { trialCodeFromSearch, trialOfferNotice, type TrialOffer } from "../lib/t
 import { lookupTrialOffer } from "../lib/trialOfferClient";
 import { useRouteMetadata } from "../lib/pageMetadata";
 import "./Contact.css";
+
+/** Where an applicant writes when the page cannot do it for them. */
+const SUPPORT_EMAIL = "admin@aurixasystems.com.au";
 
 const FIELD_ORDER: WaitlistFieldError[] = [
   "firstName",
@@ -196,7 +199,9 @@ export default function Contact() {
     } catch (error) {
       console.error(error);
       setSubmissionError(
-        "We could not submit your application just now. Please try again. Your answers have been kept.",
+        error instanceof CorrectionRefusedError
+          ? `This application's email address can no longer be changed here. Email ${SUPPORT_EMAIL} quoting ${applicationId} and our team will update it.`
+          : "We could not submit your application just now. Please try again. Your answers have been kept.",
       );
     } finally {
       setIsSubmitting(false);
