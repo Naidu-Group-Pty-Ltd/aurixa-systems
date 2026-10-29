@@ -15,7 +15,7 @@ This file is an internal publication gate. Draft wording does not mean that any 
 
 ## Privacy and data operations
 
-- [ ] Map overseas processing countries and applicable safeguards.
+- [ ] Map overseas processing countries and applicable safeguards. The free trial application's data flows are listed in `docs/free-trial-legal-review.md`.
 - [ ] Confirm all service-provider categories and disclosure language.
 - [ ] Approve retention periods by information and record category.
 - [ ] Re-audit cookies, analytics, attribution, local storage, session storage, advertising pixels, error monitoring and performance monitoring immediately before publication.
@@ -29,6 +29,10 @@ This file is an internal publication gate. Draft wording does not mean that any 
 - [ ] Approve cancellation periods, refund rules, late-payment rules and chargeback handling.
 - [ ] Confirm seat limits, credit and usage rules, taxes and GST treatment.
 - [ ] Approve trial, demonstration and early-access terms.
+- [ ] Approve the 14-day free trial clause: length, start, no automatic charge, suspension at the end, offer codes and extensions. The brief is `docs/free-trial-legal-review.md`.
+- [ ] Decide what happens to a lapsed trial's data: retention period, notice before deletion and export.
+- [ ] Decide trial eligibility: one trial per organisation, and whether Aurixa may decline an application.
+- [ ] Confirm the free trial wording on the website, videos, emails and voice agents states every condition counsel requires.
 - [ ] Approve service levels, maintenance notices and material feature-change notices.
 - [ ] Approve termination notice and cure periods.
 - [ ] Approve data-export window, post-termination retention, backup deletion and legal-retention exceptions.
