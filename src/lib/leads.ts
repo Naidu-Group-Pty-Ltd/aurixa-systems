@@ -1,18 +1,19 @@
 /**
  * Mission Control lead-capture client.
  *
- * The waitlist form's primary pipeline is unchanged: Make.com webhook →
- * Airtable. After that webhook succeeds, we ALSO mirror the same payload into
- * Mission Control (fire-and-forget) so operators see the lead in the /leads
- * console and get a realtime notification the moment it comes in.
+ * Mission Control is where an application lands: `/api/public/leads/capture`
+ * records each stage, and raises the emails the applicant and the team are
+ * owed. The applicant's result reflects Mission Control's answer at every
+ * stage. The Make.com webhooks this site used to submit to first lived in the
+ * EU Make account, which is deprecated — on 29 Oct 2026 they answered every
+ * request `200 Accepted` and ran nothing — so the site no longer calls them.
  *
- * Mission Control dedupes on (corporateEmail + submittedAt), so if the
- * Make.com scenario is also configured to forward the lead server-to-server,
- * the double delivery still lands exactly once.
+ * Aurixa's own `capture-lead` function still receives a copy, fire-and-forget,
+ * after Mission Control has accepted: a failure there never reaches the
+ * applicant.
  *
- * This mirror must NEVER affect the visitor's experience — failures are
- * swallowed (logged to the console only) and the submission result shown to
- * the user reflects the Make.com webhook alone.
+ * Mission Control dedupes on the application reference and on
+ * (corporateEmail + submittedAt), so a retried delivery lands exactly once.
  */
 
 /** Mission Control's origin, for everything this site asks of it. */
@@ -23,9 +24,8 @@ export const MISSION_CONTROL_URL = (
 
 export const MISSION_CONTROL_LEAD_CAPTURE_URL = `${MISSION_CONTROL_URL}/api/public/leads/capture`;
 
-// Aurixa Systems owns leads: they land in this site's own backend (Supabase
-// capture-lead function). We ALSO keep mirroring to Mission Control so the
-// operator /leads console + realtime notifications are unaffected.
+// Aurixa's own backend (Supabase functions): `capture-lead` keeps a copy of
+// every stage, after Mission Control has accepted it.
 export const STOREFRONT_BASE = (() => {
   const explicit = import.meta.env.VITE_STOREFRONT_API_URL as string | undefined;
   if (explicit) return explicit.replace(/\/+$/, "");
@@ -48,17 +48,33 @@ function fireAndForget(url: string, payload: Record<string, unknown>, label: str
   }
 }
 
-/** Backward-compatible: mirror a lead into Mission Control's operator console. */
-export function mirrorLeadToMissionControl(payload: Record<string, unknown>): void {
-  fireAndForget(MISSION_CONTROL_LEAD_CAPTURE_URL, payload, "Mission Control lead mirror");
+/** Fire-and-forget copy to Aurixa's own `capture-lead` function. */
+export function copyLeadToStorefront(payload: Record<string, unknown>, label: string): void {
+  fireAndForget(`${STOREFRONT_BASE}/capture-lead`, payload, label);
 }
 
 /**
- * Capture a lead into Aurixa Systems' own backend (store of record) and mirror
- * it to Mission Control. Both are fire-and-forget — a failure NEVER affects the
- * visitor's submission result (which reflects the primary Make.com webhook).
+ * Submits a Stage 1 application to Mission Control and answers whether it
+ * landed — the only thing the applicant's result reflects. A retry of the same
+ * application is a 200 `duplicate`, which is landed. Once accepted, the same
+ * payload is copied to `capture-lead`.
  */
-export function captureLead(payload: Record<string, unknown>): void {
-  fireAndForget(`${STOREFRONT_BASE}/capture-lead`, payload, "Aurixa lead capture");
-  mirrorLeadToMissionControl(payload);
+export async function submitApplication(
+  payload: Record<string, unknown>,
+  applicationId: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<boolean> {
+  const response = await fetchImpl(MISSION_CONTROL_LEAD_CAPTURE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      // Idempotency key — repeated deliveries of the same application collapse
+      // to a single record.
+      "X-Application-Id": applicationId,
+    },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) return false;
+  copyLeadToStorefront(payload, "Aurixa lead capture");
+  return true;
 }

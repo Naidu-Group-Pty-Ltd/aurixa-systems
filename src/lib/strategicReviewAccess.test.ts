@@ -169,7 +169,37 @@ test("the page renders nothing about an application until the server has granted
   );
 });
 
-test("the client points at the Stage 3 access scenario", async () => {
+test("the client asks Mission Control's Stage 3 gate, not the deprecated Make scenario", async () => {
+  // The EU Make hook answered `200 Accepted` and decided nothing, which this
+  // page reads as "unavailable": every applicant was refused.
   const source = await readFile(new URL("./strategicReviewAccessClient.ts", import.meta.url), "utf8");
-  assert.match(source, /https:\/\/hook\.eu2\.make\.com\/72awi6bckbib4axien3u6sqibbdhht29/);
+  assert.match(
+    source,
+    /STAGE_THREE_ACCESS_URL = `\$\{MISSION_CONTROL_URL\}\/api\/public\/storefront\/strategic-review-access`/,
+  );
+  assert.doesNotMatch(source, /make\.com/);
+});
+
+test("Mission Control's answers read as the page expects", () => {
+  // aurixa-mission-control src/routes/api.public.storefront.strategic-review-access.ts
+  const grant = parseAccessDecision(
+    JSON.stringify({
+      ok: true,
+      applicant: {
+        applicationId: REFERENCE,
+        firstName: "Ada",
+        lastName: "Lovelace",
+        workEmail: "ada@example.test",
+        organisationName: "Analytical Engines",
+      },
+    }),
+    REFERENCE,
+  );
+  assert.equal(grant.granted, true);
+  for (const reason of ["not_granted", "invalid_reference"]) {
+    assert.deepEqual(parseAccessDecision(JSON.stringify({ ok: false, reason }), REFERENCE), {
+      granted: false,
+      reason: "unverified",
+    });
+  }
 });

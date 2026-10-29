@@ -632,17 +632,16 @@ export default function Questionnaire() {
 
     const payload = buildCompletionPayload(session.applicationId, answers, responseVersion);
 
-    // Every access mode submits through the Stage 2 webhook: that is the
-    // pipeline the response actually travels down (Airtable, the applicant's
-    // confirmation, the Stage 3 invitation), and it is the same submission
-    // whether the applicant arrived on a secure link, carried a session over
-    // from Stage 1, or came back with their Application ID. The access mode
-    // rides along so an expired-link recovery stays visible in operations
-    // rather than looking like a normal submission.
+    // Every access mode submits to Mission Control: that is where the response
+    // is recorded and the Stage 2 email and the Stage 3 invitation are raised,
+    // and it is the same submission whether the applicant arrived on a secure
+    // link, carried a session over from Stage 1, or came back with their
+    // Application ID. The access mode rides along so an expired-link recovery
+    // stays visible in operations rather than looking like a normal submission.
     //
-    // Once the webhook has landed, the same response is mirrored to Aurixa's
-    // own store of record and the operator console. Those run after the fact
-    // and can never change what the applicant is told.
+    // Once Mission Control has accepted, the same response is copied to
+    // Aurixa's own store of record. That runs after the fact and can never
+    // change what the applicant is told.
     const result = await submitReadinessQuestionnaireWithMirrors({
       applicationId: payload.applicationId,
       answers,

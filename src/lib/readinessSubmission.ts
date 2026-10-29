@@ -9,9 +9,6 @@ import {
 } from "./readinessQuestionnaire";
 import type { ReadinessPrefill } from "./readinessQuestionnaireService";
 
-export const MAKE_READINESS_WEBHOOK_URL =
-  "https://hook.eu2.make.com/kbxnu4e130wxe42q3xgprij28sofddvk";
-
 const SUBMISSION_TYPE = "business_readiness_questionnaire" as const;
 const SUBMISSION_SOURCE = "Aurixa Business Readiness Questionnaire" as const;
 const SUBMISSION_PAGE = "/questionnaire" as const;
@@ -114,21 +111,23 @@ export type ReadinessSubmissionResult = {
   applicationId?: string;
   completedAt?: string;
   /**
-   * What was actually sent. Returned so a caller can mirror the same document
-   * onward — to Aurixa's own store of record and the operator console — after
-   * the Stage 2 webhook has already succeeded, without rebuilding it (and
-   * stamping a second, different `submittedAt` in the process).
+   * What was submitted. Returned so a caller can copy the same document to
+   * Aurixa's own `capture-lead` once Mission Control has accepted it, without
+   * rebuilding it (and stamping a second, different `submittedAt` in the
+   * process).
    */
   payload?: ReadinessSubmissionPayload;
   /**
-   * `already_completed` is the one outcome the scenario itself reports, by
-   * answering `{"error":"already_completed"}` when a response is already on
-   * file for this application. Everything else describes the transport.
+   * `already_completed` is the one outcome about the application itself,
+   * answered as `{"error":"already_completed"}` when a response is already on
+   * file for it. Everything else describes the transport.
    */
   reason?: "already_completed" | "http_error" | "network_error" | "timeout" | "invalid_response";
 };
 
 type SubmitReadinessInput = {
+  /** Where the response is recorded: Mission Control's lead capture. */
+  endpoint: string;
   applicationId: string;
   answers: AnswerMap;
   responseVersion: number;
@@ -188,7 +187,7 @@ export const buildSummaryText = (sections: ReviewSection[]): string =>
     })
     .join("\n\n--------------------------------------------------\n\n");
 
-export function buildReadinessSubmissionPayload(input: Omit<SubmitReadinessInput, "fetchImpl" | "timeoutMs">): ReadinessSubmissionPayload {
+export function buildReadinessSubmissionPayload(input: Omit<SubmitReadinessInput, "endpoint" | "fetchImpl" | "timeoutMs">): ReadinessSubmissionPayload {
   const submittedAt = (input.now?.() ?? new Date()).toISOString();
   const completion = buildCompletionPayload(input.applicationId, input.answers, input.responseVersion);
   const reviewSections = buildReviewSections(input.answers);
@@ -224,7 +223,7 @@ export function buildReadinessSubmissionPayload(input: Omit<SubmitReadinessInput
  * what the applicant actually said.
  *
  * `rawResponseJson` is dropped: it is a stringified copy of everything else in
- * the document, and the Stage 2 webhook is the pipeline that needs it.
+ * the document, which arrives field by field.
  */
 export function buildReadinessMirrorPayload(
   payload: ReadinessSubmissionPayload,
@@ -258,40 +257,28 @@ export function buildReadinessMirrorPayload(
 const validDate = (value: unknown): value is string =>
   typeof value === "string" && value.trim() !== "" && !Number.isNaN(Date.parse(value));
 
-/** Make's reply when a scenario has no "Webhook response" module: the payload is queued. */
-const MAKE_ACKNOWLEDGEMENT = /^accepted$/i;
-
+/**
+ * Records a completed questionnaire in Mission Control, which raises the
+ * Stage 2 emails. The applicant's result is Mission Control's answer: landed
+ * (`{ ok: true }`, a retried delivery included), refused, or not reached.
+ */
 export async function submitReadinessQuestionnaire(input: SubmitReadinessInput): Promise<ReadinessSubmissionResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), input.timeoutMs ?? DEFAULT_TIMEOUT_MS);
   const payload = buildReadinessSubmissionPayload(input);
 
   try {
-    const response = await (input.fetchImpl ?? fetch)(MAKE_READINESS_WEBHOOK_URL, {
+    const response = await (input.fetchImpl ?? fetch)(input.endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Application-Id": input.applicationId },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(buildReadinessMirrorPayload(payload)),
       signal: controller.signal,
     });
     if (!response.ok) return { ok: false, reason: "http_error" };
 
-    const body = await response.text();
-    // Make may acknowledge with an empty 2xx while the response mapping is being
-    // configured — or, as the Stage 2 scenario does, with its own one-word
-    // "Accepted": the scenario has no "Webhook response" module, so that word is
-    // every answer it gives. Read as malformed, it told an applicant whose
-    // answers had landed that they had not.
-    if (!body.trim() || MAKE_ACKNOWLEDGEMENT.test(body.trim()))
-      return {
-        ok: true,
-        applicationId: input.applicationId,
-        completedAt: payload.submittedAt,
-        payload,
-      };
-
     let parsed: unknown;
     try {
-      parsed = JSON.parse(body);
+      parsed = JSON.parse(await response.text());
     } catch {
       return { ok: false, reason: "invalid_response" };
     }
@@ -300,10 +287,8 @@ export async function submitReadinessQuestionnaire(input: SubmitReadinessInput):
     // A second submission for the same application is a real answer, not a
     // malformed one: the page has an "already submitted" screen for it.
     if (result.error === "already_completed") return { ok: false, reason: "already_completed" };
-    if (result.success !== true || result.applicationId !== input.applicationId || !validDate(result.completedAt)) {
-      return { ok: false, reason: "invalid_response" };
-    }
-    return { ok: true, applicationId: input.applicationId, completedAt: result.completedAt, payload };
+    if (result.ok !== true) return { ok: false, reason: "invalid_response" };
+    return { ok: true, applicationId: input.applicationId, completedAt: payload.submittedAt, payload };
   } catch (error) {
     return { ok: false, reason: controller.signal.aborted || (error instanceof DOMException && error.name === "AbortError") ? "timeout" : "network_error" };
   } finally {

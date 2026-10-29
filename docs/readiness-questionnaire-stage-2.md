@@ -8,6 +8,17 @@ Stage 1 (`/contact`) retains its existing form and direct Make.com payload. Stag
 sequence and the CRM routing in sections 7, 10 and 11 are not part of this
 change.
 
+> **Where each stage lands (29 Oct 2026).** Every stage submits to Mission
+> Control (`/api/public/leads/capture`), and the applicant is told Mission
+> Control's answer; the Stage 3 scheduler asks Mission Control's gate
+> (`/api/public/storefront/strategic-review-access`) before it opens. Mission
+> Control sends the applicant and team emails at all three stages. The Make.com
+> webhooks described below lived in the EU Make account, which is deprecated —
+> they answered `200 Accepted` and ran nothing, which left the scheduler
+> refusing every applicant — so the site no longer calls them, and Airtable no
+> longer receives applications. What follows about Make is the history of the
+> payloads, which Mission Control reads unchanged.
+
 > **The service below is written and switched off, and the Stage 2 gate is not a
 > gate until it is on.** What that costs, why raising the Airtable token's
 > entropy is the wrong repair, and the steps to activate it are in

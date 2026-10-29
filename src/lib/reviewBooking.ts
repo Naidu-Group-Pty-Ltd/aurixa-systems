@@ -231,6 +231,8 @@ export type PostBookingInput = {
   /** Test seam; production always uses the browser fetch implementation. */
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
+  /** Let the request outlive the page, for a report the applicant is not waiting on. */
+  keepalive?: boolean;
 };
 
 /**
@@ -259,6 +261,7 @@ export async function postBookingRequest(input: PostBookingInput): Promise<Booki
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal: controller.signal,
+      ...(input.keepalive ? { keepalive: true } : {}),
     });
     if (!response.ok) return { ok: false, payload, reason: "http_error" };
 

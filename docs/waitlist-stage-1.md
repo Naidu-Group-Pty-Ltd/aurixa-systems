@@ -9,6 +9,17 @@ privacy notice, confirmation page, source tracking and application ID. Stage 2
 (Business Readiness Questionnaire) and the transactional email sequence are not
 part of this change.
 
+> **Where each stage lands (29 Oct 2026).** Every stage submits to Mission
+> Control (`/api/public/leads/capture`), and the applicant is told Mission
+> Control's answer; the Stage 3 scheduler asks Mission Control's gate
+> (`/api/public/storefront/strategic-review-access`) before it opens. Mission
+> Control sends the applicant and team emails at all three stages. The Make.com
+> webhooks described below lived in the EU Make account, which is deprecated —
+> they answered `200 Accepted` and ran nothing, which left the scheduler
+> refusing every applicant — so the site no longer calls them, and Airtable no
+> longer receives applications. What follows about Make is the history of the
+> payloads, which Mission Control reads unchanged.
+
 ## Files
 
 | File | Purpose |
