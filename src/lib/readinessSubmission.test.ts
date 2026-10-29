@@ -4,7 +4,6 @@ import test from "node:test";
 
 import { AnswerMap, Q } from "./readinessQuestionnaire";
 import {
-  MAKE_READINESS_WEBHOOK_URL,
   buildReadinessMirrorPayload,
   buildReadinessSubmissionPayload,
   submitReadinessQuestionnaire,
@@ -39,10 +38,16 @@ const answers = (): AnswerMap => ({
   [Q.security]: ["mfa"],
   [Q.nextStep]: "general_demonstration",
 });
-const input = () => ({ applicationId, prefill, answers: answers(), responseVersion: 1, now: () => new Date("2026-07-29T12:00:00.000Z") });
+const ENDPOINT = "https://mission-control.test/api/public/leads/capture";
+const input = () => ({ endpoint: ENDPOINT, applicationId, prefill, answers: answers(), responseVersion: 1, now: () => new Date("2026-07-29T12:00:00.000Z") });
+/** What Mission Control's lead capture answers when a Stage 2 response lands. */
+const landed = () => new Response(JSON.stringify({ ok: true, lead_id: "lead_1", stage: 2, matched: true }), { status: 200 });
 
-test("uses the dedicated Stage 2 Make webhook", () => {
-  assert.equal(MAKE_READINESS_WEBHOOK_URL, "https://hook.eu2.make.com/kbxnu4e130wxe42q3xgprij28sofddvk");
+test("the page's client submits to Mission Control's lead capture, and nothing to Make", async () => {
+  const client = await readFile(new URL("./readinessSubmissionClient.ts", import.meta.url), "utf8");
+  assert.match(client, /endpoint: MISSION_CONTROL_LEAD_CAPTURE_URL,/);
+  const library = await readFile(new URL("./readinessSubmission.ts", import.meta.url), "utf8");
+  assert.doesNotMatch(client + library, /make\.com/, "the EU Make account is deprecated");
 });
 
 test("payload includes the existing ID, Stage 1 prefill, raw answers and readable labels", () => {
@@ -79,50 +84,38 @@ test("rawResponseJson is valid, complete structured JSON without recursion", () 
   assert.equal(raw.rawResponseJson, undefined);
 });
 
-test("submission posts JSON with the Application ID header and accepts verified Make details", async () => {
+test("submission posts the lead document, with the Application ID header, and lands on Mission Control's ok", async () => {
   let requestUrl = "";
   let request: RequestInit | undefined;
   const result = await submitReadinessQuestionnaire({
     ...input(),
     fetchImpl: async (url, init) => {
       requestUrl = String(url); request = init;
-      return new Response(JSON.stringify({ success: true, applicationId, completedAt: "2026-07-29T12:30:00.000Z" }), { status: 200 });
+      return landed();
     },
   });
-  assert.equal(requestUrl, MAKE_READINESS_WEBHOOK_URL);
+  assert.equal(requestUrl, ENDPOINT);
   assert.equal(request?.method, "POST");
   assert.equal((request?.headers as Record<string, string>)["Content-Type"], "application/json");
   assert.equal((request?.headers as Record<string, string>)["X-Application-Id"], applicationId);
-  assert.equal(JSON.parse(String(request?.body)).applicationId, applicationId);
-  assert.deepEqual(
-    { ok: result.ok, applicationId: result.applicationId, completedAt: result.completedAt },
-    { ok: true, applicationId, completedAt: "2026-07-29T12:30:00.000Z" },
-  );
-});
-
-test("an empty successful Make acknowledgement is handled without crashing", async () => {
-  const result = await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response("", { status: 200 }) });
+  // The document Mission Control reads: identity at the top level.
+  const body = JSON.parse(String(request?.body));
+  assert.equal(body.applicationId, applicationId);
+  assert.equal(body.submissionType, "business_readiness_questionnaire");
+  assert.equal(body.email, "ada@example.test");
   assert.deepEqual(
     { ok: result.ok, applicationId: result.applicationId, completedAt: result.completedAt },
     { ok: true, applicationId, completedAt: "2026-07-29T12:00:00.000Z" },
   );
 });
 
-test("Make's own one-word acknowledgement is a submission that landed", async () => {
-  // The Stage 2 scenario has no "Webhook response" module, so "Accepted" is
-  // every answer it gives. Read as malformed, it told applicants their answers
-  // had not arrived.
-  for (const reply of ["Accepted", "accepted", "Accepted\n"]) {
+test("a 200 that is not Mission Control's answer is not a submission that landed", async () => {
+  // An empty body, or Make's "Accepted", means the request reached something
+  // other than the lead capture — which records nothing.
+  for (const reply of ["", "Accepted", JSON.stringify({ ok: false, error: "storage_failed" })]) {
     const result = await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response(reply, { status: 200 }) });
-    assert.deepEqual(
-      { ok: result.ok, applicationId: result.applicationId, completedAt: result.completedAt },
-      { ok: true, applicationId, completedAt: "2026-07-29T12:00:00.000Z" },
-      reply,
-    );
+    assert.equal(result.reason, "invalid_response", reply);
   }
-  // Only the word itself: a sentence that merely contains it is still malformed.
-  const prose = await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response("Accepted with errors", { status: 200 }) });
-  assert.equal(prose.reason, "invalid_response");
 });
 
 test("the submission says whether the way in was verified, and says no unless told", () => {
@@ -145,7 +138,7 @@ test("a duplicate submission is reported as already completed, not as a broken r
   assert.deepEqual(result, { ok: false, reason: "already_completed" });
 });
 
-test("every access mode reaches the webhook with its access mode attached", async () => {
+test("every access mode reaches Mission Control with its access mode attached", async () => {
   for (const accessMode of [
     "Secure link (token)",
     "Application ID fallback",
@@ -155,11 +148,11 @@ test("every access mode reaches the webhook with its access mode attached", asyn
     let seen: { url: string; body: string } | null = null;
     const fetchImpl: typeof fetch = async (url, init) => {
       seen = { url: String(url), body: String(init?.body ?? "") };
-      return new Response("", { status: 200 });
+      return landed();
     };
     const result = await submitReadinessQuestionnaire({ ...input(), accessMode, fetchImpl });
     assert.equal(result.ok, true, accessMode);
-    assert.equal(seen!.url, MAKE_READINESS_WEBHOOK_URL, accessMode);
+    assert.equal(seen!.url, ENDPOINT, accessMode);
     assert.equal(JSON.parse(seen!.body).accessMode, accessMode);
   }
 });
@@ -172,7 +165,7 @@ test("a request exceeding the timeout is aborted and fails as a timeout", async 
   assert.deepEqual(result, { ok: false, reason: "timeout" });
 });
 
-test("the page submits every access mode through the webhook, once, with the access mode", async () => {
+test("the page submits every access mode the same way, once, with the access mode", async () => {
   const source = await readFile(new URL("../pages/Questionnaire.tsx", import.meta.url), "utf8");
   assert.match(source, /if \(isSubmitting \|\| !session\) return/);
   assert.match(source, /const result = await submitReadinessQuestionnaireWithMirrors\(\{/);
@@ -188,10 +181,10 @@ test("the page submits every access mode through the webhook, once, with the acc
   assert.ok(source.indexOf("endHandoffSession();") > source.indexOf("if (!result.ok || !result.completedAt)"));
 });
 
-test("a successful submission returns what it sent, so it can be mirrored onward", async () => {
+test("a successful submission returns what it sent, so it can be copied onward", async () => {
   const result = await submitReadinessQuestionnaire({
     ...input(),
-    fetchImpl: (async () => ({ ok: true, status: 200, text: async () => "" }) as Response) as typeof fetch,
+    fetchImpl: (async () => landed()) as typeof fetch,
   });
   assert.equal(result.ok, true);
   assert.equal(result.payload?.applicationId, applicationId);

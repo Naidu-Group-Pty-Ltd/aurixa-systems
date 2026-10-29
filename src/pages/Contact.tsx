@@ -14,7 +14,7 @@ import {
   pairedRowClass,
 } from "../components/FormControls";
 import { StageOneCompleteModal } from "../components/StageOneCompleteModal";
-import { captureLead } from "../lib/leads";
+import { submitApplication } from "../lib/leads";
 import { grantReadinessHandoff } from "../lib/readinessHandoff";
 import { getAttribution } from "../lib/attribution";
 import {
@@ -46,8 +46,6 @@ import { trialCodeFromSearch, trialOfferNotice, type TrialOffer } from "../lib/t
 import { lookupTrialOffer } from "../lib/trialOfferClient";
 import { useRouteMetadata } from "../lib/pageMetadata";
 import "./Contact.css";
-
-const MAKE_WAITLIST_WEBHOOK_URL = "https://hook.eu2.make.com/589rb23xwbgovfj3iuemtcuxm75cccut";
 
 const FIELD_ORDER: WaitlistFieldError[] = [
   "firstName",
@@ -177,26 +175,11 @@ export default function Contact() {
     };
 
     try {
-      const response = await fetch(MAKE_WAITLIST_WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Idempotency key — repeated deliveries of the same application must
-          // collapse to a single record downstream.
-          "X-Application-Id": applicationId,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        throw new Error("Waitlist webhook submission failed");
+      // Mission Control records the application and raises the Stage 1
+      // emails; the applicant's result is its answer (src/lib/leads.ts).
+      if (!(await submitApplication(payload, applicationId))) {
+        throw new Error("Mission Control did not accept the application");
       }
-
-      // Primary capture (Make.com → Airtable) succeeded — persist the lead in
-      // Aurixa Systems' own backend (store of record) and mirror it into
-      // Mission Control so operators are notified in real time.
-      // Fire-and-forget: never blocks or fails the visitor's submission.
-      captureLead(payload);
 
       const handoffCreated = grantReadinessHandoff({
         applicationId,

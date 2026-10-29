@@ -392,12 +392,14 @@ test("access mode defaults from whether a reference was held at all", () => {
 
 // The client reads `import.meta.env`, which throws outside a bundler, so its
 // wiring is asserted from the source rather than by importing it.
-test("the client submits to the Stage 3 webhook and only mirrors afterwards", async () => {
+test("the client records bookings in Mission Control, and copies a request only after it landed", async () => {
   const source = await readFile(new URL("./reviewBookingClient.ts", import.meta.url), "utf8");
-  assert.match(source, /export const MAKE_BOOKING_WEBHOOK_URL = "https:\/\/hook\.eu2\.make\.com\/15tz9divuqyvfsgccgf75horevi5kvdf"/);
-  assert.match(source, /endpoint: MAKE_BOOKING_WEBHOOK_URL,/);
+  assert.equal(source.match(/endpoint: MISSION_CONTROL_LEAD_CAPTURE_URL,/g)?.length, 2, "both the request and the confirmed booking");
+  assert.doesNotMatch(source, /make\.com/, "the EU Make account is deprecated");
+  const request = source.slice(source.indexOf("export async function submitBookingRequest"), source.indexOf("export async function announceConfirmedBooking"));
   assert.ok(
-    source.indexOf("if (!result.ok) return result;") < source.indexOf("mirror(`${STOREFRONT_BASE}/capture-lead`"),
-    "the mirrors must run only after the applicant's own submission succeeded",
+    request.indexOf("if (!result.ok) return result;") < request.indexOf("copyLeadToStorefront("),
+    "the copy must run only after the applicant's own submission succeeded",
   );
+  assert.match(source, /keepalive: true,/, "a confirmed booking's record outlives the tab");
 });

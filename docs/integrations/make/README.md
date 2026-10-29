@@ -1,5 +1,13 @@
 # Make.com blueprints — Aurixa Systems
 
+> **Deprecated (29 Oct 2026).** The EU Make account these scenarios ran in is
+> deprecated: their hooks answer `200 Accepted` and run nothing. The website no
+> longer calls them — every stage submits to Mission Control, which sends the
+> applicant and team emails and answers the Stage 3 access check — and the us2
+> account's copies of the Stage 1–3 scenarios are switched off. These exports
+> are the record of what the funnel did, and of the payloads Mission Control
+> still reads.
+
 A point-in-time export of the Aurixa scenarios in the Make organisation
 (`eu2.make.com`, org `1620547`, team `528268`), taken **2026-08-18**.
 
