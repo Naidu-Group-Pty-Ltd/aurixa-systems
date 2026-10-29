@@ -108,6 +108,29 @@ test("an empty successful Make acknowledgement is handled without crashing", asy
   );
 });
 
+test("Make's own one-word acknowledgement is a submission that landed", async () => {
+  // The Stage 2 scenario has no "Webhook response" module, so "Accepted" is
+  // every answer it gives. Read as malformed, it told applicants their answers
+  // had not arrived.
+  for (const reply of ["Accepted", "accepted", "Accepted\n"]) {
+    const result = await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response(reply, { status: 200 }) });
+    assert.deepEqual(
+      { ok: result.ok, applicationId: result.applicationId, completedAt: result.completedAt },
+      { ok: true, applicationId, completedAt: "2026-07-29T12:00:00.000Z" },
+      reply,
+    );
+  }
+  // Only the word itself: a sentence that merely contains it is still malformed.
+  const prose = await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response("Accepted with errors", { status: 200 }) });
+  assert.equal(prose.reason, "invalid_response");
+});
+
+test("the submission says whether the way in was verified, and says no unless told", () => {
+  assert.equal(buildReadinessSubmissionPayload(input()).accessVerified, false);
+  assert.equal(buildReadinessSubmissionPayload({ ...input(), accessVerified: true }).accessVerified, true);
+  assert.equal(JSON.parse(buildReadinessSubmissionPayload({ ...input(), accessVerified: true }).rawResponseJson).accessVerified, true);
+});
+
 test("non-2xx, network and malformed responses fail safely", async () => {
   assert.equal((await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => new Response("no", { status: 500 }) })).reason, "http_error");
   assert.equal((await submitReadinessQuestionnaire({ ...input(), fetchImpl: async () => { throw new TypeError("offline"); } })).reason, "network_error");

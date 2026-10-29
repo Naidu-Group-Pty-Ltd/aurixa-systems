@@ -93,7 +93,17 @@ import {
   resumeQuestionnaireByReference,
   saveQuestionnaireDraft,
 } from "../lib/readinessQuestionnaireService";
-import { readReadinessHandoff } from "../lib/readinessHandoff";
+import { grantReadinessHandoff, readReadinessHandoff } from "../lib/readinessHandoff";
+import {
+  clearVerifiedAccess,
+  isTokenShaped,
+  isWellFormedLink,
+  readMissionControlLink,
+  readVerifiedAccess,
+  rememberVerifiedAccess,
+  type MissionControlLink,
+} from "../lib/missionControlQuestionnaireAccess";
+import { checkQuestionnaireAccess } from "../lib/missionControlQuestionnaireAccessClient";
 import {
   clearQuestionnaireLinkAccess,
   resolveQuestionnaireLink,
@@ -171,6 +181,14 @@ export default function Questionnaire() {
    * scenario the option to.
    */
   const presentedTokenRef = useRef("");
+  /**
+   * Whether Mission Control verified the way in — its own link, or the
+   * reference with the work email — rather than a shape check or this tab's
+   * Stage 1. Travels with the submission as `accessVerified`.
+   */
+  const verifiedRef = useRef(false);
+  /** What "Try again" retries: the last access attempt that could not be answered. */
+  const retryRef = useRef<() => void>(() => undefined);
 
   // ── Page metadata. Scoped to this page only; restored on unmount so no other
   // route's title, description or robots behaviour changes. The `noindex,
@@ -180,15 +198,41 @@ export default function Questionnaire() {
 
   // ── Secure access: exchange the opaque token for an authorised session, then
   // strip the raw token from the visible URL. ───────────────────────────────
-  const startOpenAccess = useCallback(() => {
+  const startOpenAccess = useCallback((applicationId = "") => {
     accessModeRef.current = linkAccessRef.current ? "Secure link (token)" : "Manual entry";
-    const open = openAccessSession();
+    const blank = openAccessSession();
+    // A Mission Control link that could not be checked still names the
+    // application, so the answers can be matched to it downstream.
+    const open = applicationId
+      ? { ...blank, applicationId, prefill: { ...blank.prefill, applicationId } }
+      : blank;
     setSession(open);
     setAnswers({});
     setResponseVersion(open.responseVersion);
     savedSnapshotRef.current = "";
     setPhase("form");
   }, []);
+
+  /**
+   * Opens the questionnaire for an applicant Mission Control has vouched for.
+   * The handoff record keeps them in across a refresh, and the marker beside it
+   * remembers that it was verified and how.
+   */
+  const startVerified = useCallback(
+    (prefill: ReadinessSession["prefill"], via: "link" | "reference") => {
+      grantReadinessHandoff(prefill);
+      rememberVerifiedAccess(prefill.applicationId, via);
+      accessModeRef.current = via === "link" ? "Secure link (token)" : "Application ID fallback";
+      verifiedRef.current = true;
+      const verified = handoffSession(prefill);
+      setSession(verified);
+      setAnswers(seedPrefilledAnswers(verified));
+      setResponseVersion(verified.responseVersion);
+      savedSnapshotRef.current = "";
+      setPhase("form");
+    },
+    [],
+  );
 
   /**
    * Resolves access in priority order:
@@ -204,7 +248,12 @@ export default function Questionnaire() {
     if (!token) {
       const prefill = readReadinessHandoff();
       if (prefill) {
-        accessModeRef.current = "Same-session handoff";
+        // A handoff Mission Control verified (a refresh after its link or the
+        // reference form) keeps saying so; one from Stage 1 in this tab does not.
+        const via = readVerifiedAccess(prefill.applicationId);
+        accessModeRef.current =
+          via === "link" ? "Secure link (token)" : via === "reference" ? "Application ID fallback" : "Same-session handoff";
+        verifiedRef.current = via !== null;
         const session = handoffSession(prefill);
         setSession(session);
         setAnswers(seedPrefilledAnswers(session));
@@ -264,11 +313,89 @@ export default function Questionnaire() {
   }, []);
 
   /**
+   * A link from the Stage 1 email Mission Control sent: ask it who the link is
+   * for. Live, the questionnaire opens addressed to them. Expired or not
+   * theirs, the reference form opens with the reference filled in. Unanswered,
+   * a link that is at least well formed opens the questionnaire as such links
+   * always have — naming the application, so the answers still match it.
+   */
+  const openMissionControlLink = useCallback(
+    async (link: MissionControlLink, wellFormed: boolean) => {
+      retryRef.current = () => void openMissionControlLink(link, wellFormed);
+      setPhase("loading");
+      if (!isTokenShaped(link.token)) {
+        setBlockedBy("invalid_token");
+        setPhase("blocked");
+        return;
+      }
+
+      const result = await checkQuestionnaireAccess(link);
+      if (result.ok && result.prefill) {
+        startVerified(result.prefill, "link");
+        return;
+      }
+
+      if (result.reason === "already_completed") {
+        setCompletion({
+          applicationId: result.applicationId ?? link.applicationId,
+          completedAt: result.completedAt ?? "",
+        });
+        setBlockedBy("already_completed");
+        setPhase("blocked");
+        return;
+      }
+      if (result.reason === "expired") {
+        setBlockedBy("expired_token");
+        setPhase("blocked");
+        return;
+      }
+      if (result.reason === "invalid_token" || result.reason === "invalid_reference") {
+        setBlockedBy("invalid_token");
+        setPhase("blocked");
+        return;
+      }
+
+      // Too many attempts from this address is an answer: wait, then retry.
+      if (result.reason !== "throttled" && (wellFormed || allowsOpenAccess())) {
+        linkAccessRef.current = wellFormed;
+        startOpenAccess(link.applicationId);
+        return;
+      }
+      setBlockedBy("unavailable");
+      setPhase("blocked");
+    },
+    [startOpenAccess, startVerified],
+  );
+
+  /**
    * Fallback entry for an applicant whose secure link has expired. Returns the
    * failure reason for the form to show, or null once the questionnaire is open.
+   *
+   * Mission Control answers first: it holds the application and the work email
+   * it was filed under. Only when it cannot be reached is the Stage 2 service
+   * asked instead.
    */
   const resumeByReference = useCallback(
     async (details: { applicationId: string; workEmail: string }): Promise<ResumeFailure | null> => {
+      const checked = await checkQuestionnaireAccess({
+        applicationId: details.applicationId,
+        workEmail: details.workEmail,
+      });
+      if (checked.ok && checked.prefill) {
+        startVerified(checked.prefill, "reference");
+        return null;
+      }
+      if (checked.reason === "already_completed") {
+        setCompletion({
+          applicationId: checked.applicationId ?? details.applicationId,
+          completedAt: checked.completedAt ?? "",
+        });
+        setBlockedBy("already_completed");
+        return "already_completed";
+      }
+      if (checked.reason === "throttled") return "throttled";
+      if (checked.reason !== "unavailable") return "invalid_reference";
+
       const result = await resumeQuestionnaireByReference(details);
 
       if (!result.ok || !result.session) {
@@ -295,11 +422,16 @@ export default function Questionnaire() {
       setPhase("form");
       return null;
     },
-    [],
+    [startVerified],
   );
 
   useEffect(() => {
     const url = new URL(window.location.href);
+
+    // A link Mission Control minted names the application beside its token,
+    // and is read before anything strips either from the address bar.
+    const missionControlLink = readMissionControlLink(url);
+    const wellFormedLink = missionControlLink !== null && isWellFormedLink(missionControlLink, url);
 
     // `?ref=` comes from the Stage 1 email's "continue with your application ID"
     // link. It only prefills the resume form — the work email is still required
@@ -314,6 +446,14 @@ export default function Questionnaire() {
 
     // Captured before the parameters are stripped from the address bar below.
     presentedTokenRef.current = url.searchParams.get("token") ?? "";
+
+    if (missionControlLink) {
+      url.searchParams.delete("token");
+      url.searchParams.delete("expires");
+      window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      void openMissionControlLink(missionControlLink, wellFormedLink);
+      return;
+    }
 
     const linkAccess = resolveQuestionnaireLink(url);
 
@@ -349,8 +489,9 @@ export default function Questionnaire() {
     }
 
     tokenRef.current = token;
+    retryRef.current = () => void authorise(tokenRef.current);
     void authorise(token);
-  }, [authorise, startOpenAccess]);
+  }, [authorise, openMissionControlLink, startOpenAccess]);
 
   // ── Autosave ───────────────────────────────────────────────────────────────
   const runSave = useCallback(
@@ -509,6 +650,7 @@ export default function Questionnaire() {
       prefill: session.prefill,
       accessMode: accessModeRef.current,
       accessTokenPresented: presentedTokenRef.current,
+      accessVerified: verifiedRef.current,
     });
 
     setIsSubmitting(false);
@@ -525,6 +667,7 @@ export default function Questionnaire() {
 
     if (session.access === "handoff") endHandoffSession();
     if (linkAccessRef.current) clearQuestionnaireLinkAccess();
+    clearVerifiedAccess();
 
     setCompletion({
       applicationId: result.applicationId ?? session.applicationId,
@@ -563,7 +706,7 @@ export default function Questionnaire() {
         <BlockedState
           reason={blockedBy}
           completion={completion}
-          onRetry={() => void authorise(tokenRef.current)}
+          onRetry={() => retryRef.current()}
           onResume={resumeByReference}
           linkedReference={linkedReference}
         />

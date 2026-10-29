@@ -4,6 +4,20 @@
 Airtable automation migration, because the work ran into it and the finding is
 worth more than the task that found it.
 
+> **Update, 29 Oct 2026.** Mission Control can now send the Stage 1 email
+> itself, and **its** link is a credential: it names the application
+> (`?ref=AX-…&token=…`), Mission Control keeps the token's SHA-256, and the
+> page asks Mission Control before opening
+> (`src/lib/missionControlQuestionnaireAccess.ts`; see "Mission Control's link,
+> checked by Mission Control" in `readiness-questionnaire-stage-2.md`). A
+> submission through it says `accessVerified: true`.
+>
+> Everything below still holds for a link **without** `ref` — Make's. Once
+> Stage 1 is sent by Mission Control and the last Make link has expired, the
+> shape-only path can be closed, and with it the write-side gap this page
+> describes. Until then it stays, because closing it would lock out applicants
+> holding a Make link that is still live.
+
 ## What is true today
 
 `/questionnaire` is reached by a link carrying `?token=…&expires=…`. Anyone who
