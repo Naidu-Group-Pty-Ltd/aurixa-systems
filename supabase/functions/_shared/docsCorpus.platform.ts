@@ -326,7 +326,7 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
     title: "Solicitor Portal",
     summary: "The legal-partner surface for conveyancing and matter management.",
     group: "Portals",
-    moduleSlug: "finance-portal",
+    moduleSlug: "solicitor-portal",
     guideSectionId: "solicitor-portal",
     readMinutes: 7,
     blocks: [
@@ -359,7 +359,7 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
     title: "Accountant Portal",
     summary: "The client's accountant, working beside the broker and the solicitor on a purchase.",
     group: "Portals",
-    moduleSlug: "finance-portal",
+    moduleSlug: "accountant-portal",
     guideSectionId: "accountant-portal",
     readMinutes: 6,
     blocks: [
@@ -432,7 +432,7 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
     title: "Builder Portal",
     summary: "The builder-facing surface for construction progress and invoicing.",
     group: "Portals",
-    moduleSlug: "finance-portal",
+    moduleSlug: "builder-developer-portal",
     guideSectionId: "builder-portal",
     readMinutes: 6,
     blocks: [
@@ -464,7 +464,7 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
     title: "Partner Network",
     summary: "Managing the referral partners around your business and the agreements with them.",
     group: "Portals",
-    moduleSlug: "finance-portal",
+    moduleSlug: "agreements",
     guideSectionId: "partner-network",
     readMinutes: 5,
     blocks: [
@@ -755,6 +755,37 @@ export const PLATFORM_SECTIONS: DocsSection[] = [
         tone: "compliance",
         text:
           "Connections are held per workspace with credentials stored as secrets, never in readable configuration. Revoking a connection stops future sync immediately; historical data already imported is retained unless you remove it explicitly.",
+      },
+    ],
+  },
+  {
+    slug: "workflow-playground",
+    title: "Workflow Playground",
+    summary: "Building workflows on a canvas: a trigger, the steps it runs, and a test run before anything goes live.",
+    group: "Administration",
+    moduleSlug: "integrations",
+    readMinutes: 5,
+    blocks: [
+      {
+        kind: "prose",
+        text:
+          "Workflow Playground is the automation canvas that comes with Integrations. A workflow is a trigger and the steps that follow it, drawn as a graph, and its steps can act through the services your workspace has connected. It is open to administrators.",
+      },
+      {
+        kind: "list",
+        title: "How a workflow runs",
+        items: [
+          "A test run walks the graph without sending anything, so a workflow can be checked before it is trusted.",
+          "Run live from the canvas, a person starts it and each step is carried out on their behalf.",
+          "A live workflow can also start itself: an event on the platform, such as a client being created, starts every live workflow listening for it within about a minute.",
+          "Every run, and every step in it, is kept in the run history.",
+        ],
+      },
+      {
+        kind: "note",
+        tone: "warning",
+        text:
+          "A run that fails is not retried automatically: the steps before the failure may already have acted, and repeating them could send a message twice. The history says why it stopped, and it can be started again by hand from the canvas.",
       },
     ],
   },

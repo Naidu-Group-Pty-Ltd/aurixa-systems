@@ -28,9 +28,12 @@ export const DOCS_SECTIONS: DocsSection[] = [
  * and different runtimes. A drift test asserts every moduleSlug in the corpus
  * appears here, so a section can never reference a module the gate does not know
  * — that would make it fall through as "not priced" and be shown to everyone.
+ * Another pins each row to the price list's own inclusions
+ * (`src/lib/pricing/mockCatalog.ts`): Market Updates read Growth and above here
+ * for weeks after the price list moved it to Scale alone.
  */
 export const MODULE_TIERS: Record<string, readonly string[]> = {
-  "market-updates": ["growth", "scale"],
+  "market-updates": ["scale"],
   "commercial-industrial": ["scale"],
   "opportunity-marketplace": ["scale"],
   "intelligence-hub": [],
@@ -53,6 +56,12 @@ export const MODULE_TIERS: Record<string, readonly string[]> = {
   integrations: [],
   "api-usage": ["scale"],
   "aurixa-agent": [],
+  // Each partner portal is its own purchase, in no tier: the Solicitor Portal
+  // by D17, the Accountant Portal by the owner's decision of 29 Oct 2026, and
+  // the Builder / Developer Portal, which is sold directly.
+  "solicitor-portal": [],
+  "accountant-portal": [],
+  "builder-developer-portal": [],
 };
 
 const KNOWN_PLANS: readonly string[] = ["launch", "growth", "scale"];

@@ -17,7 +17,8 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PUBLIC_DOCS_INDEX, PUBLIC_DOCS_GROUPS, availabilityLabel } from "./publicIndex.ts";
+import { PUBLIC_DOCS_INDEX, PUBLIC_DOCS_GROUPS, MODULE_TIERS, availabilityLabel } from "./publicIndex.ts";
+import { MOCK_MODULES } from "../pricing/mockCatalog.ts";
 
 const ROOT = join(import.meta.dirname, "..", "..", "..");
 const read = (rel: string) => readFileSync(join(ROOT, rel), "utf8");
@@ -46,6 +47,21 @@ function corpusModules(): Array<{ slug: string; moduleSlug: string | null }> {
     for (const m of src.matchAll(re)) {
       out.push({ slug: m[1], moduleSlug: m[2] === "null" ? null : m[2].replace(/"/g, "") });
     }
+  }
+  return out;
+}
+
+/**
+ * The corpus's gate table, `MODULE_TIERS` in docsCorpus.ts: module slug → the
+ * tiers that include it. Read from the source, as the sections are, because
+ * the corpus is server-only and must not be imported here.
+ */
+function corpusGate(): Record<string, string[]> {
+  const src = read("supabase/functions/_shared/docsCorpus.ts");
+  const body = src.split("export const MODULE_TIERS")[1]?.split("\n};")[0] ?? "";
+  const out: Record<string, string[]> = {};
+  for (const m of body.matchAll(/^\s{2}"?([a-z0-9-]+)"?: \[([^\]]*)\],$/gm)) {
+    out[m[1]] = [...m[2].matchAll(/"([a-z]+)"/g)].map((t) => t[1]);
   }
   return out;
 }
@@ -84,17 +100,9 @@ test("index and corpus agree on which sections are gated", () => {
 
 test("every gated section names a module in the pricing catalogue", () => {
   // A moduleSlug the gate does not recognise fails closed in the corpus, which
-  // would silently hide a section from paying customers.
-  const known = new Set(
-    Object.keys({
-      "market-updates": 1, "commercial-industrial": 1, "opportunity-marketplace": 1,
-      "intelligence-hub": 1, "report-comparisons": 1, "cashflow-comparisons": 1,
-      "email-copilot": 1, "call-logs": 1, "portfolio-analysis": 1, "send-portfolio": 1,
-      "client-forms": 1, "borrowing-capacity": 1, lenders: 1, "client-ai": 1,
-      agreements: 1, marketing: 1, "deal-pipeline": 1, "aml-ctf": 1, "model-hub": 1,
-      "finance-portal": 1, integrations: 1, "api-usage": 1, "aurixa-agent": 1,
-    }),
-  );
+  // would silently hide a section from paying customers. The gate's own table
+  // is the list, so a module the price list adds needs one line, not two.
+  const known = new Set(Object.keys(corpusGate()));
   const unknown = PUBLIC_DOCS_INDEX.filter(
     (e) => e.moduleSlug !== null && !known.has(e.moduleSlug),
   ).map((e) => `${e.slug} -> ${e.moduleSlug}`);
@@ -131,6 +139,48 @@ test("AML compliance is available on every plan", () => {
   const aml = PUBLIC_DOCS_INDEX.find((e) => e.slug === "aml-ctf");
   assert.ok(aml);
   assert.equal(availabilityLabel(aml.moduleSlug), "All plans");
+});
+
+test("the index badges each module as the corpus gates it", () => {
+  // Two copies of one table, in two runtimes. A badge that disagrees with the
+  // gate advertises a section as open on a plan that cannot read it, or the
+  // reverse.
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(MODULE_TIERS).map(([k, v]) => [k, [...v]])),
+    corpusGate(),
+  );
+});
+
+test("the gate includes each module on exactly the tiers the price list does", () => {
+  // Market Updates read Growth and above here for weeks after the price list
+  // moved it to Scale alone. AML/CTF is the one deliberate difference: it is
+  // sold inside every tier's headline price, so its section is open on all
+  // three although no tier lists it as an inclusion.
+  const gate = corpusGate();
+  const drift: string[] = [];
+  for (const mod of MOCK_MODULES) {
+    if (mod.slug === "aml-ctf" || !(mod.slug in gate)) continue;
+    const listed = [...(mod.includedIn ?? [])].sort().join(",");
+    const gated = [...gate[mod.slug]].sort().join(",");
+    if (listed !== gated) drift.push(`${mod.slug} (price list=${listed} gate=${gated})`);
+  }
+  assert.deepEqual(drift, [], `tier drift: ${drift.join("; ")}`);
+});
+
+test("each partner portal is its own purchase, in no tier", () => {
+  // The Solicitor Portal by D17, the Accountant Portal by the owner's decision
+  // of 29 Oct 2026, and the Builder / Developer Portal, sold directly. Each
+  // used to read as part of the Finance Portal, and so as Scale.
+  for (const [section, module] of [
+    ["solicitor-portal", "solicitor-portal"],
+    ["accountant-portal", "accountant-portal"],
+    ["builder-portal", "builder-developer-portal"],
+  ] as const) {
+    const entry = PUBLIC_DOCS_INDEX.find((e) => e.slug === section);
+    assert.ok(entry, `${section} missing from the index`);
+    assert.equal(entry.moduleSlug, module, section);
+    assert.equal(availabilityLabel(module), "Add-on", section);
+  }
 });
 
 test("availability labels read correctly for each tier shape", () => {

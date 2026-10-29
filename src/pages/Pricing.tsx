@@ -899,11 +899,20 @@ export default function Pricing() {
                     <p className="mt-1.5 text-xs leading-relaxed text-[#94A3B8]">{a.description}</p>
                   )}
                   <div className="mt-4 text-lg font-semibold tracking-tight text-white">
-                    {range(a.price_min_cents, a.price_max_cents)}
-                    {a.billing_period && (
-                      <span className="ml-1.5 font-display text-sm font-normal italic text-[#94A3B8]">
-                        / {a.billing_period}
-                      </span>
+                    {/* Mission Control sends no price for a module whose price
+                        is undecided, rather than the placeholder its row has to
+                        hold, so an absent price is said in words. */}
+                    {a.price_min_cents == null ? (
+                      "Price to be confirmed"
+                    ) : (
+                      <>
+                        {range(a.price_min_cents, a.price_max_cents)}
+                        {a.billing_period && (
+                          <span className="ml-1.5 font-display text-sm font-normal italic text-[#94A3B8]">
+                            / {a.billing_period}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                   {(a.included_in_plans?.length ?? 0) > 0 && (

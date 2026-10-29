@@ -46,7 +46,7 @@ export const PUBLIC_DOCS_INDEX: PublicDocsEntry[] = [
   { slug: "report-comparisons", title: "Report Comparisons", summary: "Putting properties or scenarios side by side in a single client-ready document.", group: "Reports & Analysis", moduleSlug: "report-comparisons", readMinutes: 6 },
   { slug: "cash-flow-analysis", title: "Cash Flow Analysis", summary: "Ten-year cash flow modelling, holding costs and the year-by-year position.", group: "Reports & Analysis", moduleSlug: null, readMinutes: 9 },
   { slug: "cashflow-comparisons", title: "Cash Flow Comparisons", summary: "Comparing the holding position across properties or structures side by side.", group: "Reports & Analysis", moduleSlug: "cashflow-comparisons", readMinutes: 5 },
-  { slug: "quantitative-reports", title: "Quantitative Reports", summary: "Data-led analysis across the portfolio and market, beyond single-property reporting.", group: "Reports & Analysis", moduleSlug: "commercial-industrial", readMinutes: 6 },
+  { slug: "quantitative-reports", title: "Quantitative Reports", summary: "Data-led analysis across the portfolio and market, beyond single-property reporting.", group: "Reports & Analysis", moduleSlug: null, readMinutes: 6 },
   { slug: "report-requests", title: "Report Requests", summary: "Requests coming in from clients and staff, and how they are triaged.", group: "Reports & Analysis", moduleSlug: null, readMinutes: 4 },
   { slug: "depreciation", title: "Depreciation", summary: "Depreciation estimation, comparable data and how schedules feed the cash flow model.", group: "Reports & Analysis", moduleSlug: null, readMinutes: 6 },
   { slug: "charts", title: "Charts & Visualisation", summary: "The chart library behind reports, and building saved visualisations.", group: "Reports & Analysis", moduleSlug: null, readMinutes: 4 },
@@ -83,10 +83,10 @@ export const PUBLIC_DOCS_INDEX: PublicDocsEntry[] = [
   // Portals
   { slug: "client-portal", title: "Client Portal", summary: "The client-facing login: what they see, what they can do, and how to control it.", group: "Portals", moduleSlug: null, readMinutes: 8 },
   { slug: "finance-portal", title: "Finance Portal", summary: "The broker-facing surface for finance referrals, documents and messaging.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 9 },
-  { slug: "solicitor-portal", title: "Solicitor Portal", summary: "The legal-partner surface for conveyancing and matter management.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 7 },
-  { slug: "accountant-portal", title: "Accountant Portal", summary: "The client's accountant, working beside the broker and the solicitor on a purchase.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 6 },
-  { slug: "builder-portal", title: "Builder Portal", summary: "The builder-facing surface for construction progress and invoicing.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 6 },
-  { slug: "partner-network", title: "Partner Network", summary: "Managing the referral partners around your business and the agreements with them.", group: "Portals", moduleSlug: "finance-portal", readMinutes: 5 },
+  { slug: "solicitor-portal", title: "Solicitor Portal", summary: "The legal-partner surface for conveyancing and matter management.", group: "Portals", moduleSlug: "solicitor-portal", readMinutes: 7 },
+  { slug: "accountant-portal", title: "Accountant Portal", summary: "The client's accountant, working beside the broker and the solicitor on a purchase.", group: "Portals", moduleSlug: "accountant-portal", readMinutes: 6 },
+  { slug: "builder-portal", title: "Builder Portal", summary: "The builder-facing surface for construction progress and invoicing.", group: "Portals", moduleSlug: "builder-developer-portal", readMinutes: 6 },
+  { slug: "partner-network", title: "Partner Network", summary: "Managing the referral partners around your business and the agreements with them.", group: "Portals", moduleSlug: "agreements", readMinutes: 5 },
 
   // Administration
   { slug: "settings", title: "Settings", summary: "Workspace configuration: the settings that shape everything else.", group: "Administration", moduleSlug: null, readMinutes: 7 },
@@ -96,6 +96,7 @@ export const PUBLIC_DOCS_INDEX: PublicDocsEntry[] = [
   { slug: "data-import", title: "Data Import", summary: "Bringing existing clients and records into the workspace.", group: "Administration", moduleSlug: null, readMinutes: 7 },
   { slug: "sources", title: "Data Sources", summary: "The external data feeding the platform, and its freshness.", group: "Administration", moduleSlug: null, readMinutes: 5 },
   { slug: "integrations", title: "Integrations", summary: "Connecting calendar, mail, CRM, messaging and e-signature services.", group: "Administration", moduleSlug: "integrations", readMinutes: 7 },
+  { slug: "workflow-playground", title: "Workflow Playground", summary: "Building workflows on a canvas: a trigger, the steps it runs, and a test run before anything goes live.", group: "Administration", moduleSlug: "integrations", readMinutes: 5 },
   { slug: "monitoring", title: "Monitoring & Error Logs", summary: "Platform health, integration status and diagnosing what went wrong.", group: "Administration", moduleSlug: null, readMinutes: 5 },
   { slug: "activity-logs", title: "Activity Logs", summary: "The audit trail: who did what, when, and to which record.", group: "Administration", moduleSlug: null, readMinutes: 5 },
   { slug: "api-usage", title: "API Usage", summary: "Programmatic access, keys and consumption against your allowance.", group: "Administration", moduleSlug: "api-usage", readMinutes: 5 },
@@ -122,9 +123,9 @@ export const PUBLIC_DOCS_GROUPS = [
   "Help & Usage",
 ] as const;
 
-/** Tier badge for the index. Mirrors MODULE_TIERS in the corpus. */
-const MODULE_TIERS: Record<string, readonly string[]> = {
-  "market-updates": ["growth", "scale"],
+/** Tier badge for the index. Mirrors MODULE_TIERS in the corpus, which a test pins. */
+export const MODULE_TIERS: Record<string, readonly string[]> = {
+  "market-updates": ["scale"],
   "commercial-industrial": ["scale"],
   "opportunity-marketplace": ["scale"],
   "intelligence-hub": [],
@@ -147,6 +148,9 @@ const MODULE_TIERS: Record<string, readonly string[]> = {
   integrations: [],
   "api-usage": ["scale"],
   "aurixa-agent": [],
+  "solicitor-portal": [],
+  "accountant-portal": [],
+  "builder-developer-portal": [],
 };
 
 /** Human-readable availability, for the badge on each index entry. */
