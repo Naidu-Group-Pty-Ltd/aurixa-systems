@@ -66,6 +66,46 @@ test("a published listing becomes a watchable entry", () => {
   assert.equal("artworkPosition" in briefing, false);
 });
 
+/**
+ * Images go up in a version folder of their own, so a designed thumbnail can
+ * sit in v2 beside a stream still in v1. Each field is held to the briefing's
+ * folder on its own, never to the stream's version.
+ */
+test("a designed thumbnail is carried across, from its own version folder", () => {
+  const media = { ...listing().media!, thumbnail: "videos/client-reporting/v2/thumbnail.jpg" };
+  const briefing = briefingFromListing(listing({ media }));
+  assert.equal(briefing.media?.thumbnail, "videos/client-reporting/v2/thumbnail.jpg");
+  assert.deepEqual(briefingProblems(briefing, context), []);
+  assert.deepEqual(
+    Object.keys(briefing.media ?? {}),
+    ["hls", "mp4", "poster", "thumbnail", "card"],
+    "the generated file keeps one key order",
+  );
+});
+
+test("no thumbnail, a null one or a blank one leaves the entry exactly as it was", () => {
+  // The fixture is a listing from a Mission Control that predates the field.
+  assert.equal("thumbnail" in listing().media!, false);
+  const without = briefingFromListing(listing());
+  assert.equal("thumbnail" in (without.media ?? {}), false);
+  for (const thumbnail of [null, "", "  "]) {
+    const briefing = briefingFromListing(listing({ media: { ...listing().media!, thumbnail } }));
+    assert.equal("thumbnail" in (briefing.media ?? {}), false, `thumbnail ${JSON.stringify(thumbnail)}`);
+    assert.deepEqual(briefing, without);
+  }
+});
+
+test("a thumbnail from another briefing's folder is refused like any other media field", () => {
+  const briefing = briefingFromListing(
+    listing({ media: { ...listing().media!, thumbnail: "videos/other/v2/thumbnail.jpg" } }),
+  );
+  assert.deepEqual(briefingProblems(briefing, context), ["media.thumbnail is outside the briefing's own folder"]);
+  const premiere = briefingFromListing(
+    listing({ status: "premiere", media: { ...listing().media!, thumbnail: "videos/client-reporting/v2/thumbnail.jpg" } }),
+  );
+  assert.equal(premiere.media, undefined, "a premiere carries no thumbnail either");
+});
+
 test("a premiere carries no publishing fields, whatever Mission Control holds", () => {
   const briefing = briefingFromListing(listing({ status: "premiere" }));
   assert.equal(briefing.media, undefined);

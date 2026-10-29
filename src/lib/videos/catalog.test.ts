@@ -28,7 +28,7 @@ import {
 const publicFile = (path: string) => new URL(`../../../public${path}`, import.meta.url);
 
 /** Every media field an entry can carry. */
-const MEDIA_FIELDS = ["hls", "mp4", "poster", "card", "captions"] as const;
+const MEDIA_FIELDS = ["hls", "mp4", "poster", "thumbnail", "card", "captions"] as const;
 
 test("slugs are unique, URL-safe and stable in shape", () => {
   const slugs = BRIEFINGS.map((briefing) => briefing.slug);

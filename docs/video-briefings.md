@@ -69,6 +69,11 @@ words are on screen rather than spoken, put that text, in order, in
 If you have captions, save them as `media-build/<slug>/captions.en.vtt` (WebVTT)
 before uploading.
 
+The encoder does not make a **thumbnail**. That is designed artwork: a 16:9
+image, 1920×1080 JPEG, with the headline, the logo and any badge set into it,
+made for the library rather than taken from a frame. It goes up in Mission
+Control, on its own (see below).
+
 ### 2. Upload and verify, in Mission Control
 
 On the video's listing in Mission Control, **Choose folder** → `media-build/<slug>`
@@ -90,9 +95,18 @@ On the video's listing in Mission Control, **Choose folder** → `media-build/<s
   orientation from the stream.
 
 A new upload is always a new version folder, and nothing published is ever
-uploaded over. To replace only a poster or card, upload the whole package again:
-it lands as the next version. (The `card-2.jpg` on Borrowing Capacity predates
-this and stays as published.)
+uploaded over. (The `card-2.jpg` on Borrowing Capacity predates this and stays
+as published.)
+
+**Images on their own.** Mission Control can also upload a listing's images
+without the stream: a designed thumbnail, a replacement poster or card, or any
+of them together. They go through the same grant and the same create-only
+signing, into the listing's next version folder, and only the fields uploaded
+move to it. When a thumbnail is uploaded, Mission Control derives the 1200×630
+card from it. One briefing's media can therefore span folders: the stream in
+`videos/<slug>/v1/`, say, and the thumbnail and card in `videos/<slug>/v2/`.
+The publishing rules hold each field to the briefing's own folder
+(`videos/<slug>/v<n>/`), not to the stream's version.
 
 ### 3. Publish, in Mission Control
 

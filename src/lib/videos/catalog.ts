@@ -67,8 +67,16 @@ export type BriefingMedia = {
   hls?: string;
   /** ~720p progressive MP4 with `+faststart`. Last-resort fallback only. */
   mp4?: string;
-  /** 16:9 poster frame, shown until the first video frame is decoded. */
+  /**
+   * The theatre's poster frame, shown until the first video frame is decoded:
+   * 16:9 for a landscape video, 9:16 for a portrait one.
+   */
   poster?: string;
+  /**
+   * The 16:9 thumbnail designed for the video, shown on the library card and
+   * the up-next card in place of the poster. 1920×1080 JPEG.
+   */
+  thumbnail?: string;
   /** 1200×630 social card. Falls back to the sitewide card when absent. */
   card?: string;
   /** English WebVTT captions. */
