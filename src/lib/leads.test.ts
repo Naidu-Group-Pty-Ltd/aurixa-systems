@@ -45,3 +45,16 @@ test("a correction Mission Control refused is said plainly, not answered with \"
   const page = await read("../pages/Contact.tsx");
   assert.match(page, /error instanceof CorrectionRefusedError\s*\?\s*`This application's email address can no longer be changed here\./);
 });
+
+test("a correction carries back the token Mission Control gave the application, and only Mission Control sees it", async () => {
+  const leads = await read("./leads.ts");
+  const submit = leads.slice(leads.indexOf("export async function submitApplication"));
+  assert.match(submit, /const correctionToken = correctionTokens\.get\(applicationId\);/);
+  assert.match(submit, /body: JSON\.stringify\(correctionToken \? \{ \.\.\.payload, correctionToken \} : payload\),/);
+  assert.ok(
+    submit.indexOf("correctionTokens.set(applicationId, issued);") > submit.indexOf("if (!response.ok) return false;"),
+    "the token is kept only from an accepted application",
+  );
+  assert.match(submit, /copyLeadToStorefront\(payload, /, "the copy to capture-lead never carries the token");
+  assert.match(leads, /body\?\.correction_token/);
+});

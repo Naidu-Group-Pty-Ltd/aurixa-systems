@@ -80,18 +80,39 @@ async function errorCodeOf(response: Response): Promise<string | null> {
 }
 
 /**
+ * The correction token each application's `201` carried, by reference, for
+ * the life of the page. Mission Control re-addresses an application only for
+ * the browser that made it: the reference alone is printed in the Stage 1
+ * email, which may have gone to the very address being corrected. Kept in
+ * memory and nowhere else — the confirmation screen that offers the
+ * correction lasts exactly as long.
+ */
+const correctionTokens = new Map<string, string>();
+
+async function correctionTokenOf(response: Response): Promise<string | null> {
+  try {
+    const body = (await response.json()) as { correction_token?: unknown } | null;
+    return typeof body?.correction_token === "string" ? body.correction_token : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Submits a Stage 1 application to Mission Control and answers whether it
  * landed — the only thing the applicant's result reflects. A retry of the same
  * application is a 200 `duplicate`, which is landed; so is a corrected
- * address, `corrected: true`. A correction Mission Control refused throws
+ * address, `corrected: true`, which carries back the token the first
+ * submission was given. A correction Mission Control refused throws
  * `CorrectionRefusedError`. Once accepted, the same payload is copied to
- * `capture-lead`.
+ * `capture-lead` (without the token).
  */
 export async function submitApplication(
   payload: Record<string, unknown>,
   applicationId: string,
   fetchImpl: typeof fetch = fetch,
 ): Promise<boolean> {
+  const correctionToken = correctionTokens.get(applicationId);
   const response = await fetchImpl(MISSION_CONTROL_LEAD_CAPTURE_URL, {
     method: "POST",
     headers: {
@@ -100,12 +121,14 @@ export async function submitApplication(
       // to a single record.
       "X-Application-Id": applicationId,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(correctionToken ? { ...payload, correctionToken } : payload),
   });
   if (response.status === 409 && (await errorCodeOf(response)) === "correction_refused") {
     throw new CorrectionRefusedError();
   }
   if (!response.ok) return false;
+  const issued = await correctionTokenOf(response);
+  if (issued) correctionTokens.set(applicationId, issued);
   copyLeadToStorefront(payload, "Aurixa lead capture");
   return true;
 }

@@ -92,6 +92,18 @@ name and organisation, the application reference, the masked work email, the
 review timeframe, the next-step explanation and a correction path for the email
 address (answers retained, same reference reused).
 
+A correction is the same application posted again with the new address.
+Mission Control re-addresses it and sends the Stage 1 email again
+(`aurixa-mission-control` docs/LEAD_EMAILS.md, "Address corrections"), but only
+for the browser that made the application: the `201` that accepted it carries a
+`correction_token`, which `submitApplication` keeps in memory for the page's
+life and sends back as `correctionToken`. The reference alone is not enough. It
+is printed in the Stage 1 email, which may have gone to the very address being
+corrected. A correction Mission Control will not make (more than a day after
+applying, after the questionnaire, or too many times) answers `409
+correction_refused`. The form then says the address can no longer be changed
+here and to email admin@aurixasystems.com.au quoting the reference.
+
 When `VITE_READINESS_QUESTIONNAIRE_URL` is set, the primary button links straight
 to the Stage 2 questionnaire. Until Stage 2 exists, the screen instead states
 that the secure link will be emailed.
