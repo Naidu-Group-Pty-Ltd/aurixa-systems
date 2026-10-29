@@ -54,6 +54,19 @@ function keepSnapshot(reason: string): never {
   process.exit(0);
 }
 
+/**
+ * On a Vercel build, which build this is. Mission Control records the read,
+ * and Website → Videos shows when a production build last read the listings:
+ * the proof a rebuild it asked for actually ran, whatever Vercel answered the
+ * deploy hook. Off Vercel, nothing is announced.
+ */
+function buildAnnouncement(): Record<string, string> {
+  const env = (process.env.VERCEL_ENV ?? "").trim();
+  const id = (process.env.VERCEL_DEPLOYMENT_ID ?? process.env.VERCEL_URL ?? "").trim();
+  if (!onVercel || !env || !id) return {};
+  return { "X-Aurixa-Build-Env": env, "X-Aurixa-Build-Id": id };
+}
+
 async function main() {
   if (!shouldFetch) {
     console.log("briefings: using the committed snapshot (set BRIEFINGS_SYNC=1 to pull from Mission Control)");
@@ -64,7 +77,7 @@ async function main() {
   let body: unknown;
   try {
     const response = await fetch(endpoint, {
-      headers: { Accept: "application/json" },
+      headers: { Accept: "application/json", ...buildAnnouncement() },
       signal: AbortSignal.timeout(TIMEOUT_MS),
     });
     status = response.status;

@@ -54,10 +54,38 @@ export function copyLeadToStorefront(payload: Record<string, unknown>, label: st
 }
 
 /**
+ * Mission Control kept the application's address as it was.
+ *
+ * "Not the right email address? Correct it" posts the corrected application
+ * under the same reference, and Mission Control re-addresses it and sends the
+ * Stage 1 email again — while it can: within a day of applying, before the
+ * questionnaire, and a few times at most. Past that it answers `409
+ * correction_refused` and tells the team, with the address given. That is
+ * not a fault to retry, so it is not answered like one.
+ */
+export class CorrectionRefusedError extends Error {
+  constructor() {
+    super("Mission Control did not change the application's email address");
+    this.name = "CorrectionRefusedError";
+  }
+}
+
+async function errorCodeOf(response: Response): Promise<string | null> {
+  try {
+    const body = (await response.json()) as { error?: unknown } | null;
+    return typeof body?.error === "string" ? body.error : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Submits a Stage 1 application to Mission Control and answers whether it
  * landed — the only thing the applicant's result reflects. A retry of the same
- * application is a 200 `duplicate`, which is landed. Once accepted, the same
- * payload is copied to `capture-lead`.
+ * application is a 200 `duplicate`, which is landed; so is a corrected
+ * address, `corrected: true`. A correction Mission Control refused throws
+ * `CorrectionRefusedError`. Once accepted, the same payload is copied to
+ * `capture-lead`.
  */
 export async function submitApplication(
   payload: Record<string, unknown>,
@@ -74,6 +102,9 @@ export async function submitApplication(
     },
     body: JSON.stringify(payload),
   });
+  if (response.status === 409 && (await errorCodeOf(response)) === "correction_refused") {
+    throw new CorrectionRefusedError();
+  }
   if (!response.ok) return false;
   copyLeadToStorefront(payload, "Aurixa lead capture");
   return true;
