@@ -80,16 +80,38 @@ async function errorCodeOf(response: Response): Promise<string | null> {
 }
 
 /**
- * The correction token each application's `201` carried, by reference, for
- * the life of the page. Mission Control re-addresses an application only for
- * the browser that made it: the reference alone is printed in the Stage 1
- * email, which may have gone to the very address being corrected. Kept in
- * memory and nowhere else — the confirmation screen that offers the
- * correction lasts exactly as long.
+ * The correction token of each application this page made, by reference.
+ *
+ * Mission Control re-addresses an application only for the browser that made
+ * it: the reference alone is printed in the Stage 1 email, which may have gone
+ * to the very address being corrected. So the browser generates a token and
+ * sends it with every submission of the application, the first included, and
+ * Mission Control keeps its hash. Generated here rather than handed back in the
+ * `201`, it survives a retry whose first post landed but whose answer never
+ * arrived. Kept in memory and nowhere else — the confirmation screen that
+ * offers the correction lasts exactly as long.
  */
 const correctionTokens = new Map<string, string>();
 
-async function correctionTokenOf(response: Response): Promise<string | null> {
+function browserToken(): string | null {
+  if (typeof crypto === "undefined" || typeof crypto.getRandomValues !== "function") return null;
+  const bytes = crypto.getRandomValues(new Uint8Array(24));
+  return btoa(String.fromCharCode(...bytes))
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+function correctionTokenFor(applicationId: string): string | null {
+  const held = correctionTokens.get(applicationId);
+  if (held) return held;
+  const token = browserToken();
+  if (token) correctionTokens.set(applicationId, token);
+  return token;
+}
+
+/** A browser that could not generate a token is handed one in the `201`. */
+async function issuedTokenOf(response: Response): Promise<string | null> {
   try {
     const body = (await response.json()) as { correction_token?: unknown } | null;
     return typeof body?.correction_token === "string" ? body.correction_token : null;
@@ -102,8 +124,8 @@ async function correctionTokenOf(response: Response): Promise<string | null> {
  * Submits a Stage 1 application to Mission Control and answers whether it
  * landed — the only thing the applicant's result reflects. A retry of the same
  * application is a 200 `duplicate`, which is landed; so is a corrected
- * address, `corrected: true`, which carries back the token the first
- * submission was given. A correction Mission Control refused throws
+ * address, `corrected: true`. Every submission of the application carries
+ * its correction token. A correction Mission Control refused throws
  * `CorrectionRefusedError`. Once accepted, the same payload is copied to
  * `capture-lead` (without the token).
  */
@@ -112,7 +134,7 @@ export async function submitApplication(
   applicationId: string,
   fetchImpl: typeof fetch = fetch,
 ): Promise<boolean> {
-  const correctionToken = correctionTokens.get(applicationId);
+  const correctionToken = correctionTokenFor(applicationId);
   const response = await fetchImpl(MISSION_CONTROL_LEAD_CAPTURE_URL, {
     method: "POST",
     headers: {
@@ -127,8 +149,10 @@ export async function submitApplication(
     throw new CorrectionRefusedError();
   }
   if (!response.ok) return false;
-  const issued = await correctionTokenOf(response);
-  if (issued) correctionTokens.set(applicationId, issued);
+  if (!correctionToken) {
+    const issued = await issuedTokenOf(response);
+    if (issued) correctionTokens.set(applicationId, issued);
+  }
   copyLeadToStorefront(payload, "Aurixa lead capture");
   return true;
 }

@@ -95,9 +95,13 @@ address (answers retained, same reference reused).
 A correction is the same application posted again with the new address.
 Mission Control re-addresses it and sends the Stage 1 email again
 (`aurixa-mission-control` docs/LEAD_EMAILS.md, "Address corrections"), but only
-for the browser that made the application: the `201` that accepted it carries a
-`correction_token`, which `submitApplication` keeps in memory for the page's
-life and sends back as `correctionToken`. The reference alone is not enough. It
+for the browser that made the application. `submitApplication` generates a
+correction token in the browser and sends it, as `correctionToken`, with every
+submission of the application, the first included; Mission Control keeps its
+hash. It is held in memory for the page's life, so it survives a retry whose
+first post landed but whose answer never arrived. A browser that cannot
+generate one is handed one in the `201` (`correction_token`) and keeps that.
+The reference alone is not enough. It
 is printed in the Stage 1 email, which may have gone to the very address being
 corrected. A correction Mission Control will not make (more than a day after
 applying, after the questionnaire, or too many times) answers `409
