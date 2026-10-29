@@ -73,6 +73,23 @@ Make connections throughout, so no placeholder appears in this directory.
 An import creates a *new* scenario. It does not update the scenario the
 blueprint came from, and the new one starts inactive.
 
+## The emails are moving to Mission Control (29 Oct 2026)
+
+Mission Control can now send all three applicant emails itself, in copy edited
+on its **Email → Lead emails** page (Mission Control `docs/LEAD_EMAILS.md`).
+Each stage moves on its own, and only after its email modules are taken out of
+the scenario here — otherwise every applicant gets the email twice. The rest of
+each scenario stays: it still writes the stage to Airtable.
+
+| Scenario | Remove | Then |
+| --- | --- | --- |
+| Aurixa Waitlist Stage 1 (`9389960`) | modules 19 and 21 (create and send) and 22 (record the send) | — |
+| Aurixa Waitlist Stage 2 (`9590512`) | modules 3 and 4 (create and send) | — |
+| Aurixa Waitlist Stage 3 (`9601915`) | modules 7 and 8 (create and send) | connect module 4 to module 9, give that link module 7's filter (`Send Booking Confirmation` equal to `SEND`), and clear module 9's Confirmation Message ID field |
+
+Aurixa Stage 3 Access (`9602082`) sends no email and is unaffected. A stage
+handed over no longer needs the wording edits below.
+
 ## Free trial wording (29 Oct 2026)
 
 Since 28 Oct 2026 the funnel's first stage is the **free trial application**,

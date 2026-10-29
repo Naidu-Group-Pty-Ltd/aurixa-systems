@@ -88,16 +88,16 @@ export type ReadinessSubmissionPayload = {
    */
   accessTokenPresented: string;
   /**
-   * Whether anything actually *verified* the token, as opposed to checking its
-   * shape. Currently always `false`, and that is the honest value:
-   * `resolveQuestionnaireLink` matches a regex and an expiry date with no
-   * signature and no network call, and the Stage 2 service that would do the
-   * real check is not deployed.
+   * Whether anything actually *verified* the way in, as opposed to checking its
+   * shape. `true` only when Mission Control answered for it: its own link from
+   * the Stage 1 email (it keeps the token's hash), or the application
+   * reference with the work email it was filed under
+   * (`missionControlQuestionnaireAccess.ts`). A Make link is still only
+   * shape-checked by `resolveQuestionnaireLink`, and a Stage 1 handoff in the
+   * same tab was never checked by a server, so both stay `false`.
    *
    * Kept as an explicit field rather than left implicit so the operations
-   * record stops asserting something the code cannot support. When the Make
-   * scenario or a deployed service starts validating `accessTokenPresented`,
-   * this becomes the flag that says so.
+   * record never asserts something the code cannot support.
    */
   accessVerified: boolean;
   applicant: ReadinessPrefill;
@@ -136,6 +136,8 @@ type SubmitReadinessInput = {
   accessMode?: StageTwoAccessMode | string;
   /** The raw `token` query value the browser accepted, for downstream checking. */
   accessTokenPresented?: string;
+  /** Whether Mission Control verified the way in. See the payload field. */
+  accessVerified?: boolean;
   /** Test seam; production always uses the browser fetch implementation. */
   fetchImpl?: typeof fetch;
   timeoutMs?: number;
@@ -202,7 +204,7 @@ export function buildReadinessSubmissionPayload(input: Omit<SubmitReadinessInput
     // beside it, which Make ignores until somebody maps them.
     accessMode: (input.accessMode as StageTwoAccessMode) ?? "Secure link (token)",
     accessTokenPresented: input.accessTokenPresented ?? "",
-    accessVerified: false,
+    accessVerified: input.accessVerified === true,
     applicant: { ...input.prefill },
     fields: buildFields(reviewSections),
     reviewSections,
@@ -256,6 +258,9 @@ export function buildReadinessMirrorPayload(
 const validDate = (value: unknown): value is string =>
   typeof value === "string" && value.trim() !== "" && !Number.isNaN(Date.parse(value));
 
+/** Make's reply when a scenario has no "Webhook response" module: the payload is queued. */
+const MAKE_ACKNOWLEDGEMENT = /^accepted$/i;
+
 export async function submitReadinessQuestionnaire(input: SubmitReadinessInput): Promise<ReadinessSubmissionResult> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), input.timeoutMs ?? DEFAULT_TIMEOUT_MS);
@@ -271,8 +276,12 @@ export async function submitReadinessQuestionnaire(input: SubmitReadinessInput):
     if (!response.ok) return { ok: false, reason: "http_error" };
 
     const body = await response.text();
-    // Make may acknowledge with an empty 2xx while the response mapping is being configured.
-    if (!body.trim())
+    // Make may acknowledge with an empty 2xx while the response mapping is being
+    // configured — or, as the Stage 2 scenario does, with its own one-word
+    // "Accepted": the scenario has no "Webhook response" module, so that word is
+    // every answer it gives. Read as malformed, it told an applicant whose
+    // answers had landed that they had not.
+    if (!body.trim() || MAKE_ACKNOWLEDGEMENT.test(body.trim()))
       return {
         ok: true,
         applicationId: input.applicationId,

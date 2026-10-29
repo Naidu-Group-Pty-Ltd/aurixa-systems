@@ -144,6 +144,40 @@ therefore remains locked. Refreshing the authorised questionnaire tab remains
 open until the record expires; closing the browser tab/session removes access.
 Malformed and expired records are removed and fail closed.
 
+### Mission Control's link, checked by Mission Control
+
+Since 29 Oct 2026 Mission Control can send the Stage 1 "application received"
+email itself (Mission Control `docs/LEAD_EMAILS.md`). Its link names the
+application beside the token:
+
+    /questionnaire?ref=AX-…&token=…&expires=…
+
+and it is read **before** any of the paths above. The page asks Mission
+Control — `POST {VITE_MISSION_CONTROL_URL}/api/public/storefront/questionnaire-access`
+with `{ applicationId, token }` — which keeps the token's SHA-256 and answers
+with the applicant's Stage 1 details
+([`missionControlQuestionnaireAccess.ts`](../src/lib/missionControlQuestionnaireAccess.ts)):
+
+| Answer | What the page does |
+| --- | --- |
+| live | opens addressed to the applicant: Application Details shown, the submission carries their identity, `accessMode` "Secure link (token)", `accessVerified: true` |
+| expired | the expired screen, with the reference form filled in |
+| not this application's, or no such reference | the locked screen, with the reference form filled in |
+| already completed | the completed screen |
+| no answer (down, timeout) | a well-formed link opens as such links always have, naming the application so the answers still match it downstream |
+
+A verified link opens through the same-tab handoff record, so a refresh keeps
+the applicant in; `aurixa_questionnaire_verified` beside it remembers that the
+handoff was verified and how. Both are cleared after a successful submission.
+
+The **"Continue with your reference"** form asks the same endpoint with
+`{ applicationId, workEmail }` first — "Application ID fallback",
+`accessVerified: true` — and the undeployed `readiness-questionnaire` service
+only when Mission Control cannot be reached.
+
+A link with no `ref` — Make's — is untouched by any of this and still takes the
+shape-only path described in `QUESTIONNAIRE_TOKEN_IS_NOT_A_CREDENTIAL.md`.
+
 ### Stage 1 → Stage 2 handoff
 
     Stage 1 submitted directly to the existing Make.com webhook
