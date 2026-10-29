@@ -58,8 +58,8 @@ a 4-core machine.
 - The card shows the whole frame over a soft fill drawn from its own colours,
   rather than cropping it to a strip.
 - The snippet includes `orientation: "portrait"`, which gives the briefing a
-  vertical theatre (beside the headline on desktop) and framed thumbnails in
-  the library.
+  vertical theatre (beside the headline on desktop). In the library its poster
+  is framed over a fill of itself, until a designed thumbnail replaces it.
 
 If the video carries a compliance line on screen, such as a disclaimer, put it
 in the entry's `disclaimer` and it is shown under the player verbatim. If the
@@ -188,6 +188,7 @@ Control, or the next production build drops it.
 | Theatre, HUD, standby and end card | `src/components/watch/BriefingTheatre.tsx` |
 | Player | `src/components/watch/BriefingPlayer.tsx` |
 | Library card, share bar, chapters | `src/components/watch/` |
+| What a card shows (library and "Up next") | `cardArtwork()` in `src/lib/videos/catalog.ts` |
 | Streaming engine | `src/lib/streaming/` (ported from NPC Services VSL) |
 | Playback state store | `src/lib/videos/playback.ts` |
 | Resume and watched progress | `src/lib/videos/progress.ts` (this device only) |
@@ -196,6 +197,35 @@ Control, or the next production build drops it.
 | Styles | the "Briefing Room" section at the end of `src/index.css` |
 | Pipeline | `scripts/video/` (encode, upload, verify, ladder) |
 | Bucket | `supabase/migrations/20261028120000_marketing_media_bucket.sql` |
+
+### Thumbnails and the library card
+
+`media.thumbnail` is optional. Where a briefing has one:
+
+- **The library card and the "Up next" card** show it, as a landscape image
+  that fills the slot. Both take their artwork from `cardArtwork()`, so the two
+  cannot disagree about a briefing. Without a thumbnail they show what they
+  always have: the poster, which for a reel stands whole over a blurred fill
+  of itself, or the brand artwork for a premiere.
+- **Lock-screen and notification controls** (Media Session) are offered the
+  thumbnail first and the poster second.
+- **The theatre keeps the poster.** It is the video's own frame, in the
+  video's own shape, and it gives way to the first decoded frame.
+- **Link previews keep the card** (see below).
+
+The card normally lays two layers over its image: a colour tint
+(`.watch-card__tint`, blended in) and a wash (`.watch-card__wash`) from a light
+navy at the top to near-solid navy at the bottom. A designed thumbnail already
+has its own vignette, and a bright badge low in the frame that the bottom of
+the wash would dim. So a card showing one carries `.watch-card__thumb--designed`
+(`src/index.css`), which:
+
+- drops the tint;
+- reduces the wash to a light fade at the top, under the catalogue code, and
+  a soft corner fade under the running time (both tags also have their own
+  dark backing);
+- shows the image unfiltered, and zooms it less on hover (3% rather than 8%),
+  so the type set near its edges is never cropped.
 
 ### Routes and SEO
 
@@ -210,7 +240,8 @@ Each briefing page is served with:
 
 - `og:type` set to `video.other`
 - the briefing's own `og:image` and `twitter:image` (its `card.jpg`, falling back
-  to the sitewide card)
+  to the sitewide card). Never the thumbnail: `index.html` declares 1200×630
+  for every page's image, and a 1920×1080 thumbnail would make that untrue.
 - the title "<Briefing> – Video Briefing | Aurixa Systems", which never collides
   with the page the video explains
 

@@ -1884,6 +1884,15 @@
   .watch-card__tint { position:absolute; inset:0; background:linear-gradient(135deg, rgba(0,168,181,.3), transparent 50%, rgba(200,155,60,.28)); mix-blend-mode:color; transition:opacity .6s; }
   a.watch-card:hover .watch-card__tint { opacity:.45; }
   .watch-card__wash { position:absolute; inset:0; background:linear-gradient(180deg, rgba(4,11,22,.35), transparent 40%, rgba(16,35,61,.95)); }
+  /* A designed thumbnail carries its own vignette and a bright trial badge low
+     in the frame, which the wash above would dim and the tint would recolour.
+     It keeps only what the code and running-time tags need: a light fade at
+     the top and a corner fade under the duration. Its hover zoom is smaller,
+     so the type set near its edges is never cropped. */
+  .watch-card__thumb--designed .watch-card__tint { display:none; }
+  .watch-card__thumb--designed .watch-card__wash { background:linear-gradient(180deg, rgba(4,11,22,.3), transparent 22%), radial-gradient(ellipse 45% 40% at 100% 100%, rgba(4,11,22,.55), transparent); }
+  .watch-card__thumb--designed .watch-card__image { filter:none; }
+  a.watch-card:hover .watch-card__thumb--designed .watch-card__image { transform:scale(1.03); filter:brightness(1.05); }
   .watch-card__code { position:absolute; top:.85rem; left:1.2rem; padding:.3rem .5rem; border:1px solid rgba(255,255,255,.25); background:rgba(0,0,0,.6); color:#fff; font-size:.52rem; font-weight:700; letter-spacing:.2em; }
   .watch-card__duration { position:absolute; right:.85rem; bottom:.85rem; padding:.3rem .5rem; background:rgba(0,0,0,.72); color:#fff; font-size:.55rem; font-weight:700; letter-spacing:.12em; font-variant-numeric:tabular-nums; }
   .watch-card__duration--soon { border:1px solid rgba(215,179,95,.55); color:#F5D17A; letter-spacing:.2em; }

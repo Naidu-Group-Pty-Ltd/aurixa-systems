@@ -219,6 +219,31 @@ export function isPortrait(briefing: Briefing): boolean {
   return briefing.orientation === "portrait";
 }
 
+/** What a briefing's library card and up-next card show. */
+export type CardArtwork = {
+  /** An absolute media URL, or the `/brand/…` fallback artwork. */
+  src: string;
+  /** A vertical 9:16 frame, to stand whole over a blurred fill of itself. */
+  portrait: boolean;
+  /** A thumbnail designed for the card, with its own type and vignette. */
+  designed: boolean;
+  /** The brand fallback rather than an image of the video. */
+  fallback: boolean;
+};
+
+/**
+ * The one decision both cards share, so the library and the up-next card can
+ * never show a briefing two ways: the designed thumbnail when there is one,
+ * else the poster (framed, for a reel), else the fallback artwork.
+ */
+export function cardArtwork(briefing: Briefing): CardArtwork {
+  const thumbnail = mediaUrl(briefing.media?.thumbnail);
+  if (thumbnail) return { src: thumbnail, portrait: false, designed: true, fallback: false };
+  const poster = mediaUrl(briefing.media?.poster);
+  if (poster) return { src: poster, portrait: isPortrait(briefing), designed: false, fallback: false };
+  return { src: briefing.artwork, portrait: false, designed: false, fallback: true };
+}
+
 /** The origin the player fetches from, for `preconnect`. */
 export function mediaOriginFor(briefing: Briefing): string | undefined {
   const url = mediaUrl(briefing.media?.hls ?? briefing.media?.mp4);
