@@ -72,3 +72,29 @@ Make connections throughout, so no placeholder appears in this directory.
 
 An import creates a *new* scenario. It does not update the scenario the
 blueprint came from, and the new one starts inactive.
+
+## Free trial wording (29 Oct 2026)
+
+Since 28 Oct 2026 the funnel's first stage is the **free trial application**,
+but the three email-sending scenarios still say *priority access*. Edit the
+live scenarios in place rather than re-importing (an import creates a new
+scenario). In each one, open the Microsoft Graph **HTTP · Make a request**
+module named below, find each phrase in its request body, and replace it.
+Trial lengths are left out on purpose, because an offer code can change the
+length.
+
+| Scenario | Module | Find | Replace with |
+| --- | --- | --- | --- |
+| Aurixa Waitlist Stage 1 (`9389960`) | 19 | `"subject": "Application Received — Aurixa Systems Waitlist"` | `"subject": "Application Received — Your Aurixa Systems Free Trial"` |
+| | 19 | `<title>Aurixa Systems — Priority Access Application Received</title>` | `<title>Aurixa Systems — Free Trial Application Received</title>` |
+| | 19 | `Your Aurixa Systems priority access application has been received.` | `Your Aurixa Systems free trial application has been received.` |
+| | 19 | `Your priority access application for` | `Your free trial application for` |
+| | 19 | `in connection with an Aurixa Systems priority access application.` | `in connection with an Aurixa Systems free trial application.` |
+| Aurixa Waitlist Stage 2 (`9590512`) | 3 | `in connection with an Aurixa Systems priority access application.` | `in connection with an Aurixa Systems free trial application.` |
+| Aurixa Waitlist Stage 3 (`9601915`) | 7 | `The final stage of your priority access application is booked.` | `The final stage of your free trial application is booked.` |
+| | 7 | `in connection with an Aurixa Systems priority access application.` | `in connection with an Aurixa Systems free trial application.` |
+
+The phrases come from the 2026-08-18 exports in this directory. If the live
+module was edited since, search for "priority access" and "Waitlist" to find
+anything else. Afterwards, export the three scenarios again so these files
+match what is live. The scenario names are internal and can stay as they are.
