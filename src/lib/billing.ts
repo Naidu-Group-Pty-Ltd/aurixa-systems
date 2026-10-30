@@ -252,6 +252,13 @@ export interface CatalogAddon {
   billing_period: string | null;
   category: string | null;
   included_in_plans: string[] | null;
+  /**
+   * Facts Mission Control states about the row from its own catalogue:
+   * `included_with_aml` for a partner portal AML/CTF Compliance brings (29 Oct
+   * 2026), `price_undecided` for a module with no price yet. Absent from a
+   * catalog that has not carried them.
+   */
+  metadata?: { included_with_aml?: boolean; price_undecided?: boolean } | null;
 }
 
 /**
@@ -284,6 +291,13 @@ export interface ResolvedHandoff {
   /** The plan this workspace is already on, so CTAs can say Upgrade/Downgrade. */
   currentPlanSlug: string | null;
   currentPlanName: string | null;
+  /**
+   * The modules the workspace already holds, as its own app is gated: what it
+   * bought, the AML/CTF its plan carries, and the partner portals AML/CTF
+   * brings, less what its contract excludes. Mission Control derives it; the
+   * page only uses it to stop offering what is already there.
+   */
+  heldAddonSlugs: string[];
 }
 
 export interface ResolvedIdentity {
@@ -356,6 +370,7 @@ export async function resolveHandoff(h: string): Promise<ResolvedHandoff | null>
       intent: string | null;
       current_plan_slug?: string | null;
       current_plan_name?: string | null;
+      addon_slugs?: string[] | null;
     }>(`/storefront-handoff?h=${encodeURIComponent(h)}`);
     return {
       handoffId: body.handoff_id,
@@ -364,6 +379,7 @@ export async function resolveHandoff(h: string): Promise<ResolvedHandoff | null>
       intent: body.intent,
       currentPlanSlug: body.current_plan_slug ?? null,
       currentPlanName: body.current_plan_name ?? null,
+      heldAddonSlugs: Array.isArray(body.addon_slugs) ? body.addon_slugs : [],
     };
   } catch {
     // Expired/consumed/unknown token → degrade to the browse-only page.

@@ -109,6 +109,29 @@ test("a module already included in the visitor's plan is not sold to them again"
   assert.equal(resolveAddonPurchase(included, { currentPlanSlug: null }).available, true);
 });
 
+test("a module the workspace already holds is never sold to it, whatever sells it", () => {
+  // The handoff's answer is what the workspace's own app is gated on: what it
+  // bought, and what comes with what it holds — with AML/CTF Compliance, every
+  // partner portal (29 Oct 2026).
+  const held = ["aml-ctf", "finance-portal", "solicitor-portal", "accountant-portal", "builder-developer-portal"];
+  const solicitor = addon({ slug: "solicitor-portal", price_min_cents: 29900, price_max_cents: 29900 });
+  assert.equal(resolveAddonPurchase(solicitor).available, true);
+  assert.deepEqual(resolveAddonPurchase(solicitor, { heldAddonSlugs: held }), {
+    available: false,
+    reason: "already_held",
+  });
+  // Including the portals no link here sells: held beats "enquire".
+  for (const slug of ["accountant-portal", "builder-developer-portal"]) {
+    assert.deepEqual(resolveAddonPurchase(addon({ slug }), { heldAddonSlugs: held }), {
+      available: false,
+      reason: "already_held",
+    });
+  }
+  // Without AML/CTF a portal is the add-on it always was.
+  assert.equal(resolveAddonPurchase(solicitor, { heldAddonSlugs: ["call-logs"] }).available, true);
+  assert.equal(resolveAddonPurchase(solicitor, { heldAddonSlugs: null }).available, true);
+});
+
 test("the account reference rides along as Stripe's client_reference_id", () => {
   const purchase = resolveAddonPurchase(addon(), { accountReference: "Northbridge Finance" });
   assert.equal(purchase.available, true);
@@ -152,6 +175,11 @@ test("the pricing page builds every module link through this module", async () =
   );
   assert.match(source, /resolveAddonPurchase\(a, \{/, "the card asks this module for its action");
   assert.match(source, /currentPlanSlug,/, "the visitor's plan decides whether it is already theirs");
+  assert.match(
+    source,
+    /heldAddonSlugs: handoff\?\.heldAddonSlugs \?\? null,/,
+    "and so does what the workspace already holds, from the handoff",
+  );
 });
 
 test("a module link opens in a new tab without handing Stripe the opener", async () => {

@@ -28,9 +28,12 @@ export const DOCS_SECTIONS: DocsSection[] = [
  * and different runtimes. A drift test asserts every moduleSlug in the corpus
  * appears here, so a section can never reference a module the gate does not know
  * — that would make it fall through as "not priced" and be shown to everyone.
+ * Another pins each row to the price list's own inclusions
+ * (`src/lib/pricing/mockCatalog.ts`): Market Updates read Growth and above here
+ * for weeks after the price list moved it to Scale alone.
  */
 export const MODULE_TIERS: Record<string, readonly string[]> = {
-  "market-updates": ["growth", "scale"],
+  "market-updates": ["scale"],
   "commercial-industrial": ["scale"],
   "opportunity-marketplace": ["scale"],
   "intelligence-hub": [],
@@ -53,7 +56,29 @@ export const MODULE_TIERS: Record<string, readonly string[]> = {
   integrations: [],
   "api-usage": ["scale"],
   "aurixa-agent": [],
+  // Each partner portal is its own purchase, in no tier: the Solicitor Portal
+  // by D17, the Accountant Portal by the owner's decision of 29 Oct 2026, and
+  // the Builder / Developer Portal, which is sold directly.
+  "solicitor-portal": [],
+  "accountant-portal": [],
+  "builder-developer-portal": [],
 };
+
+/**
+ * The partner portals AML/CTF Compliance brings at no extra cost: the owner's
+ * decision of 29 Oct 2026, Mission Control's `AML_BUNDLED_MODULES`.
+ *
+ * A workspace that holds AML/CTF reads their sections through the handoff,
+ * whose add-ons Mission Control derives with the portals in them. This list
+ * only lets a locked section say where it is included. The public index keeps
+ * the same list, and a test pins both to the pricing page's AML/CTF line.
+ */
+export const AML_BUNDLED_MODULE_SLUGS: readonly string[] = [
+  "finance-portal",
+  "solicitor-portal",
+  "accountant-portal",
+  "builder-developer-portal",
+];
 
 const KNOWN_PLANS: readonly string[] = ["launch", "growth", "scale"];
 
@@ -64,13 +89,28 @@ export function isKnownPlan(planSlug: string | null | undefined): boolean {
 export type Viewer = {
   /** Plan slug resolved from the handoff, or null for an anonymous visitor. */
   planSlug: string | null;
-  /** Add-on slugs held. Empty for anonymous. */
+  /**
+   * Add-on slugs held, as Mission Control answers for the workspace: what it
+   * bought, the AML/CTF its plan carries and the portals that brings. Empty
+   * for anonymous.
+   */
   addonSlugs: readonly string[];
+  /**
+   * Price-list slugs the workspace's agreement excludes. Empty for anonymous,
+   * and when Mission Control could not say: documentation is not worth
+   * locking a customer out of every section over a failed read.
+   */
+  excludedSlugs: readonly string[];
   /** True once a handoff resolved — i.e. this is a real customer, not a visitor. */
   identified: boolean;
 };
 
-export const ANONYMOUS: Viewer = { planSlug: null, addonSlugs: [], identified: false };
+export const ANONYMOUS: Viewer = {
+  planSlug: null,
+  addonSlugs: [],
+  excludedSlugs: [],
+  identified: false,
+};
 
 /**
  * Whether a viewer may read a section's body.
@@ -94,6 +134,10 @@ export function canReadSection(section: DocsSection, viewer: Viewer): boolean {
 
   // Gated section, unidentified viewer: never.
   if (!viewer.identified) return false;
+
+  // Excluded by the workspace's own agreement: never, whatever the plan says.
+  // The workspace's app gates the module shut, so its manual stays shut too.
+  if (viewer.excludedSlugs.includes(section.moduleSlug)) return false;
 
   // Identified but on a plan outside the matrix — treat as entitled.
   if (!isKnownPlan(viewer.planSlug)) return true;
@@ -130,6 +174,10 @@ export type DeliveredSection =
       locked: true;
       /** Tier that unlocks it, or null when it is an add-on purchase. */
       unlockedBy: string | null;
+      /** A partner portal any plan with AML/CTF Compliance includes. */
+      includedWithAml: boolean;
+      /** Locked because the workspace's agreement excludes the module. */
+      excludedByAgreement: boolean;
       blocks: [];
     });
 
@@ -155,6 +203,12 @@ export function deliverFor(viewer: Viewer): DeliveredSection[] {
       readMinutes: section.readMinutes,
       locked: true as const,
       unlockedBy: unlockedBy(section),
+      includedWithAml:
+        section.moduleSlug !== null && AML_BUNDLED_MODULE_SLUGS.includes(section.moduleSlug),
+      excludedByAgreement:
+        viewer.identified &&
+        section.moduleSlug !== null &&
+        viewer.excludedSlugs.includes(section.moduleSlug),
       blocks: [] as [],
     };
   });

@@ -93,6 +93,11 @@ export type PurchasableAddon = {
 
 /** Why a module has no buy button, when it has none. */
 export type NoPurchaseReason =
+  /**
+   * The workspace already holds the module: bought, or brought by something
+   * it holds, as the partner portals come with AML/CTF Compliance.
+   */
+  | "already_held"
   /** Nothing is sold for this module yet — it has no Stripe product. */
   | "not_sold"
   /** The advertised price is a range, which a single Payment Link cannot be. */
@@ -131,6 +136,12 @@ export function accountReference(value: string | null | undefined): string {
 export type ResolveOptions = {
   /** The plan the visitor is already on, if the page has identified them. */
   currentPlanSlug?: string | null;
+  /**
+   * What the identified workspace already holds, as its own app is gated:
+   * Mission Control's answer through the handoff. A stable `?uid=` link is not
+   * a credential and carries none, so its visitor sees the plan check alone.
+   */
+  heldAddonSlugs?: readonly string[] | null;
   /** Carried to Stripe as `client_reference_id` so ops can match the payment. */
   accountReference?: string | null;
 };
@@ -146,6 +157,14 @@ export function resolveAddonPurchase(
   addon: PurchasableAddon,
   options: ResolveOptions = {},
 ): AddonPurchase {
+  // Asked first, because it holds whether or not this page sells the module:
+  // a workspace with AML/CTF has the Accountant and Builder / Developer
+  // portals, which no link here sells, and should be told so rather than
+  // invited to enquire about them.
+  if ((options.heldAddonSlugs ?? []).includes(addon.slug)) {
+    return { available: false, reason: "already_held" };
+  }
+
   const link = ADDON_PURCHASE_LINKS[addon.slug];
   if (!link) return { available: false, reason: "not_sold" };
 

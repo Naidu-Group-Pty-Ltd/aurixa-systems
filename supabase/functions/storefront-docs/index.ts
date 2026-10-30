@@ -24,6 +24,8 @@ type HandoffResponse = {
   ok?: boolean;
   current_plan_slug?: string | null;
   addon_slugs?: string[] | null;
+  /** The workspace agreement's exclusions; null when Mission Control could not read them. */
+  excluded_slugs?: string[] | null;
   clone_name?: string | null;
 };
 
@@ -49,6 +51,7 @@ async function resolveViewer(handoff: string | null): Promise<Viewer> {
     return {
       planSlug: body.current_plan_slug ?? null,
       addonSlugs: Array.isArray(body.addon_slugs) ? body.addon_slugs : [],
+      excludedSlugs: Array.isArray(body.excluded_slugs) ? body.excluded_slugs : [],
       identified: true,
     };
   } catch {
@@ -72,6 +75,7 @@ Deno.serve(async (req) => {
         identified: viewer.identified,
         plan_slug: viewer.planSlug,
         addon_slugs: viewer.addonSlugs,
+        excluded_slugs: viewer.excludedSlugs,
       },
       groups: DOCS_GROUPS,
       sections,

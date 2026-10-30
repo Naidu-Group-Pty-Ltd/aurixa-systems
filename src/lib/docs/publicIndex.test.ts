@@ -17,7 +17,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PUBLIC_DOCS_INDEX, PUBLIC_DOCS_GROUPS, availabilityLabel } from "./publicIndex.ts";
+import {
+  AML_BUNDLED_MODULE_SLUGS,
+  PUBLIC_DOCS_INDEX,
+  PUBLIC_DOCS_GROUPS,
+  MODULE_TIERS,
+  availabilityLabel,
+} from "./publicIndex.ts";
+import { MOCK_MODULES } from "../pricing/mockCatalog.ts";
+import { TIER_FEATURES } from "../pricing/tierFeatures.ts";
 
 const ROOT = join(import.meta.dirname, "..", "..", "..");
 const read = (rel: string) => readFileSync(join(ROOT, rel), "utf8");
@@ -46,6 +54,21 @@ function corpusModules(): Array<{ slug: string; moduleSlug: string | null }> {
     for (const m of src.matchAll(re)) {
       out.push({ slug: m[1], moduleSlug: m[2] === "null" ? null : m[2].replace(/"/g, "") });
     }
+  }
+  return out;
+}
+
+/**
+ * The corpus's gate table, `MODULE_TIERS` in docsCorpus.ts: module slug → the
+ * tiers that include it. Read from the source, as the sections are, because
+ * the corpus is server-only and must not be imported here.
+ */
+function corpusGate(): Record<string, string[]> {
+  const src = read("supabase/functions/_shared/docsCorpus.ts");
+  const body = src.split("export const MODULE_TIERS")[1]?.split("\n};")[0] ?? "";
+  const out: Record<string, string[]> = {};
+  for (const m of body.matchAll(/^\s{2}"?([a-z0-9-]+)"?: \[([^\]]*)\],$/gm)) {
+    out[m[1]] = [...m[2].matchAll(/"([a-z]+)"/g)].map((t) => t[1]);
   }
   return out;
 }
@@ -84,17 +107,9 @@ test("index and corpus agree on which sections are gated", () => {
 
 test("every gated section names a module in the pricing catalogue", () => {
   // A moduleSlug the gate does not recognise fails closed in the corpus, which
-  // would silently hide a section from paying customers.
-  const known = new Set(
-    Object.keys({
-      "market-updates": 1, "commercial-industrial": 1, "opportunity-marketplace": 1,
-      "intelligence-hub": 1, "report-comparisons": 1, "cashflow-comparisons": 1,
-      "email-copilot": 1, "call-logs": 1, "portfolio-analysis": 1, "send-portfolio": 1,
-      "client-forms": 1, "borrowing-capacity": 1, lenders: 1, "client-ai": 1,
-      agreements: 1, marketing: 1, "deal-pipeline": 1, "aml-ctf": 1, "model-hub": 1,
-      "finance-portal": 1, integrations: 1, "api-usage": 1, "aurixa-agent": 1,
-    }),
-  );
+  // would silently hide a section from paying customers. The gate's own table
+  // is the list, so a module the price list adds needs one line, not two.
+  const known = new Set(Object.keys(corpusGate()));
   const unknown = PUBLIC_DOCS_INDEX.filter(
     (e) => e.moduleSlug !== null && !known.has(e.moduleSlug),
   ).map((e) => `${e.slug} -> ${e.moduleSlug}`);
@@ -133,12 +148,76 @@ test("AML compliance is available on every plan", () => {
   assert.equal(availabilityLabel(aml.moduleSlug), "All plans");
 });
 
+test("the index badges each module as the corpus gates it", () => {
+  // Two copies of one table, in two runtimes. A badge that disagrees with the
+  // gate advertises a section as open on a plan that cannot read it, or the
+  // reverse.
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(MODULE_TIERS).map(([k, v]) => [k, [...v]])),
+    corpusGate(),
+  );
+});
+
+test("the gate includes each module on exactly the tiers the price list does", () => {
+  // Market Updates read Growth and above here for weeks after the price list
+  // moved it to Scale alone. AML/CTF is the one deliberate difference: it is
+  // sold inside every tier's headline price, so its section is open on all
+  // three although no tier lists it as an inclusion.
+  const gate = corpusGate();
+  const drift: string[] = [];
+  for (const mod of MOCK_MODULES) {
+    if (mod.slug === "aml-ctf" || !(mod.slug in gate)) continue;
+    const listed = [...(mod.includedIn ?? [])].sort().join(",");
+    const gated = [...gate[mod.slug]].sort().join(",");
+    if (listed !== gated) drift.push(`${mod.slug} (price list=${listed} gate=${gated})`);
+  }
+  assert.deepEqual(drift, [], `tier drift: ${drift.join("; ")}`);
+});
+
+test("each partner portal is its own purchase in no tier, and comes with AML/CTF", () => {
+  // The Solicitor Portal by D17, the Accountant Portal by the owner's decision
+  // of 29 Oct 2026, and the Builder / Developer Portal, sold directly. Each
+  // used to read as part of the Finance Portal, and so as Scale. Any plan with
+  // AML/CTF Compliance includes all three (29 Oct 2026).
+  for (const [section, module] of [
+    ["solicitor-portal", "solicitor-portal"],
+    ["accountant-portal", "accountant-portal"],
+    ["builder-portal", "builder-developer-portal"],
+  ] as const) {
+    const entry = PUBLIC_DOCS_INDEX.find((e) => e.slug === section);
+    assert.ok(entry, `${section} missing from the index`);
+    assert.equal(entry.moduleSlug, module, section);
+    assert.deepEqual(MODULE_TIERS[module], [], section);
+    assert.equal(availabilityLabel(module), "With AML/CTF, or add-on", section);
+  }
+});
+
 test("availability labels read correctly for each tier shape", () => {
   assert.equal(availabilityLabel(null), "All plans");
-  assert.equal(availabilityLabel("finance-portal"), "Scale");
+  assert.equal(availabilityLabel("finance-portal"), "Scale, or with AML/CTF");
   assert.equal(availabilityLabel("deal-pipeline"), "Growth and above");
+  assert.equal(availabilityLabel("market-updates"), "Scale");
   assert.equal(availabilityLabel("email-copilot"), "Add-on");
   assert.equal(availabilityLabel("aml-ctf"), "All plans");
+});
+
+test("the portals AML/CTF brings are the same list in the index, the corpus and the pricing page", () => {
+  // Three copies in two runtimes. The pricing page's AML/CTF line names them
+  // as its sub-items; the index badges them; the corpus says so on a locked
+  // section.
+  const src = read("supabase/functions/_shared/docsCorpus.ts");
+  const body = src.split("export const AML_BUNDLED_MODULE_SLUGS")[1]?.split("];")[0] ?? "";
+  const corpus = [...body.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual([...AML_BUNDLED_MODULE_SLUGS].sort(), corpus.sort());
+
+  const slug = (name: string) =>
+    name.toLowerCase().replace(/\//g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const amlLine = TIER_FEATURES.launch.groups
+    .flatMap((g) => g.items)
+    .find((i) => i.name === "AML/CTF Compliance");
+  assert.ok(amlLine, "the Launch card lists AML/CTF Compliance");
+  assert.deepEqual((amlLine.subs ?? []).map(slug).sort(), [...AML_BUNDLED_MODULE_SLUGS].sort());
+  for (const s of AML_BUNDLED_MODULE_SLUGS) assert.ok(s in MODULE_TIERS, s);
 });
 
 test("summaries are written, not placeholders", () => {

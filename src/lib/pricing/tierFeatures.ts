@@ -9,6 +9,13 @@
 // Sub-modules are kept as structured data rather than folded into the module
 // name, so the card can nest them instead of rendering one unreadable
 // parenthetical eighteen items long.
+//
+// Mission Control keeps the same table (`src/lib/pricing/tier-features.ts`)
+// and resolves which modules a clone on each tier holds from it, so the two
+// change together. The sheet predates some of what the platform builds:
+// Quantitative Reports, Templates and Auto Report Generation (Launch) and the
+// four pages under Agreements (Scale) were added on 29 Oct 2026, each on the
+// tier where the platform already opens it.
 
 export type FeatureItem = { name: string; subs?: string[] };
 export type FeatureGroup = { heading: string; items: FeatureItem[] };
@@ -34,6 +41,7 @@ export const TIER_FEATURES: Record<string, TierFeatures> = {
       items: [
         { name: "Reports" },
         { name: "Generated Reports", subs: ["Investment"] },
+        { name: "Quantitative Reports" },
         { name: "Cash Flow Analysis", subs: ["10 Year Cash Flow"] },
         { name: "Report Requests" },
       ],
@@ -66,6 +74,8 @@ export const TIER_FEATURES: Record<string, TierFeatures> = {
         { name: "Settings" },
         { name: "User Management" },
         { name: "Branding" },
+        { name: "Templates" },
+        { name: "Auto Report Generation" },
         { name: "Error Logs" },
         { name: "Activity Logs" },
         { name: "Client Portal" },
@@ -74,7 +84,9 @@ export const TIER_FEATURES: Record<string, TierFeatures> = {
     {
       heading: "AML / CTF Compliance",
       items: [
-        { name: "AML/CTF Compliance" },
+        // The partner portals AML/CTF brings at no extra cost (29 Oct 2026).
+        // The without-AML price leaves them out with it.
+        { name: "AML/CTF Compliance", subs: ["Finance Portal", "Solicitor Portal", "Accountant Portal", "Builder / Developer Portal"] },
       ],
     },
     ],
@@ -125,7 +137,7 @@ export const TIER_FEATURES: Record<string, TierFeatures> = {
     {
       heading: "Operations",
       items: [
-        { name: "Agreements" },
+        { name: "Agreements", subs: ["Agreement Templates", "Partner Referrals", "Loan Writer Undertakings", "Partner Compliance"] },
         { name: "Marketing" },
       ],
     },

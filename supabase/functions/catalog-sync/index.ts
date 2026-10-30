@@ -15,7 +15,8 @@ const cors = {
 };
 
 // NOT-NULL jsonb columns: coalesce missing/null values to their empty default
-// (e.g. Mission Control's addons carry no metadata field).
+// (e.g. most of Mission Control's add-on rows carry no metadata field; the
+// ones it states a fact about — `included_with_aml`, `price_undecided` — do).
 const JSONB_DEFAULT: Record<string, unknown> = {
   metadata: {},
   deliverables: [],

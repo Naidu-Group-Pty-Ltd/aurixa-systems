@@ -706,7 +706,7 @@ export const FOUNDATION_SECTIONS: DocsSection[] = [
     title: "Quantitative Reports",
     summary: "Data-led analysis across the portfolio and market, beyond single-property reporting.",
     group: "Reports & Analysis",
-    moduleSlug: "commercial-industrial",
+    moduleSlug: null,
     guideSectionId: "quantitative-reports",
     readMinutes: 6,
     blocks: [

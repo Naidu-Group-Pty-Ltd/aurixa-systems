@@ -77,7 +77,10 @@ Deno.serve(async (req) => {
         ? db.from("catalog_setups").select("id,slug,name,description,price_min_cents,price_max_cents,currency,deliverables")
         : Promise.resolve({ data: [] }),
       access.granted
-        ? db.from("catalog_addons").select("id,slug,name,description,price_min_cents,price_max_cents,currency,billing_period,category,included_in_plans")
+        // `metadata` carries what Mission Control states about a row from its
+        // own catalogue: `included_with_aml` for a partner portal AML/CTF
+        // brings, `price_undecided` for a module with no price yet.
+        ? db.from("catalog_addons").select("id,slug,name,description,price_min_cents,price_max_cents,currency,billing_period,category,included_in_plans,metadata")
         : Promise.resolve({ data: [] }),
       access.granted
         ? db.from("catalog_roles").select("id,slug,name,description,price_min_cents,price_max_cents,currency,permissions")

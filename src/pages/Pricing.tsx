@@ -180,6 +180,7 @@ const FAQ_GROUPS: FaqGroup[] = [
         a: [
           "Every plan is quoted with the AML/CTF Compliance module included, because most firms in this market need it. The second, lower figure is the same plan without that module, for firms whose compliance obligations are already covered elsewhere.",
           "The with-AML option includes a $400 AML reference component and a $250 conditional Core Platform bundle discount, so removing both changes the subscription by $150 a month. That difference is the same on every tier, which is why the two figures can never drift apart, and adding compliance later costs the same as having taken it from the start.",
+          "The with-AML figure also brings every partner portal at no extra cost: the Finance, Solicitor, Accountant and Builder / Developer portals, the ones a client's Compliance Passport is shared through. Without AML/CTF, each portal is priced as the Modules section lists it, and Scale still includes the Finance Portal.",
         ],
       },
     ],
@@ -899,16 +900,25 @@ export default function Pricing() {
                     <p className="mt-1.5 text-xs leading-relaxed text-[#94A3B8]">{a.description}</p>
                   )}
                   <div className="mt-4 text-lg font-semibold tracking-tight text-white">
-                    {range(a.price_min_cents, a.price_max_cents)}
-                    {a.billing_period && (
-                      <span className="ml-1.5 font-display text-sm font-normal italic text-[#94A3B8]">
-                        / {a.billing_period}
-                      </span>
+                    {/* Mission Control sends no price for a module whose price
+                        is undecided, rather than the placeholder its row has to
+                        hold, so an absent price is said in words. */}
+                    {a.price_min_cents == null ? (
+                      "Price to be confirmed"
+                    ) : (
+                      <>
+                        {range(a.price_min_cents, a.price_max_cents)}
+                        {a.billing_period && (
+                          <span className="ml-1.5 font-display text-sm font-normal italic text-[#94A3B8]">
+                            / {a.billing_period}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
-                  {(a.included_in_plans?.length ?? 0) > 0 && (
+                  {((a.included_in_plans?.length ?? 0) > 0 || a.metadata?.included_with_aml) && (
                     <div className="mt-3 flex flex-wrap gap-1">
-                      {a.included_in_plans!.map((pl) => (
+                      {(a.included_in_plans ?? []).map((pl) => (
                         <span
                           key={pl}
                           className="rounded-sm bg-white/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[#94A3B8]"
@@ -916,6 +926,14 @@ export default function Pricing() {
                           included · {pl}
                         </span>
                       ))}
+                      {/* A partner portal comes with any plan that includes
+                          AML/CTF Compliance (29 Oct 2026). Mission Control
+                          says which, from its own catalogue. */}
+                      {a.metadata?.included_with_aml && (
+                        <span className="rounded-sm bg-white/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-[#94A3B8]">
+                          included · with AML/CTF
+                        </span>
+                      )}
                     </div>
                   )}
                   {/* Pinned to the bottom so the CTAs line up across a row
@@ -924,6 +942,7 @@ export default function Pricing() {
                     <AddonAction
                       purchase={resolveAddonPurchase(a, {
                         currentPlanSlug,
+                        heldAddonSlugs: handoff?.heldAddonSlugs ?? null,
                         accountReference: moduleReference,
                       })}
                       name={a.name}
@@ -1304,6 +1323,10 @@ function PlanCard({
             </div>
             <div className="mt-0.5 font-mono text-[9px] uppercase tracking-[0.22em] text-[#C89B3C]/90">
               without AML/CTF Compliance · incl GST
+            </div>
+            {/* The partner portals come with AML/CTF, so they go with it. */}
+            <div className="mt-1 text-[11px] leading-snug text-[#C89B3C]/80">
+              The partner portals it brings are then sold separately.
             </div>
           </div>
         )}
@@ -2029,6 +2052,9 @@ function FaqItem({
  *     the customer left it; they will be comparing more than one module.
  *   · **Included with your plan** — they already have it, and offering to sell
  *     it again would be worse than showing nothing.
+ *   · **On your workspace** — the handoff says the workspace holds it: bought
+ *     already, or brought by something it holds, as the partner portals come
+ *     with AML/CTF Compliance.
  *   · **Enquire** — nothing is sold for this module yet (or the catalog and
  *     Stripe disagree on the price, in which case not charging is the only
  *     honest option). The contact funnel is where the site sends everything it
@@ -2062,6 +2088,14 @@ function AddonAction({
     return (
       <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-[#5EDDE8]">
         <Check className="h-3.5 w-3.5" aria-hidden="true" /> Included with your plan
+      </p>
+    );
+  }
+
+  if (purchase.reason === "already_held") {
+    return (
+      <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.2em] text-[#5EDDE8]">
+        <Check className="h-3.5 w-3.5" aria-hidden="true" /> On your workspace
       </p>
     );
   }
