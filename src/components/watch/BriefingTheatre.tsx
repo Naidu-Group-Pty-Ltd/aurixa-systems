@@ -6,10 +6,10 @@ import { BriefingPlayer } from "./BriefingPlayer";
 import {
   SERIES_LABELS,
   briefingPath,
+  cardArtwork,
   formatDuration,
   isPortrait,
   isPublished,
-  mediaUrl,
   type Briefing,
   type PublishedBriefing,
 } from "../../lib/videos/catalog";
@@ -166,7 +166,8 @@ function EndCard({ store, next }: { store: PlaybackStore; next: PublishedBriefin
   if (!ended) return null;
 
   const replay = () => store.controller()?.play(0);
-  const nextPoster = next ? mediaUrl(next.media.poster) ?? next.artwork : undefined;
+  // The same artwork the library card shows for that briefing.
+  const nextArt = next ? cardArtwork(next) : undefined;
 
   return (
     <div className="watch-endcard" role="group" aria-label="Briefing complete">
@@ -181,9 +182,7 @@ function EndCard({ store, next }: { store: PlaybackStore; next: PublishedBriefin
             className="watch-endcard__next"
           >
             <span className="watch-endcard__thumb">
-              {nextPoster && (
-                <Artwork src={nextPoster} portrait={Boolean(next.media.poster) && isPortrait(next)} loading="eager" />
-              )}
+              {nextArt && <Artwork src={nextArt.src} portrait={nextArt.portrait} loading="eager" />}
               {!cancelled && (
                 <svg className="watch-endcard__countdown" viewBox="0 0 48 48" aria-hidden="true">
                   <circle cx="24" cy="24" r="21" />

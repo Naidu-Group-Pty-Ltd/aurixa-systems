@@ -67,8 +67,16 @@ export type BriefingMedia = {
   hls?: string;
   /** ~720p progressive MP4 with `+faststart`. Last-resort fallback only. */
   mp4?: string;
-  /** 16:9 poster frame, shown until the first video frame is decoded. */
+  /**
+   * The theatre's poster frame, shown until the first video frame is decoded:
+   * 16:9 for a landscape video, 9:16 for a portrait one.
+   */
   poster?: string;
+  /**
+   * The 16:9 thumbnail designed for the video, shown on the library card and
+   * the up-next card in place of the poster. 1920×1080 JPEG.
+   */
+  thumbnail?: string;
   /** 1200×630 social card. Falls back to the sitewide card when absent. */
   card?: string;
   /** English WebVTT captions. */
@@ -209,6 +217,31 @@ export function mediaUrl(value: string | undefined): string | undefined {
 
 export function isPortrait(briefing: Briefing): boolean {
   return briefing.orientation === "portrait";
+}
+
+/** What a briefing's library card and up-next card show. */
+export type CardArtwork = {
+  /** An absolute media URL, or the `/brand/…` fallback artwork. */
+  src: string;
+  /** A vertical 9:16 frame, to stand whole over a blurred fill of itself. */
+  portrait: boolean;
+  /** A thumbnail designed for the card, with its own type and vignette. */
+  designed: boolean;
+  /** The brand fallback rather than an image of the video. */
+  fallback: boolean;
+};
+
+/**
+ * The one decision both cards share, so the library and the up-next card can
+ * never show a briefing two ways: the designed thumbnail when there is one,
+ * else the poster (framed, for a reel), else the fallback artwork.
+ */
+export function cardArtwork(briefing: Briefing): CardArtwork {
+  const thumbnail = mediaUrl(briefing.media?.thumbnail);
+  if (thumbnail) return { src: thumbnail, portrait: false, designed: true, fallback: false };
+  const poster = mediaUrl(briefing.media?.poster);
+  if (poster) return { src: poster, portrait: isPortrait(briefing), designed: false, fallback: false };
+  return { src: briefing.artwork, portrait: false, designed: false, fallback: true };
 }
 
 /** The origin the player fetches from, for `preconnect`. */

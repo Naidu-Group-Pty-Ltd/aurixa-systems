@@ -32,6 +32,8 @@ export type MissionControlListing = {
     hls: string | null;
     mp4: string | null;
     poster: string | null;
+    /** Absent from a Mission Control that predates designed thumbnails. */
+    thumbnail?: string | null;
     card: string | null;
     captions: string | null;
   } | null;
@@ -56,6 +58,7 @@ export function briefingFromListing(listing: MissionControlListing): Briefing {
         hls: present(listing.media.hls),
         mp4: present(listing.media.mp4),
         poster: present(listing.media.poster),
+        thumbnail: present(listing.media.thumbnail),
         card: present(listing.media.card),
         captions: present(listing.media.captions),
       }
@@ -88,7 +91,7 @@ export function briefingFromListing(listing: MissionControlListing): Briefing {
 export function canonicalBriefing(briefing: Briefing): Briefing {
   const media = briefing.media
     ? Object.fromEntries(
-        (["hls", "mp4", "poster", "card", "captions"] as const)
+        (["hls", "mp4", "poster", "thumbnail", "card", "captions"] as const)
           .filter((key) => briefing.media?.[key])
           .map((key) => [key, briefing.media![key]]),
       )

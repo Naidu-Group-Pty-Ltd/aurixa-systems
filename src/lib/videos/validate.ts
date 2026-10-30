@@ -19,7 +19,7 @@ export type ValidationContext = {
   artworkExists: (path: string) => boolean;
 };
 
-const MEDIA_FIELDS = ["hls", "mp4", "poster", "card", "captions"] as const;
+const MEDIA_FIELDS = ["hls", "mp4", "poster", "thumbnail", "card", "captions"] as const;
 const SERIES = new Set(["flagship", "platform", "growth", "compliance"]);
 
 /** Every field that makes an entry watchable. All or none, never some. */
