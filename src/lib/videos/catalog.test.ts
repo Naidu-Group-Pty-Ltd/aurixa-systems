@@ -7,6 +7,7 @@ import {
   DEFAULT_VIDEO_MEDIA_ORIGIN,
   briefingBySlug,
   briefingPath,
+  cardArtwork,
   featuredBriefing,
   formatDuration,
   formatPublished,
@@ -28,7 +29,7 @@ import {
 const publicFile = (path: string) => new URL(`../../../public${path}`, import.meta.url);
 
 /** Every media field an entry can carry. */
-const MEDIA_FIELDS = ["hls", "mp4", "poster", "card", "captions"] as const;
+const MEDIA_FIELDS = ["hls", "mp4", "poster", "thumbnail", "card", "captions"] as const;
 
 test("slugs are unique, URL-safe and stable in shape", () => {
   const slugs = BRIEFINGS.map((briefing) => briefing.slug);
@@ -245,6 +246,59 @@ test("lookups and paths", () => {
   assert.equal(briefingBySlug("two", LIBRARY)?.slug, "two");
   assert.equal(briefingBySlug("nope", LIBRARY), undefined);
   assert.equal(briefingPath("two"), "/watch/two");
+});
+
+/**
+ * The library card and the up-next card both draw from `cardArtwork`, so a
+ * briefing cannot look one way in the library and another as "Up next".
+ */
+test("a designed thumbnail is the card's artwork, shown landscape whatever the video's shape", () => {
+  const reel = live("reel", {
+    orientation: "portrait",
+    media: {
+      hls: "videos/reel/v1/master.m3u8",
+      poster: "videos/reel/v1/poster.jpg",
+      thumbnail: "videos/reel/v2/thumbnail.jpg",
+    },
+  });
+  assert.deepEqual(cardArtwork(reel), {
+    src: `${videoMediaOrigin()}/videos/reel/v2/thumbnail.jpg`,
+    portrait: false,
+    designed: true,
+    fallback: false,
+  });
+  const absolute = live("cdn", { media: { hls: "videos/cdn/v1/master.m3u8", thumbnail: "https://cdn.example.com/t.jpg" } });
+  assert.equal(cardArtwork(absolute).src, "https://cdn.example.com/t.jpg");
+});
+
+test("without a thumbnail the card keeps the poster, framed for a reel, else the artwork", () => {
+  assert.deepEqual(cardArtwork(live("wide")), {
+    src: `${videoMediaOrigin()}/videos/wide/v1/poster.jpg`,
+    portrait: false,
+    designed: false,
+    fallback: false,
+  });
+  assert.deepEqual(cardArtwork(live("tall", { orientation: "portrait" })), {
+    src: `${videoMediaOrigin()}/videos/tall/v1/poster.jpg`,
+    portrait: true,
+    designed: false,
+    fallback: false,
+  });
+  const premiere = fixture({ slug: "soon", orientation: "portrait" });
+  assert.deepEqual(cardArtwork(premiere), { src: premiere.artwork, portrait: false, designed: false, fallback: true });
+  // An empty thumbnail is no thumbnail.
+  assert.equal(cardArtwork(live("blank", { media: { hls: "videos/blank/v1/master.m3u8", poster: "videos/blank/v1/poster.jpg", thumbnail: "" } })).designed, false);
+});
+
+test("a snapshot entry with no thumbnail shows its poster, exactly as before thumbnails existed", () => {
+  for (const briefing of BRIEFINGS) {
+    if (briefing.media?.thumbnail) continue;
+    const art = cardArtwork(briefing);
+    const poster = mediaUrl(briefing.media?.poster);
+    assert.equal(art.src, poster ?? briefing.artwork, briefing.slug);
+    assert.equal(art.portrait, Boolean(poster) && briefing.orientation === "portrait", briefing.slug);
+    assert.equal(art.designed, false, briefing.slug);
+  }
 });
 
 test("media paths resolve against the bucket; absolute https URLs pass through", () => {

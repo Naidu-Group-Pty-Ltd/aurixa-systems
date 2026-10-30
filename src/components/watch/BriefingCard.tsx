@@ -4,10 +4,9 @@ import { Artwork } from "./Artwork";
 import {
   SERIES_LABELS,
   briefingPath,
+  cardArtwork,
   formatDuration,
-  isPortrait,
   isPublished,
-  mediaUrl,
   spokenDuration,
   type Briefing,
 } from "../../lib/videos/catalog";
@@ -28,16 +27,18 @@ type BriefingCardProps = {
  */
 export function BriefingCard({ briefing, code, current = false, watched = 0 }: BriefingCardProps) {
   const published = isPublished(briefing);
-  const poster = mediaUrl(briefing.media?.poster);
+  const art = cardArtwork(briefing);
   const complete = watched >= 1;
 
+  // A designed thumbnail brings its own vignette and type, so the card lays
+  // a lighter wash over it and no colour tint (`--designed` in index.css).
   const thumbnail = (
-    <div className="watch-card__thumb">
+    <div className={`watch-card__thumb${art.designed ? " watch-card__thumb--designed" : ""}`}>
       <Artwork
-        src={poster ?? briefing.artwork}
-        portrait={Boolean(poster) && isPortrait(briefing)}
-        className={`watch-card__image${poster ? "" : " watch-card__image--artwork"}`}
-        objectPosition={poster ? "center" : briefing.artworkPosition ?? "center"}
+        src={art.src}
+        portrait={art.portrait}
+        className={`watch-card__image${art.fallback ? " watch-card__image--artwork" : ""}`}
+        objectPosition={art.fallback ? briefing.artworkPosition ?? "center" : "center"}
       />
       <div className="watch-card__tint" aria-hidden="true" />
       <div className="watch-card__wash" aria-hidden="true" />

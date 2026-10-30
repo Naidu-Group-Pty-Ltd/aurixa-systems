@@ -65,18 +65,26 @@ function isApplePlatform(): boolean {
   return classicIOS || modernIPadOS || desktopSafari;
 }
 
-/** Lock-screen, notification-shade and headset controls carry the briefing, not a bare URL. */
-function announceMediaSession(briefing: PublishedBriefing, poster: string | undefined): void {
+/**
+ * Lock-screen, notification-shade and headset controls carry the briefing, not
+ * a bare URL. The designed thumbnail is offered first, because it is the
+ * briefing's face on every card, and where a browser weighs two images as
+ * equally good fits the order is what decides.
+ */
+function announceMediaSession(briefing: PublishedBriefing, poster: string | undefined, thumbnail: string | undefined): void {
   if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
   if (typeof MediaMetadata === "undefined") return;
+  const artwork: MediaImage[] = [];
+  if (thumbnail) artwork.push({ src: thumbnail, sizes: "1920x1080", type: "image/jpeg" });
+  if (poster) {
+    artwork.push({ src: poster, sizes: briefing.orientation === "portrait" ? "1080x1920" : "1920x1080", type: "image/jpeg" });
+  }
   try {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: briefing.title,
       artist: "Aurixa Systems",
       album: "Briefing Room",
-      artwork: poster
-        ? [{ src: poster, sizes: briefing.orientation === "portrait" ? "1080x1920" : "1920x1080", type: "image/jpeg" }]
-        : [],
+      artwork,
     });
   } catch {
     // Older implementations throw on artwork they cannot parse. Cosmetic only.
@@ -114,6 +122,7 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
   const hlsUrl = mediaUrl(briefing.media.hls);
   const mp4Url = mediaUrl(briefing.media.mp4);
   const posterUrl = mediaUrl(briefing.media.poster);
+  const thumbnailUrl = mediaUrl(briefing.media.thumbnail);
   const captionsUrl = mediaUrl(briefing.media.captions);
   const slug = briefing.slug;
 
@@ -259,7 +268,7 @@ function BriefingPlayerImpl({ briefing, code, store, autoStart = false, preferNa
       tracker.markStallEnd();
       store.set({ status: "playing" });
     });
-    addMediaListener("play", () => announceMediaSession(briefing, posterUrl));
+    addMediaListener("play", () => announceMediaSession(briefing, posterUrl, thumbnailUrl));
     addMediaListener("waiting", () => {
       tracker.markStallStart();
       store.set({ status: "loading" });
