@@ -17,8 +17,15 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { PUBLIC_DOCS_INDEX, PUBLIC_DOCS_GROUPS, MODULE_TIERS, availabilityLabel } from "./publicIndex.ts";
+import {
+  AML_BUNDLED_MODULE_SLUGS,
+  PUBLIC_DOCS_INDEX,
+  PUBLIC_DOCS_GROUPS,
+  MODULE_TIERS,
+  availabilityLabel,
+} from "./publicIndex.ts";
 import { MOCK_MODULES } from "../pricing/mockCatalog.ts";
+import { TIER_FEATURES } from "../pricing/tierFeatures.ts";
 
 const ROOT = join(import.meta.dirname, "..", "..", "..");
 const read = (rel: string) => readFileSync(join(ROOT, rel), "utf8");
@@ -167,10 +174,11 @@ test("the gate includes each module on exactly the tiers the price list does", (
   assert.deepEqual(drift, [], `tier drift: ${drift.join("; ")}`);
 });
 
-test("each partner portal is its own purchase, in no tier", () => {
+test("each partner portal is its own purchase in no tier, and comes with AML/CTF", () => {
   // The Solicitor Portal by D17, the Accountant Portal by the owner's decision
   // of 29 Oct 2026, and the Builder / Developer Portal, sold directly. Each
-  // used to read as part of the Finance Portal, and so as Scale.
+  // used to read as part of the Finance Portal, and so as Scale. Any plan with
+  // AML/CTF Compliance includes all three (29 Oct 2026).
   for (const [section, module] of [
     ["solicitor-portal", "solicitor-portal"],
     ["accountant-portal", "accountant-portal"],
@@ -179,16 +187,37 @@ test("each partner portal is its own purchase, in no tier", () => {
     const entry = PUBLIC_DOCS_INDEX.find((e) => e.slug === section);
     assert.ok(entry, `${section} missing from the index`);
     assert.equal(entry.moduleSlug, module, section);
-    assert.equal(availabilityLabel(module), "Add-on", section);
+    assert.deepEqual(MODULE_TIERS[module], [], section);
+    assert.equal(availabilityLabel(module), "With AML/CTF, or add-on", section);
   }
 });
 
 test("availability labels read correctly for each tier shape", () => {
   assert.equal(availabilityLabel(null), "All plans");
-  assert.equal(availabilityLabel("finance-portal"), "Scale");
+  assert.equal(availabilityLabel("finance-portal"), "Scale, or with AML/CTF");
   assert.equal(availabilityLabel("deal-pipeline"), "Growth and above");
+  assert.equal(availabilityLabel("market-updates"), "Scale");
   assert.equal(availabilityLabel("email-copilot"), "Add-on");
   assert.equal(availabilityLabel("aml-ctf"), "All plans");
+});
+
+test("the portals AML/CTF brings are the same list in the index, the corpus and the pricing page", () => {
+  // Three copies in two runtimes. The pricing page's AML/CTF line names them
+  // as its sub-items; the index badges them; the corpus says so on a locked
+  // section.
+  const src = read("supabase/functions/_shared/docsCorpus.ts");
+  const body = src.split("export const AML_BUNDLED_MODULE_SLUGS")[1]?.split("];")[0] ?? "";
+  const corpus = [...body.matchAll(/"([a-z0-9-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual([...AML_BUNDLED_MODULE_SLUGS].sort(), corpus.sort());
+
+  const slug = (name: string) =>
+    name.toLowerCase().replace(/\//g, " ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const amlLine = TIER_FEATURES.launch.groups
+    .flatMap((g) => g.items)
+    .find((i) => i.name === "AML/CTF Compliance");
+  assert.ok(amlLine, "the Launch card lists AML/CTF Compliance");
+  assert.deepEqual((amlLine.subs ?? []).map(slug).sort(), [...AML_BUNDLED_MODULE_SLUGS].sort());
+  for (const s of AML_BUNDLED_MODULE_SLUGS) assert.ok(s in MODULE_TIERS, s);
 });
 
 test("summaries are written, not placeholders", () => {

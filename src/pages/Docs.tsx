@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import {
+  AML_BUNDLED_MODULE_SLUGS,
   PUBLIC_DOCS_INDEX,
   PUBLIC_DOCS_GROUPS,
   availabilityLabel,
@@ -36,6 +37,8 @@ function indexAsSections(index: PublicDocsEntry[]): DeliveredSection[] {
     ...e,
     locked: e.moduleSlug !== null,
     unlockedBy: null,
+    includedWithAml: e.moduleSlug !== null && AML_BUNDLED_MODULE_SLUGS.includes(e.moduleSlug),
+    excludedByAgreement: false,
     blocks: [],
   }));
 }
@@ -141,24 +144,39 @@ function Block({ block }: { block: DocsBlock }): ReactElement | null {
   }
 }
 
-function LockedBody({ section, identified }: { section: DeliveredSection; identified: boolean }) {
+/** Where a locked module is included, in a sentence for a customer. */
+function whereIncluded(section: DeliveredSection): string {
   const unlock = section.unlockedBy ? PLAN_LABELS[section.unlockedBy] ?? section.unlockedBy : null;
+  // A partner portal comes with any plan that includes AML/CTF Compliance.
+  if (section.includedWithAml) {
+    return unlock
+      ? `It is included from the ${unlock} plan, and with any plan that includes AML/CTF Compliance.`
+      : "It is included with any plan that includes AML/CTF Compliance, or available as a separately purchased add-on.";
+  }
+  return unlock
+    ? `It is included from the ${unlock} plan.`
+    : "It is available as a separately purchased add-on.";
+}
+
+function LockedBody({ section, identified }: { section: DeliveredSection; identified: boolean }) {
   return (
     <div className="border border-[#C89B3C]/20 bg-[#C89B3C]/[0.03] rounded-sm px-6 py-6">
       <div className="flex items-center gap-2 mb-3 text-[#C89B3C]">
         <Lock className="w-4 h-4" />
         <span className="text-[10px] font-mono uppercase tracking-[0.25em]">
-          {identified ? "Not in your plan" : "Customer documentation"}
+          {identified
+            ? section.excludedByAgreement
+              ? "Excluded by your agreement"
+              : "Not in your plan"
+            : "Customer documentation"}
         </span>
       </div>
       {identified ? (
         <>
           <p className="text-[#9CA3AF] font-light leading-relaxed mb-4">
-            This module is not included in your current plan, so its documentation is not available on
-            your workspace.{" "}
-            {unlock
-              ? `It is included from the ${unlock} plan.`
-              : "It is available as a separately purchased add-on."}
+            {section.excludedByAgreement
+              ? "Your agreement excludes this module, so its documentation is not available on your workspace."
+              : `This module is not included in your current plan, so its documentation is not available on your workspace. ${whereIncluded(section)}`}
           </p>
           <Link
             to="/pricing"

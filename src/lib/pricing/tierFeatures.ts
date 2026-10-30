@@ -84,7 +84,9 @@ export const TIER_FEATURES: Record<string, TierFeatures> = {
     {
       heading: "AML / CTF Compliance",
       items: [
-        { name: "AML/CTF Compliance" },
+        // The partner portals AML/CTF brings at no extra cost (29 Oct 2026).
+        // The without-AML price leaves them out with it.
+        { name: "AML/CTF Compliance", subs: ["Finance Portal", "Solicitor Portal", "Accountant Portal", "Builder / Developer Portal"] },
       ],
     },
     ],

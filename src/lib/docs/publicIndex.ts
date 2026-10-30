@@ -153,14 +153,27 @@ export const MODULE_TIERS: Record<string, readonly string[]> = {
   "builder-developer-portal": [],
 };
 
+/**
+ * The partner portals AML/CTF Compliance brings at no extra cost (29 Oct
+ * 2026). Mirrors AML_BUNDLED_MODULE_SLUGS in the corpus; a test pins both to
+ * the pricing page's AML/CTF line.
+ */
+export const AML_BUNDLED_MODULE_SLUGS: readonly string[] = [
+  "finance-portal",
+  "solicitor-portal",
+  "accountant-portal",
+  "builder-developer-portal",
+];
+
 /** Human-readable availability, for the badge on each index entry. */
 export function availabilityLabel(moduleSlug: string | null): string {
   if (!moduleSlug) return "All plans";
   const tiers = MODULE_TIERS[moduleSlug];
   if (!tiers) return "All plans";
-  if (tiers.length === 0) return "Add-on";
+  const withAml = AML_BUNDLED_MODULE_SLUGS.includes(moduleSlug);
+  if (tiers.length === 0) return withAml ? "With AML/CTF, or add-on" : "Add-on";
   if (tiers.length === 3) return "All plans";
   if (tiers.includes("growth")) return "Growth and above";
-  if (tiers.includes("scale")) return "Scale";
+  if (tiers.includes("scale")) return withAml ? "Scale, or with AML/CTF" : "Scale";
   return "All plans";
 }

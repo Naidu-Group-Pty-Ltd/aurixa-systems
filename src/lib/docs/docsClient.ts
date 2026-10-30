@@ -33,13 +33,22 @@ export type DeliveredSection = {
   readMinutes: number;
   locked: boolean;
   unlockedBy?: string | null;
+  /** A partner portal any plan with AML/CTF Compliance includes (29 Oct 2026). */
+  includedWithAml?: boolean;
+  /** Locked because the workspace's agreement excludes the module. */
+  excludedByAgreement?: boolean;
   guideSectionId?: string;
   blocks: DocsBlock[];
 };
 
 export type DocsPayload = {
   ok: boolean;
-  viewer: { identified: boolean; plan_slug: string | null; addon_slugs: string[] };
+  viewer: {
+    identified: boolean;
+    plan_slug: string | null;
+    addon_slugs: string[];
+    excluded_slugs?: string[];
+  };
   groups: Array<{ heading: string; blurb: string }>;
   sections: DeliveredSection[];
   counts: { total: number; readable: number; locked: number };
